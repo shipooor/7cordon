@@ -1,0 +1,39 @@
+{
+  "name": "@saaafe/wdk-module",
+  "version": "0.1.0",
+  "description": "saaafe WDK module — AI-powered transaction analysis middleware for Tether WDK",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shipooor/saaafe.git",
+    "directory": "packages/wdk-module"
+  },
+  "keywords": ["wdk", "tether", "saaafe", "security", "trust-safety", "ai", "transaction-analysis"],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@saaafe/shared": "0.1.0",
+    "@saaafe/sdk": "0.1.0"
+  },
+  "peerDependencies": {
+    "@tetherto/wdk": "^1.0.0-beta.6"
+  },
+  "devDependencies": {
+    "@tetherto/wdk": "^1.0.0-beta.6",
+    "typescript": "^5.4"
+  }
+}

@@ -1,0 +1,2364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentation — saaafe</title>
+  <meta name="description" content="Complete documentation for saaafe: architecture, SDK guide, API reference, MCP integration, deployment, and business model.">
+  <meta property="og:title" content="Documentation — saaafe">
+  <meta property="og:description" content="SDK guide, API reference, architecture, and deployment docs for saaafe">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://saaafe.me/docs">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Documentation — saaafe">
+  <meta name="twitter:description" content="SDK guide, API reference, architecture, and deployment docs for saaafe">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+    :root {
+      --color-bg: #08070d;
+      --color-surface: #0f0e17;
+      --color-card: #161424;
+      --color-card-hover: #1c1a2e;
+      --color-border: #2a2740;
+      --color-border-light: #352f55;
+      --color-text: #f0eef6;
+      --color-text-muted: #8b89a0;
+      --color-text-dim: #5c5a70;
+      --color-primary: #8b5cf6;
+      --color-primary-dim: #6d45d4;
+      --color-primary-glow: rgba(139, 92, 246, 0.15);
+      --color-primary-glow-strong: rgba(139, 92, 246, 0.3);
+      --color-approved: #10b981;
+      --color-approved-glow: rgba(16, 185, 129, 0.15);
+      --color-blocked: #ef4444;
+      --color-blocked-glow: rgba(239, 68, 68, 0.15);
+      --color-warning: #f59e0b;
+      --color-warning-glow: rgba(245, 158, 11, 0.15);
+      --color-info: #3b82f6;
+      --radius: 10px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4);
+      --font: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+      --sidebar-width: 280px;
+      --nav-height: 56px;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; scroll-padding-top: calc(var(--nav-height) + 24px); }
+
+    body {
+      font-family: var(--font);
+      background: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.7;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    a { color: var(--color-primary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ===== TOP NAV ===== */
+    .site-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      height: var(--nav-height);
+      padding: 0 24px;
+      display: flex; justify-content: center; align-items: center;
+      background: rgba(8, 7, 13, 0.92);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--color-border);
+    }
+    .nav-inner {
+      max-width: 1400px; width: 100%;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .nav-logo {
+      font-size: 16px; font-weight: 800; color: var(--color-text);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .nav-logo span { font-size: 20px; }
+    .nav-links { display: flex; gap: 24px; list-style: none; align-items: center; }
+    .nav-links a {
+      font-size: 13px; color: var(--color-text-muted);
+      transition: color 0.2s; font-weight: 500;
+    }
+    .nav-links a:hover { color: var(--color-text); text-decoration: none; }
+    .nav-links .active-doc { color: var(--color-primary); }
+
+    /* ===== LAYOUT ===== */
+    .docs-layout {
+      display: flex;
+      margin-top: var(--nav-height);
+      min-height: calc(100vh - var(--nav-height));
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      position: fixed;
+      top: var(--nav-height);
+      left: 0;
+      width: var(--sidebar-width);
+      height: calc(100vh - var(--nav-height));
+      overflow-y: auto;
+      background: var(--color-surface);
+      border-right: 1px solid var(--color-border);
+      padding: 24px 0;
+      z-index: 100;
+      transition: transform 0.3s ease;
+    }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-track { background: transparent; }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 4px; }
+
+    .sidebar-search {
+      padding: 0 16px 16px;
+      border-bottom: 1px solid var(--color-border);
+      margin-bottom: 8px;
+    }
+    .sidebar-search input {
+      width: 100%;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--color-border);
+      background: var(--color-card);
+      color: var(--color-text);
+      font-family: var(--font);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .sidebar-search input::placeholder { color: var(--color-text-dim); }
+    .sidebar-search input:focus { border-color: var(--color-primary); }
+
+    .sidebar-section { padding: 4px 0; }
+    .sidebar-heading {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 20px;
+      font-size: 12px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1.5px; color: var(--color-text-muted);
+      cursor: pointer; user-select: none;
+      transition: color 0.2s;
+    }
+    .sidebar-heading:hover { color: var(--color-text); }
+    .sidebar-heading .chevron {
+      font-size: 10px; transition: transform 0.2s;
+      color: var(--color-text-dim);
+    }
+    .sidebar-heading.collapsed .chevron { transform: rotate(-90deg); }
+
+    .sidebar-items { list-style: none; overflow: hidden; transition: max-height 0.3s ease; }
+    .sidebar-items.hidden { max-height: 0 !important; padding: 0; }
+
+    .sidebar-items a {
+      display: block;
+      padding: 6px 20px 6px 32px;
+      font-size: 13px;
+      color: var(--color-text-dim);
+      transition: color 0.15s, background 0.15s, border-left-color 0.15s;
+      border-left: 2px solid transparent;
+      line-height: 1.5;
+    }
+    .sidebar-items a:hover {
+      color: var(--color-text-muted);
+      background: rgba(139, 92, 246, 0.05);
+      text-decoration: none;
+    }
+    .sidebar-items a.active {
+      color: var(--color-primary);
+      border-left-color: var(--color-primary);
+      background: var(--color-primary-glow);
+      font-weight: 500;
+    }
+
+    /* ===== MOBILE SIDEBAR TOGGLE ===== */
+    .sidebar-toggle {
+      display: none;
+      position: fixed;
+      bottom: 24px; left: 24px;
+      z-index: 300;
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      color: white;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+      transition: transform 0.2s;
+    }
+    .sidebar-toggle:hover { transform: scale(1.1); }
+    .sidebar-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 99;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    .docs-content {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      max-width: 900px;
+      padding: 40px 48px 80px;
+    }
+
+    /* ===== DOC INTRO ===== */
+    .doc-intro {
+      padding-bottom: 40px;
+      margin-bottom: 48px;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .doc-intro-tag {
+      display: inline-block;
+      font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 2px;
+      color: var(--color-primary);
+      background: var(--color-primary-glow);
+      padding: 6px 16px; border-radius: 100px;
+      margin-bottom: 16px;
+    }
+    .doc-intro h1 {
+      font-size: 40px; font-weight: 900;
+      letter-spacing: -1.5px; line-height: 1.1;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #f0eef6 30%, #8b5cf6 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .doc-intro p {
+      font-size: 17px; color: var(--color-text-muted); line-height: 1.7;
+      max-width: 640px;
+    }
+    .doc-intro p a { font-weight: 500; }
+
+    /* ===== SECTION STYLES ===== */
+    .doc-section {
+      padding-top: 16px;
+      margin-bottom: 64px;
+    }
+    .doc-section h2 {
+      font-size: 30px; font-weight: 800;
+      letter-spacing: -0.5px; line-height: 1.2;
+      margin-bottom: 8px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--color-border);
+      color: var(--color-text);
+    }
+    .doc-section h3 {
+      font-size: 21px; font-weight: 700;
+      margin-top: 40px; margin-bottom: 12px;
+      color: var(--color-text);
+    }
+    .doc-section h4 {
+      font-size: 16px; font-weight: 700;
+      margin-top: 32px; margin-bottom: 10px;
+      color: var(--color-text-muted);
+    }
+    .doc-section h5 {
+      font-size: 14px; font-weight: 700;
+      margin-top: 24px; margin-bottom: 8px;
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .doc-section p {
+      margin-bottom: 16px;
+      color: var(--color-text-muted);
+      line-height: 1.75;
+    }
+    .doc-section strong { color: var(--color-text); font-weight: 600; }
+    .doc-section em { color: var(--color-text-muted); font-style: italic; }
+
+    .doc-section ul, .doc-section ol {
+      margin-bottom: 16px;
+      padding-left: 24px;
+      color: var(--color-text-muted);
+    }
+    .doc-section li {
+      margin-bottom: 6px;
+      line-height: 1.7;
+    }
+    .doc-section li strong { color: var(--color-text); }
+
+    /* ===== CODE BLOCKS ===== */
+    .doc-section code {
+      font-family: var(--font-mono);
+      font-size: 0.88em;
+      background: var(--color-card);
+      padding: 2px 7px;
+      border-radius: 5px;
+      color: #c4b5fd;
+      border: 1px solid var(--color-border);
+    }
+    pre {
+      margin-bottom: 20px;
+      border-radius: var(--radius);
+      overflow-x: auto;
+      position: relative;
+    }
+    pre code {
+      display: block;
+      background: #0c0b14;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      font-size: 13px;
+      line-height: 1.65;
+      color: #d4d0e8;
+      overflow-x: auto;
+    }
+    pre code .comment { color: var(--color-text-dim); }
+    pre code .keyword { color: #c084fc; }
+    pre code .string { color: #6ee7b7; }
+    pre code .number { color: #fbbf24; }
+
+    /* Language label */
+    pre[data-lang]::before {
+      content: attr(data-lang);
+      position: absolute;
+      top: 8px; right: 12px;
+      font-family: var(--font-mono);
+      font-size: 10px; font-weight: 600;
+      color: var(--color-text-dim);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      z-index: 1;
+    }
+
+    /* ASCII diagrams */
+    pre.diagram code {
+      font-size: 12px;
+      line-height: 1.45;
+      color: var(--color-text-dim);
+      border-color: var(--color-border);
+      background: var(--color-card);
+    }
+
+    /* ===== TABLES ===== */
+    .doc-section table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 24px;
+      font-size: 14px;
+    }
+    .doc-section table th {
+      text-align: left;
+      padding: 10px 16px;
+      background: var(--color-card);
+      border: 1px solid var(--color-border);
+      color: var(--color-text);
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .doc-section table td {
+      padding: 10px 16px;
+      border: 1px solid var(--color-border);
+      color: var(--color-text-muted);
+      vertical-align: top;
+    }
+    .doc-section table tr:hover td {
+      background: rgba(139, 92, 246, 0.03);
+    }
+    .doc-section table code {
+      font-size: 0.85em;
+      padding: 1px 5px;
+    }
+
+    /* ===== BLOCKQUOTES / NOTES ===== */
+    .doc-section blockquote {
+      margin: 16px 0 20px;
+      padding: 16px 20px;
+      border-left: 3px solid var(--color-primary);
+      background: var(--color-primary-glow);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      color: var(--color-text-muted);
+      font-size: 14px;
+    }
+    .doc-section blockquote p { margin-bottom: 4px; }
+    .doc-section blockquote p:last-child { margin-bottom: 0; }
+    .doc-section blockquote strong { color: var(--color-text); }
+
+    .note-warning {
+      border-left-color: var(--color-warning) !important;
+      background: var(--color-warning-glow) !important;
+    }
+    .note-danger {
+      border-left-color: var(--color-blocked) !important;
+      background: var(--color-blocked-glow) !important;
+    }
+    .note-success {
+      border-left-color: var(--color-approved) !important;
+      background: var(--color-approved-glow) !important;
+    }
+
+    /* ===== STATUS BADGES ===== */
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge-get { background: rgba(59,130,246,0.15); color: #60a5fa; }
+    .badge-post { background: rgba(16,185,129,0.15); color: #34d399; }
+    .badge-auth { background: rgba(245,158,11,0.15); color: #fbbf24; }
+    .badge-noauth { background: rgba(139,92,246,0.1); color: var(--color-text-dim); }
+
+    /* ===== CHECKLIST ===== */
+    .checklist { list-style: none; padding-left: 0; }
+    .checklist li {
+      padding: 4px 0 4px 28px;
+      position: relative;
+    }
+    .checklist li::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 9px;
+      width: 16px; height: 16px;
+      border: 2px solid var(--color-border-light);
+      border-radius: 4px;
+    }
+
+    /* ===== FOOTER ===== */
+    .doc-footer {
+      margin-left: var(--sidebar-width);
+      border-top: 1px solid var(--color-border);
+      padding: 32px 48px;
+      text-align: center;
+    }
+    .doc-footer p {
+      font-size: 13px;
+      color: var(--color-text-dim);
+    }
+    .doc-footer a { font-weight: 500; }
+
+    /* ===== SEARCH HIGHLIGHT ===== */
+    .search-hidden { display: none !important; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1100px) {
+      .docs-content { padding: 32px 32px 80px; }
+    }
+
+    @media (max-width: 900px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); box-shadow: 8px 0 32px rgba(0,0,0,0.5); }
+      .sidebar-toggle { display: flex; align-items: center; justify-content: center; }
+      .sidebar-overlay.open { display: block; }
+      .docs-content { margin-left: 0; padding: 32px 24px 80px; }
+      .doc-footer { margin-left: 0; padding: 32px 24px; }
+      .doc-intro h1 { font-size: 30px; }
+      .doc-section h2 { font-size: 24px; }
+      .doc-section h3 { font-size: 18px; }
+      .nav-links .hide-mobile { display: none; }
+    }
+
+    @media (max-width: 600px) {
+      .doc-intro h1 { font-size: 26px; }
+      .doc-section h2 { font-size: 22px; }
+      pre code { font-size: 12px; padding: 14px 16px; }
+      .doc-section table { font-size: 12px; }
+      .doc-section table th, .doc-section table td { padding: 8px 10px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo" style="text-decoration:none">
+      <span>&#x1f6e1;&#xfe0f;</span> saaafe
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="#architecture" class="hide-mobile">Architecture</a></li>
+      <li><a href="#sdk" class="hide-mobile">SDK</a></li>
+      <li><a href="#api" class="hide-mobile">API</a></li>
+      <li class="active-doc"><a href="docs.html" class="active-doc">Docs</a></li>
+      <li><a href="https://github.com/shipooor/saaafe" target="_blank" rel="noopener">GitHub</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- Mobile sidebar toggle -->
+<button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle navigation">&#9776;</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="docs-layout">
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-search">
+    <input type="text" id="searchInput" placeholder="Search docs..." autocomplete="off">
+  </div>
+
+  <!-- Architecture -->
+  <div class="sidebar-section" data-section="architecture">
+    <div class="sidebar-heading" onclick="toggleSection(this)">Architecture <span class="chevron">&#9662;</span></div>
+    <ul class="sidebar-items">
+      <li><a href="#architecture">Overview</a></li>
+      <li><a href="#arch-packages">Package Structure</a></li>
+      <li><a href="#arch-defense">Three-Level Defense</a></li>
+      <li><a href="#arch-dataflow">Data Flow</a></li>
+      <li><a href="#arch-security">Security Model</a></li>
+      <li><a href="#arch-cache">Cache System</a></li>
+      <li><a href="#arch-budget">Budget Tracking</a></li>
+      <li><a href="#arch-trust">Trust Score</a></li>
+      <li><a href="#arch-audit">Audit Trail</a></li>
+      <li><a href="#arch-spark">Spark Payments</a></li>
+      <li><a href="#arch-errors">Error Handling</a></li>
+    </ul>
+  </div>
+
+  <!-- SDK -->
+  <div class="sidebar-section" data-section="sdk">
+    <div class="sidebar-heading" onclick="toggleSection(this)">SDK Guide <span class="chevron">&#9662;</span></div>
+    <ul class="sidebar-items">
+      <li><a href="#sdk">Quick Start</a></li>
+      <li><a href="#sdk-config">Configuration</a></li>
+      <li><a href="#sdk-policy">Policy Config</a></li>
+      <li><a href="#sdk-init">Initialization</a></li>
+      <li><a href="#sdk-request">Transaction Request</a></li>
+      <li><a href="#sdk-result">Transaction Result</a></li>
+      <li><a href="#sdk-engine">Policy Engine</a></li>
+      <li><a href="#sdk-cache">Cache System</a></li>
+      <li><a href="#sdk-trust">Trust Score</a></li>
+      <li><a href="#sdk-audit">Audit Log</a></li>
+      <li><a href="#sdk-spark">Spark Payments</a></li>
+      <li><a href="#sdk-4337">ERC-4337 Gasless</a></li>
+      <li><a href="#sdk-errors">Error Handling</a></li>
+      <li><a href="#sdk-examples">Integration Examples</a></li>
+      <li><a href="#sdk-checklist">Production Checklist</a></li>
+    </ul>
+  </div>
+
+  <!-- API -->
+  <div class="sidebar-section" data-section="api">
+    <div class="sidebar-heading" onclick="toggleSection(this)">API Reference <span class="chevron">&#9662;</span></div>
+    <ul class="sidebar-items">
+      <li><a href="#api">Overview</a></li>
+      <li><a href="#api-auth">Authentication</a></li>
+      <li><a href="#api-ratelimit">Rate Limiting</a></li>
+      <li><a href="#api-analyze">POST /analyze</a></li>
+      <li><a href="#api-health">GET /health</a></li>
+      <li><a href="#api-stats">GET /dashboard/stats</a></li>
+      <li><a href="#api-entries">GET /dashboard/entries</a></li>
+      <li><a href="#api-trust">GET /dashboard/trust</a></li>
+      <li><a href="#api-policy">GET /dashboard/policy</a></li>
+      <li><a href="#api-report">POST /dashboard/report</a></li>
+      <li><a href="#api-data">Data Enrichment</a></li>
+      <li><a href="#api-schemas">Response Schemas</a></li>
+      <li><a href="#api-curl">Testing with cURL</a></li>
+    </ul>
+  </div>
+
+  <!-- WDK Module -->
+  <div class="sidebar-section" data-section="wdk-module">
+    <div class="sidebar-heading" onclick="toggleSection(this)">WDK Module <span class="chevron">&#9662;</span></div>
+    <ul class="sidebar-items">
+      <li><a href="#wdk-module">Overview</a></li>
+      <li><a href="#wdk-module-install">Installation</a></li>
+      <li><a href="#wdk-module-usage">Usage</a></li>
+      <li><a href="#wdk-module-config">Configuration</a></li>
+      <li><a href="#wdk-module-errors">Error Handling</a></li>
+    </ul>
+  </div>
+
+  <!-- MCP -->
+  <div class="sidebar-section" data-section="mcp">
+    <div class="sidebar-heading" onclick="toggleSection(this)">MCP Integration <span class="chevron">&#9662;</span></div>
+    <ul class="sidebar-items">
+      <li><a href="#mcp">What is MCP</a></li>
+      <li><a href="#mcp-start">Starting the Server</a></li>
+      <li><a href="#mcp-claude">Claude Desktop Setup</a></li>
+      <li><a href="#mcp-tools">Available Tools</a></li>
+      <li><a href="#mcp-examples">Example Conversations</a></li>
+      <li><a href="#mcp-security">Security</a></li>
+      <li><a href="#mcp-troubleshooting">Troubleshooting</a></li>
+    </ul>
+  </div>
+
+  <!-- Deployment -->
+  <div class="sidebar-section" data-section="deployment">
+    <div class="sidebar-heading" onclick="toggleSection(this)">Deployment <span class="chevron">&#9662;</span></div>
+    <ul class="sidebar-items">
+      <li><a href="#deployment">Prerequisites</a></li>
+      <li><a href="#deploy-local">Local Dev Setup</a></li>
+      <li><a href="#deploy-scripts">npm Scripts</a></li>
+      <li><a href="#deploy-production">Production Deploy</a></li>
+      <li><a href="#deploy-docker">Docker</a></li>
+      <li><a href="#deploy-systemd">Systemd Service</a></li>
+      <li><a href="#deploy-env">Environment Reference</a></li>
+      <li><a href="#deploy-scaling">Scaling</a></li>
+      <li><a href="#deploy-troubleshooting">Troubleshooting</a></li>
+    </ul>
+  </div>
+
+  <!-- Network -->
+  <div class="sidebar-section" data-section="network">
+    <div class="sidebar-heading" onclick="toggleSection(this)">Network Model <span class="chevron">&#9662;</span></div>
+    <ul class="sidebar-items">
+      <li><a href="#network">Overview</a></li>
+      <li><a href="#net-selfhosted">Self-hosted Mode</a></li>
+      <li><a href="#net-cloud">saaafe Network</a></li>
+      <li><a href="#net-threats">Shared Threat Database</a></li>
+      <li><a href="#net-cache">Global Analysis Cache</a></li>
+      <li><a href="#net-detection">Cross-agent Detection</a></li>
+      <li><a href="#net-reputation">Reputation Scores</a></li>
+    </ul>
+  </div>
+
+  <!-- Business Model -->
+  <div class="sidebar-section" data-section="business">
+    <div class="sidebar-heading" onclick="toggleSection(this)">Business Model <span class="chevron">&#9662;</span></div>
+    <ul class="sidebar-items">
+      <li><a href="#business">Current Model</a></li>
+      <li><a href="#biz-costs">Measured Costs</a></li>
+      <li><a href="#biz-problems">Known Problems</a></li>
+      <li><a href="#biz-candidates">Candidate Models</a></li>
+      <li><a href="#biz-spark">Spark Integration</a></li>
+      <li><a href="#biz-cache">Cache Monetization</a></li>
+      <li><a href="#biz-matrix">Decision Matrix</a></li>
+    </ul>
+  </div>
+</aside>
+
+<!-- Main Content -->
+<main class="docs-content">
+
+<!-- Intro -->
+<div class="doc-intro">
+  <div class="doc-intro-tag">Documentation</div>
+  <h1>saaafe Docs</h1>
+  <p>Complete technical documentation for the AI-powered trust and safety layer for autonomous financial agents. Built on <a href="https://tether.to/en/wdk/" target="_blank">Tether WDK</a>. See the <a href="index.html">landing page</a> for a visual overview.</p>
+</div>
+
+<!-- ============================================================
+     SECTION 1: ARCHITECTURE
+     ============================================================ -->
+<div class="doc-section" id="architecture">
+  <h2>Architecture</h2>
+
+  <p>saaafe is an AI-powered trust and safety layer that sits between autonomous financial agents and blockchain transactions. It uses a multi-level risk analysis pipeline combined with local policy enforcement to protect users from unauthorized or dangerous transactions.</p>
+
+<pre class="diagram"><code>                     AI Agent
+                        |
+         "swap 50 USDT for TOKEN-X"
+                        |
+            +--------+--------+
+            |  saaafe   |
+            |      SDK        |
+            +--------+--------+
+                     |
+         +-----------+-----------+
+         |           |           |
+      L0 Policy   L1 Quick      L2 Deep
+      (instant)  (~2-5s)       (~10-20s)
+      policy     GoPlus +      full risk
+      engine     AI triage     assessment
+         |           |           |
+         +-----+-----+-----+-----+
+               |           |
+          APPROVED    BLOCKED
+               |
+        +------v------+
+        | WDK Wallet  |
+        |  (execute)  |
+        +------+------+
+               |
+        +------v--------+
+        | Spark Streaming|
+        | $0.001/sec fee |
+        +----------------+</code></pre>
+
+  <h3 id="arch-packages">Package Structure</h3>
+
+<pre class="diagram"><code>saaafe/
+&#9500;&#9472;&#9472; packages/shared             Types, constants, formulas (shared by SDK &amp; API)
+&#9474;   &#9500;&#9472;&#9472; types/
+&#9474;   &#9474;   &#9500;&#9472;&#9472; analysis.ts         RiskLevel, AnalysisResult, GoPlusData
+&#9474;   &#9474;   &#9500;&#9472;&#9472; audit.ts            AuditEntry, AuditLog, AuditStats
+&#9474;   &#9474;   &#9500;&#9472;&#9472; policy.ts           PolicyConfig, PolicyResult, PolicyViolation
+&#9474;   &#9474;   &#9500;&#9472;&#9472; transaction.ts      TransactionRequest, TransactionResult
+&#9474;   &#9474;   &#9492;&#9472;&#9472; trust.ts            TrustScore, TrustLevel, TrustStats
+&#9474;   &#9500;&#9472;&#9472; constants.ts            Defaults, risk thresholds, cache TTLs
+&#9474;   &#9492;&#9472;&#9472; trust-formula.ts        calculateTrustScore()
+&#9474;
+&#9500;&#9472;&#9472; packages/sdk                Client SDK (runs in agents)
+&#9474;   &#9500;&#9472;&#9472; guardian.ts             Main orchestrator
+&#9474;   &#9500;&#9472;&#9472; policy/                 L0 policy engine
+&#9474;   &#9500;&#9472;&#9472; trust/                  Trust score calculation
+&#9474;   &#9500;&#9472;&#9472; cache/                  LRU cache with file persistence
+&#9474;   &#9500;&#9472;&#9472; audit/                  Append-only audit trail (JSONL)
+&#9474;   &#9500;&#9472;&#9472; api-client.ts           HTTP client to saaafe API
+&#9474;   &#9500;&#9472;&#9472; wdk/                    WDK wrapper (EVM, Spark)
+&#9474;   &#9492;&#9472;&#9472; mcp/                    MCP server for Claude Desktop
+&#9474;
+&#9500;&#9472;&#9472; packages/api                AI analysis server (Express)
+&#9474;   &#9500;&#9472;&#9472; server.ts               Express app, middleware, routes
+&#9474;   &#9500;&#9472;&#9472; middleware/auth.ts      SHA-256 + timing-safe API key auth
+&#9474;   &#9500;&#9472;&#9472; middleware/jwt.ts       JWT verification middleware
+&#9474;   &#9500;&#9472;&#9472; routes/                 Health, analyze, auth, dashboard
+&#9474;   &#9500;&#9472;&#9472; analysis/               L1 and L2 analysis pipeline
+&#9474;   &#9500;&#9472;&#9472; data/                   GoPlus, DeFi Llama, Arbiscan
+&#9474;   &#9492;&#9472;&#9472; prompts/                AI prompt templates
+&#9474;
+&#9500;&#9472;&#9472; packages/dashboard          Svelte 5 + SvelteKit real-time UI
+&#9492;&#9472;&#9472; packages/demo               Demo scenarios and walkthrough</code></pre>
+
+  <h3 id="arch-defense">Three-Level Defense Pipeline</h3>
+
+  <h4>Level 0: Policy Engine (L0)</h4>
+  <p><strong>Timing:</strong> &lt;1ms &bull; <strong>Cost:</strong> Free &bull; <strong>Location:</strong> SDK (local) &bull; <strong>Engine:</strong> Deterministic rules</p>
+  <p>Enforced instantly without any AI or network calls. Operates on the fund owner's device using their local policy configuration.</p>
+  <p><strong>Rules checked:</strong></p>
+  <ol>
+    <li><strong>Allowed action</strong> &mdash; only <code>send</code>, <code>swap</code>, <code>approve</code>, <code>lend</code>, <code>withdraw</code>, <code>bridge</code></li>
+    <li><strong>Max transaction amount</strong> &mdash; single txn cap (default: $100)</li>
+    <li><strong>Daily budget</strong> &mdash; rolling 24h limit (default: $500)</li>
+    <li><strong>Weekly budget</strong> &mdash; rolling 7-day limit (default: $2,000)</li>
+    <li><strong>Rate limit</strong> &mdash; max 5 txns/minute</li>
+    <li><strong>Address blacklist</strong> &mdash; reject known bad recipient addresses</li>
+    <li><strong>Token whitelist</strong> &mdash; only approved tokens (default: USDT, ETH, WBTC, WETH, ARB, USDC)</li>
+    <li><strong>Protocol whitelist</strong> &mdash; only approved protocols (default: Aave, Compound, Uniswap)</li>
+  </ol>
+  <p>Budget persistence: Policy engine restores budget from audit log on startup, preventing restart-based budget bypass.</p>
+
+  <h4>Level 1: AI Quick Analysis (L1)</h4>
+  <p><strong>Timing:</strong> 2-5 seconds &bull; <strong>Cost:</strong> ~$0.003 USDT &bull; <strong>Location:</strong> Remote API server &bull; <strong>Model:</strong> Claude Haiku &bull; <strong>Data source:</strong> GoPlus API</p>
+  <p>Quick triage using on-chain security data and lightweight AI analysis. Good for common safe transactions.</p>
+  <p><strong>Analysis steps:</strong></p>
+  <ol>
+    <li>Fetch GoPlus token security (honeypot check, holder count, open-source verification)</li>
+    <li>Fetch on-chain address reputation (if applicable)</li>
+    <li>Run Haiku prompt: analyze transaction intent + on-chain data</li>
+    <li>Return risk assessment</li>
+  </ol>
+  <p><strong>Risk levels:</strong> <code>safe</code>, <code>low</code>, <code>medium</code>, <code>high</code>, <code>critical</code></p>
+  <p><strong>Escalation to L2 if:</strong> Risk level &gt;= <code>medium</code> OR amount &gt; manual approval threshold ($500 default)</p>
+
+  <h4>Level 2: AI Deep Analysis (L2)</h4>
+  <p><strong>Timing:</strong> 10-20 seconds &bull; <strong>Cost:</strong> ~$0.015 USDT &bull; <strong>Location:</strong> Remote API server &bull; <strong>Model:</strong> Claude Opus &bull; <strong>Data sources:</strong> GoPlus + Arbiscan contract source</p>
+  <p>Comprehensive threat assessment with full contract code inspection. Used only when L1 flagged suspicious activity or amount is large.</p>
+  <p><strong>Analysis steps:</strong></p>
+  <ol>
+    <li>All L1 data (GoPlus, address checks)</li>
+    <li>Fetch contract source code from Arbiscan</li>
+    <li>Run Opus prompt: comprehensive threat assessment with code review</li>
+    <li>Identify specific threats (scam token, social engineering, malicious contract, etc.)</li>
+    <li>Return detailed explanation and recommendations</li>
+  </ol>
+
+  <h3 id="arch-dataflow">Data Flow</h3>
+
+<pre class="diagram"><code>Agent
+  |
+  &#9492;&#9472;&gt; guardian.request(TransactionRequest)
+       |
+       &#9500;&#9472; L0 Policy Check (PolicyEngine.evaluate)
+       &#9474;  &#9492;&#9472; BLOCKED? &#8594; Return immediately, log to audit, report to API
+       &#9474;
+       &#9500;&#9472; Cache Check (AnalysisCache.get)
+       &#9474;  &#9492;&#9472; HIT? &#8594; Skip AI, use cached result
+       &#9474;
+       &#9500;&#9472; Start Spark Streaming (if enabled)
+       &#9474;
+       &#9500;&#9472; Remote AI Analysis
+       &#9474;  &#9474;
+       &#9474;  &#9492;&#9472; POST /analyze to saaafe API
+       &#9474;      &#9474;
+       &#9474;      &#9500;&#9472; Fetch GoPlus data (parallel)
+       &#9474;      &#9500;&#9472; Fetch protocol info (parallel)
+       &#9474;      &#9474;
+       &#9474;      &#9500;&#9472; Run L1 Analysis (Haiku)
+       &#9474;      &#9474;  &#9492;&#9472; Should escalate to L2?
+       &#9474;      &#9474;
+       &#9474;      &#9492;&#9472; (if escalating) Run L2 Analysis (Opus)
+       &#9474;         &#9492;&#9472; Fetch Arbiscan contract source
+       &#9474;
+       &#9500;&#9472; Stop Spark Streaming
+       &#9474;
+       &#9500;&#9472; Determine Final Status
+       &#9474;  &#9500;&#9472; Approved: low/safe risk + amount &lt;= threshold
+       &#9474;  &#9500;&#9472; Pending: medium risk OR amount &gt; threshold
+       &#9474;  &#9492;&#9472; Blocked: high/critical risk OR policy violation
+       &#9474;
+       &#9500;&#9472; Execute Transaction (if approved)
+       &#9474;  &#9492;&#9472; WalletManager.send() &#8594; WDK &#8594; EVM/Spark
+       &#9474;
+       &#9492;&#9472; Log Audit Entry
+          &#9492;&#9472; AuditLogger.append() &#8594; .saaafe/audit.jsonl</code></pre>
+
+  <h4>Data Enrichment Sources</h4>
+  <p><strong>GoPlus API</strong> &mdash; Token security check: honeypot detection, holder distribution, minting privileges. Address reputation: whether address has been flagged as malicious. Available for EVM chains (Arbitrum, Ethereum, Sepolia).</p>
+  <p><strong>DeFi Llama API</strong> &mdash; Protocol metadata: TVL, category (lending, dex, bridge, etc.), supported chains. Used to verify protocol legitimacy and audit status.</p>
+  <p><strong>Arbiscan API</strong> &mdash; Contract source code retrieval for deep code review (L2 only). Verifies contract is open-source and can be audited.</p>
+
+  <h3 id="arch-security">Security Model</h3>
+
+  <h4>Key Management</h4>
+  <ul>
+    <li>Seed phrase <strong>never persisted to disk</strong></li>
+    <li>Consumed during <code>guardian.init()</code> and immediately released</li>
+    <li>Used to derive EVM and Spark wallets</li>
+    <li>Wallets stored internally and disposed on <code>guardian.dispose()</code></li>
+  </ul>
+
+  <h4>API Authentication</h4>
+  <ul>
+    <li>Client sends: <code>X-Saaafe-Key</code> header</li>
+    <li>Server validates: SHA-256 hash of request body + constant-time comparison</li>
+    <li>Prevents timing attacks on API key verification</li>
+    <li>Rate limited: 20 req/min on <code>/analyze</code>, 60 req/min on <code>/dashboard</code></li>
+  </ul>
+
+  <h4>Input Sanitization (Prompt Injection Defense)</h4>
+  <ol>
+    <li>Regex validation of all fields (amount format, UUID, action enum, etc.)</li>
+    <li>String length caps on user-supplied fields</li>
+    <li>AI prompt uses field separators and explicit structure to prevent injection</li>
+    <li>Schema validation on AI responses (must match expected type signature)</li>
+  </ol>
+  <p><strong>Body size limit:</strong> 50KB cap on incoming requests (prevents DoS)</p>
+
+  <h3 id="arch-cache">Cache System</h3>
+  <p><strong>Type:</strong> In-memory LRU Map with file persistence &bull; <strong>Location:</strong> <code>.saaafe/analysis-cache.json</code> &bull; <strong>Max size:</strong> 1,000 entries</p>
+  <p>Cache keys are built from action, contract address, token, protocol, and recipient address. Amount is <strong>NOT</strong> included &mdash; same token/protocol analyzed once, reused for all amounts.</p>
+
+  <table>
+    <thead><tr><th>Type</th><th>TTL</th></tr></thead>
+    <tbody>
+      <tr><td>Token analysis</td><td>24h</td></tr>
+      <tr><td>Protocol info</td><td>30d</td></tr>
+      <tr><td>Address check</td><td>7d</td></tr>
+    </tbody>
+  </table>
+
+  <p><strong>File persistence:</strong> Debounced write (1s after last set), loaded on startup, expired entries skipped. File mode: <code>0o600</code> (owner read/write only).</p>
+
+  <h3 id="arch-budget">Budget and Spending Tracking</h3>
+
+  <table>
+    <thead><tr><th>Event</th><th>Fee</th></tr></thead>
+    <tbody>
+      <tr><td>L0 policy block</td><td>$0 (free)</td></tr>
+      <tr><td>L1 analysis</td><td>~$0.003 USDT</td></tr>
+      <tr><td>L2 analysis</td><td>~$0.015 USDT (includes L1)</td></tr>
+    </tbody>
+  </table>
+
+  <p><strong>Spark streaming model:</strong> While API analyzes, SDK streams $0.001 USDT per second to the saaafe operator wallet. Safety cap: auto-stops after 60 seconds.</p>
+  <p><strong>Budget tracking:</strong> PolicyEngine stores spend log (timestamp + amount). Daily/weekly budgets calculated as sum of approvals in time window. On restart, budget restored from audit log (prevents restart-based bypass). Spend log pruned to 7-day window.</p>
+
+  <h3 id="arch-trust">Trust Score System</h3>
+
+<pre data-lang="formula"><code>Score = (40% x approval_ratio) +
+        (25% x volume_score) +
+        (20% x time_score) +
+        (15% x streak_score)</code></pre>
+
+  <table>
+    <thead><tr><th>Factor</th><th>Weight</th><th>Calculation</th><th>Scale</th></tr></thead>
+    <tbody>
+      <tr><td>Approval ratio</td><td>40%</td><td>(1 - blocked/total) x 100</td><td>0-100</td></tr>
+      <tr><td>Volume</td><td>25%</td><td>log10(total_USDT) / 4 x 100</td><td>Log: $0-&gt;0, $10K-&gt;100</td></tr>
+      <tr><td>Active time</td><td>20%</td><td>log10(hours+1) / 3 x 100</td><td>Log: 0h-&gt;0, 1000h-&gt;100</td></tr>
+      <tr><td>Approval streak</td><td>15%</td><td>consecutive / 50 x 100</td><td>Linear: 0-&gt;0, 50-&gt;100</td></tr>
+    </tbody>
+  </table>
+
+  <table>
+    <thead><tr><th>Score</th><th>Level</th><th>Behavior</th></tr></thead>
+    <tbody>
+      <tr><td>0-20</td><td>Untrusted</td><td>All transactions get L2 analysis</td></tr>
+      <tr><td>21-40</td><td>Cautious</td><td>Most transactions get L1+L2</td></tr>
+      <tr><td>41-60</td><td>Moderate</td><td>Standard pipeline, L2 only when flagged</td></tr>
+      <tr><td>61-80</td><td>Trusted</td><td>Faster approvals for known patterns</td></tr>
+      <tr><td>81-100</td><td>Veteran</td><td>Maximum efficiency, minimal escalation</td></tr>
+    </tbody>
+  </table>
+
+  <h3 id="arch-audit">Audit Trail</h3>
+  <p><strong>Format:</strong> JSON Lines (JSONL) &mdash; one JSON object per line &bull; <strong>Location:</strong> <code>.saaafe/audit.jsonl</code> &bull; <strong>Mode:</strong> Append-only (immutable history)</p>
+  <p>Each entry includes: Request ID, timestamp, transaction details, policy result, analysis result, final status, risk level, explanation, fee paid, and transaction hash (if executed). File permissions: <code>0o600</code>.</p>
+
+  <h3 id="arch-spark">Streaming Payments (Spark)</h3>
+
+<pre class="diagram"><code>Agent starts request
+      &#8595;
+saaafe analyzes (3 seconds)
+      &#9500;&#9472; Time 0s: Stream payment #1 ($0.001)
+      &#9500;&#9472; Time 1s: Stream payment #2 ($0.001)
+      &#9500;&#9472; Time 2s: Stream payment #3 ($0.001)
+      &#8595; (Analysis completes)
+Stop streaming
+      &#8595;
+Total paid: $0.003 for 3-second L1 analysis</code></pre>
+
+  <p><strong>Implementation (SparkPayer):</strong> Sequential payment loop, one at a time. Each payment sent to the operator's Spark address. Interval: 1 second. Safety cap: 60-second limit. Failure handling: 3 consecutive failures stop streaming.</p>
+
+  <h3 id="arch-errors">Error Handling Strategy</h3>
+  <ul>
+    <li><strong>L0 Policy failures:</strong> Fast-fail without AI. Fee: $0.</li>
+    <li><strong>Network errors:</strong> API client timeout 45s. Spark retry: 3 failures. GoPlus/DeFi Llama: best-effort (continue with partial data).</li>
+    <li><strong>LLM response validation:</strong> Malformed response = critical error, transaction blocked. Risk level re-validated against enum.</li>
+    <li><strong>File I/O failures:</strong> Audit log write fails = entry stays in memory. Cache write fails = in-memory cache still works.</li>
+  </ul>
+</div>
+
+<!-- ============================================================
+     SECTION 2: SDK GUIDE
+     ============================================================ -->
+<div class="doc-section" id="sdk">
+  <h2>SDK Guide</h2>
+
+  <p>The saaafe SDK is the client-side library that agents integrate to protect their transactions. It provides transaction analysis, policy enforcement, and local wallet management.</p>
+
+  <h3>Installation</h3>
+<pre data-lang="bash"><code>npm install @saaafe/sdk @saaafe/shared</code></pre>
+
+  <h3>Quick Start</h3>
+<pre data-lang="typescript"><code>import { createGuardian } from '@saaafe/sdk';
+
+// 1. Create saaafe instance
+const guardian = createGuardian({
+  apiUrl: 'http://localhost:3000',
+  apiKey: 'your-api-key',
+  evmRpcUrl: 'https://arb1.arbitrum.io/rpc',
+  chain: 'arbitrum',
+});
+
+// 2. Initialize with seed phrase
+await guardian.init('your twelve word mnemonic phrase here');
+
+// 3. Submit a transaction request
+const result = await guardian.request({
+  id: crypto.randomUUID(),
+  action: 'swap',
+  params: {
+    chain: 'arbitrum',
+    amount: '50',
+    fromToken: 'USDT',
+    toToken: 'WETH',
+    protocol: 'uniswap',
+    contractAddress: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
+  },
+  reasoning: 'Portfolio rebalancing to increase ETH exposure',
+  timestamp: Date.now(),
+});
+
+console.log(result.status);      // 'approved' | 'blocked' | 'pending_approval'
+console.log(result.riskLevel);   // 'safe' | 'low' | 'medium' | 'high' | 'critical'
+console.log(result.explanation);
+
+// 4. Cleanup
+await guardian.dispose();</code></pre>
+
+  <h3 id="sdk-config">GuardianConfig</h3>
+<pre data-lang="typescript"><code>interface GuardianConfig {
+  // Required
+  evmRpcUrl: string;                    // EVM RPC endpoint
+  chain: Chain;                           // Target blockchain
+  apiUrl: string;                       // saaafe API server URL
+  apiKey?: string;                      // Shared secret (optional with wallet auth)
+
+  // Optional: Policy customization
+  policy?: Partial&lt;PolicyConfig&gt;;
+
+  // Optional: Spark streaming payments
+  enableSparkPayments?: boolean;        // Enable $0.001/sec USDT micropayments
+  guardianSparkAddress?: string;        // Operator's Spark address
+  sparkNetwork?: 'MAINNET' | 'TESTNET';
+
+  // Optional: Transaction execution control
+  analysisOnly?: boolean;               // Skip WDK execution (default: false)
+
+  // Optional: ERC-4337 gasless transactions
+  erc4337?: Erc4337Config;
+}</code></pre>
+
+  <h4>Config Examples</h4>
+  <p><strong>Local development:</strong></p>
+<pre data-lang="typescript"><code>const guardian = createGuardian({
+  evmRpcUrl: 'https://arb-sepolia.g.alchemy.com/v2/demo',
+  chain: 'sepolia',
+  apiUrl: 'http://localhost:3000',
+  apiKey: 'test-key-123',
+});</code></pre>
+
+  <p><strong>Production with Spark payments:</strong></p>
+<pre data-lang="typescript"><code>const guardian = createGuardian({
+  evmRpcUrl: 'https://arb1.arbitrum.io/rpc',
+  chain: 'arbitrum',
+  apiUrl: 'https://api.saaafe.me',
+  apiKey: process.env.SAAAFE_API_KEY,
+  enableSparkPayments: true,
+  guardianSparkAddress: '0x742d35Cc6634C0532925a3b844Bc9e7595f2bD18',
+  sparkNetwork: 'MAINNET',
+});</code></pre>
+
+  <p><strong>Analysis-only mode</strong> (no wallet execution):</p>
+<pre data-lang="typescript"><code>const guardian = createGuardian({
+  evmRpcUrl: 'https://arb1.arbitrum.io/rpc',
+  chain: 'arbitrum',
+  apiUrl: 'http://localhost:3000',
+  apiKey: process.env.SAAAFE_API_KEY,
+  analysisOnly: true,
+});</code></pre>
+
+  <h3 id="sdk-policy">Policy Configuration</h3>
+<pre data-lang="typescript"><code>interface PolicyConfig {
+  maxTransactionAmount: string;  // Single transaction cap (default: "100")
+  dailyBudget: string;          // Rolling 24h limit (default: "500")
+  weeklyBudget: string;         // Rolling 7-day limit (default: "2000")
+  rateLimit: number;            // Max txns/minute (default: 5)
+
+  allowedActions: TransactionAction[];
+  // Default: ['send', 'swap', 'lend', 'withdraw', 'approve', 'bridge']
+
+  whitelist: {
+    addresses: string[];
+    protocols: string[];        // Default: ['aave', 'compound', 'uniswap']
+    tokens: string[];           // Default: ['USDT', 'ETH', 'WBTC', 'WETH', 'ARB', 'USDC']
+  };
+
+  blacklist: {
+    addresses: string[];
+  };
+
+  autoApproveThreshold: string;   // Default: "10"
+  manualApproveThreshold: string; // Default: "500"
+}</code></pre>
+
+  <p><strong>Restrict to Uniswap only:</strong></p>
+<pre data-lang="typescript"><code>const guardian = createGuardian({
+  // ... other config
+  policy: {
+    whitelist: {
+      protocols: ['uniswap'],
+      tokens: ['USDT', 'WETH', 'USDC'],
+    },
+  },
+});</code></pre>
+
+  <p><strong>Tight budget for testing:</strong></p>
+<pre data-lang="typescript"><code>const guardian = createGuardian({
+  // ... other config
+  policy: {
+    maxTransactionAmount: '10',
+    dailyBudget: '50',
+    weeklyBudget: '200',
+    autoApproveThreshold: '5',
+  },
+});</code></pre>
+
+  <h3 id="sdk-init">Initialization Flow</h3>
+<pre data-lang="typescript"><code>// Step 1: Create instance (no network calls, no keys loaded yet)
+const guardian = createGuardian(config);
+
+// Step 2: Initialize with seed phrase (derives wallets, clears seed)
+await guardian.init(seedPhrase);
+
+// Step 3: Ready to process transactions
+const result = await guardian.request(transactionRequest);</code></pre>
+
+  <blockquote class="note-warning"><p><strong>Key property:</strong> The seed phrase is <strong>never stored</strong>. It is consumed during <code>init()</code> and immediately released.</p></blockquote>
+
+  <h3 id="sdk-request">TransactionRequest Format</h3>
+<pre data-lang="typescript"><code>interface TransactionRequest {
+  id: string;                // UUID v4
+  action: TransactionAction; // 'send' | 'swap' | 'approve' | 'lend' | 'withdraw' | 'bridge'
+  params: TransactionParams;
+  reasoning: string;         // Agent's explanation for the transaction
+  timestamp: number;         // Milliseconds since epoch
+}
+
+interface TransactionParams {
+  chain: Chain;              // 'ethereum' | 'arbitrum' | 'polygon' | 'bsc' | 'base' | 'optimism' | 'avalanche' | 'sepolia'
+  amount: string;            // Decimal string (e.g., "50.5")
+  fromToken?: string;        // Source token symbol
+  toToken?: string;          // Destination token symbol
+  toAddress?: string;        // Recipient address (for send)
+  protocol?: string;         // DeFi protocol name
+  contractAddress?: string;  // Smart contract address
+  data?: string;             // Encoded function call (advanced)
+}</code></pre>
+
+  <h4>Request Examples</h4>
+  <p><strong>Simple token send:</strong></p>
+<pre data-lang="typescript"><code>const request: TransactionRequest = {
+  id: crypto.randomUUID(),
+  action: 'send',
+  params: {
+    chain: 'arbitrum',
+    amount: '50',
+    fromToken: 'USDT',
+    toAddress: '0x742d35Cc6634C0532925a3b844Bc9e7595f2bD18',
+  },
+  reasoning: 'Transfer to secondary wallet for gas funding',
+  timestamp: Date.now(),
+};</code></pre>
+
+  <p><strong>Swap on DEX:</strong></p>
+<pre data-lang="typescript"><code>const request: TransactionRequest = {
+  id: crypto.randomUUID(),
+  action: 'swap',
+  params: {
+    chain: 'arbitrum',
+    amount: '100',
+    fromToken: 'USDT',
+    toToken: 'WETH',
+    protocol: 'uniswap',
+    contractAddress: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
+  },
+  reasoning: 'Portfolio rebalancing',
+  timestamp: Date.now(),
+};</code></pre>
+
+  <h3 id="sdk-result">TransactionResult</h3>
+<pre data-lang="typescript"><code>interface TransactionResult {
+  requestId: string;
+  status: 'approved' | 'blocked' | 'pending_approval';
+  riskLevel: RiskLevel;       // 'safe' | 'low' | 'medium' | 'high' | 'critical'
+  explanation: string;
+  analysisLevel: AnalysisLevel; // 'L0_policy' | 'L1_quick' | 'L2_deep'
+  txHash?: string;            // Blockchain tx hash (if executed)
+  feePaid: string;            // USDT paid for analysis
+  duration: number;           // Total milliseconds
+  timestamp: number;
+}</code></pre>
+
+  <table>
+    <thead><tr><th>Status</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td><code>approved</code></td><td>Transaction executed (unless <code>analysisOnly</code> mode)</td></tr>
+      <tr><td><code>blocked</code></td><td>Transaction rejected, not executed</td></tr>
+      <tr><td><code>pending_approval</code></td><td>Analysis complete, awaiting user confirmation</td></tr>
+    </tbody>
+  </table>
+
+  <table>
+    <thead><tr><th>Analysis Level</th><th>Time</th><th>Cost</th></tr></thead>
+    <tbody>
+      <tr><td><code>L0_policy</code></td><td>&lt;1ms</td><td>Free</td></tr>
+      <tr><td><code>L1_quick</code></td><td>2-5s</td><td>~$0.003</td></tr>
+      <tr><td><code>L2_deep</code></td><td>10-20s</td><td>~$0.015</td></tr>
+    </tbody>
+  </table>
+
+  <h3 id="sdk-engine">Policy Engine</h3>
+<pre data-lang="typescript"><code>// Get current policy config
+const config = guardian.getPolicyEngine().getConfig();
+console.log(config.maxTransactionAmount);  // "100"
+console.log(config.whitelist.tokens);      // ['USDT', 'ETH', ...]
+
+// Get budget status
+const budget = guardian.getPolicyEngine().getBudgetStatus();
+console.log(budget.dailySpent);  // 250.50
+console.log(budget.dailyLimit);  // 500
+
+// Update policy at runtime (deep merges)
+guardian.getPolicyEngine().updateConfig({
+  maxTransactionAmount: '200',
+  whitelist: {
+    protocols: [...currentProtocols, 'curve'],
+  },
+});</code></pre>
+
+  <h3 id="sdk-cache">Cache System</h3>
+  <p>The SDK caches analysis results internally using an LRU cache with file persistence. Repeated requests for the same token/protocol/address reuse previous results automatically.</p>
+  <p><strong>TTLs:</strong> Token analysis: 24h, Protocol info: 30d, Address checks: 7d</p>
+
+  <h3 id="sdk-trust">Trust Score</h3>
+<pre data-lang="typescript"><code>const trust = guardian.getTrustScore();
+console.log(trust.score);   // 0-100
+console.log(trust.level);   // 'untrusted' | 'cautious' | 'moderate' | 'trusted' | 'veteran'
+console.log(trust.stats);   // { totalTransactions, approvedCount, blockedCount, ... }</code></pre>
+
+  <h3 id="sdk-audit">Audit Log</h3>
+<pre data-lang="typescript"><code>// Get most recent 10 entries
+const entries = guardian.getAuditLog().getEntries(10);
+for (const entry of entries) {
+  console.log(`${entry.action} $${entry.params.amount} -> ${entry.finalStatus}`);
+}
+
+// Get stats
+const stats = guardian.getAuditLog().getStats();
+// { totalRequests, approved, blocked, pending, totalFeesPaid, averageAnalysisTime }
+
+// Clear log (for testing/reset)
+guardian.getAuditLog().clear();</code></pre>
+
+  <h3 id="sdk-spark">Spark Payment Configuration</h3>
+<pre data-lang="typescript"><code>const guardian = createGuardian({
+  // ... other config
+  enableSparkPayments: true,
+  guardianSparkAddress: '0x742d35Cc6634C0532925a3b844Bc9e7595f2bD18',
+  sparkNetwork: 'MAINNET',
+});</code></pre>
+  <p><strong>How it works:</strong> During AI analysis, SDK streams $0.001/sec USDT. Analysis completes, streaming stops. Total fee = seconds x $0.001. Safety: auto-stop after 60s, 3 consecutive failures stop streaming.</p>
+
+  <h3 id="sdk-4337">ERC-4337 Gasless Transactions</h3>
+<pre data-lang="typescript"><code>// Sponsored model (paymaster covers gas)
+const guardian = createGuardian({
+  // ... other config
+  erc4337: {
+    bundlerUrl: 'https://bundler.example.com/rpc',
+    paymasterUrl: 'https://paymaster.example.com/rpc',
+    isSponsored: true,
+    sponsorshipPolicyId: 'my-policy',
+  },
+});
+
+// Token-based model (pay gas with token)
+const guardian = createGuardian({
+  // ... other config
+  erc4337: {
+    bundlerUrl: '...',
+    paymasterUrl: '...',
+    paymasterAddress: '0x...',
+    paymasterTokenAddress: '0x...', // e.g., USDT
+  },
+});</code></pre>
+
+  <h3 id="sdk-errors">Error Handling</h3>
+<pre data-lang="typescript"><code>try {
+  const result = await guardian.request(request);
+
+  if (result.status === 'blocked') {
+    console.warn(`Blocked: ${result.explanation}`);
+  } else if (result.status === 'pending_approval') {
+    console.log(`Awaiting approval: ${result.riskLevel}`);
+  } else {
+    console.log(`Approved: ${result.txHash}`);
+  }
+} catch (error) {
+  if (error instanceof Error) {
+    if (error.message.includes('not initialized')) {
+      // guardian.init() wasn't called
+    } else if (error.message.includes('saaafe API')) {
+      // API server unreachable
+    }
+    console.error(`Failed: ${error.message}`);
+  }
+}</code></pre>
+
+  <p><strong>Common errors:</strong></p>
+  <ul>
+    <li><code>Guardian not initialized. Call init() first.</code></li>
+    <li><code>saaafe API error 401</code> &mdash; invalid or missing API key</li>
+    <li><code>saaafe API request timed out</code> &mdash; API server not responding</li>
+    <li><code>Invalid EVM address</code> &mdash; malformed address</li>
+  </ul>
+
+  <h3 id="sdk-examples">Integration Examples</h3>
+
+  <h4>With AI Agent (Node.js)</h4>
+<pre data-lang="typescript"><code>import Anthropic from '@anthropic-ai/sdk';
+import { createGuardian } from '@saaafe/sdk';
+
+const client = new Anthropic();
+const guardian = createGuardian({
+  apiUrl: process.env.SAAAFE_API_URL,
+  apiKey: process.env.SAAAFE_API_KEY,
+  evmRpcUrl: process.env.EVM_RPC_URL,
+  chain: 'arbitrum',
+});
+
+await guardian.init(process.env.WDK_SEED_PHRASE);
+
+async function executeTransaction(description: string) {
+  const message = await client.messages.create({
+    model: 'claude-3-5-sonnet-20241022',
+    max_tokens: 1024,
+    system: `You are an autonomous agent. Analyze the user's request
+and construct a transaction. Return JSON.`,
+    messages: [{ role: 'user', content: description }],
+  });
+
+  const txData = JSON.parse(message.content[0].text);
+  const result = await guardian.request({
+    id: crypto.randomUUID(),
+    action: txData.action,
+    params: txData.params,
+    reasoning: txData.reasoning,
+    timestamp: Date.now(),
+  });
+
+  console.log(`Status: ${result.status}, Risk: ${result.riskLevel}`);
+  return result;
+}
+
+await executeTransaction('Swap 50 USDT for WETH');
+await guardian.dispose();</code></pre>
+
+  <h3 id="sdk-checklist">Production Checklist</h3>
+  <ul class="checklist">
+    <li>API URL uses HTTPS (not localhost)</li>
+    <li>API key loaded from environment variables</li>
+    <li>Seed phrase loaded from secure storage (not hardcoded)</li>
+    <li>Error handling implemented for all <code>request()</code> calls</li>
+    <li><code>dispose()</code> called on shutdown</li>
+    <li>Policy configured for your use case</li>
+    <li>Budget limits set appropriately</li>
+    <li>Spark payments funded if enabled</li>
+    <li>Rate limiting understood (20 req/min on API)</li>
+    <li>Audit logs reviewed regularly</li>
+  </ul>
+</div>
+
+<!-- ============================================================
+     SECTION 3: API REFERENCE
+     ============================================================ -->
+<div class="doc-section" id="api">
+  <h2>API Reference</h2>
+
+  <p>The saaafe API server handles multi-level risk analysis (L1 quick, L2 deep) with Claude AI, integrates external data sources (GoPlus, DeFi Llama, Arbiscan), and serves a dashboard for real-time monitoring.</p>
+
+  <h3>Server Setup</h3>
+<pre data-lang="bash"><code># Start with default configuration
+npm run dev:api
+
+# or with custom port
+PORT=3001 npm run dev:api</code></pre>
+
+  <h4>Environment Variables</h4>
+<pre data-lang="bash"><code># Required
+ANTHROPIC_API_KEY=sk-ant-...          # Claude API key
+SAAAFE_API_KEY=your-shared-secret   # API authentication
+
+# Optional
+PORT=3000                               # Server port (default: 3000)
+NODE_ENV=development|production
+CORS_ORIGIN=http://localhost:4000
+ARBISCAN_API_KEY=...                   # Contract source retrieval</code></pre>
+
+  <h3 id="api-auth">Authentication</h3>
+  <p>All protected endpoints require the <code>X-Saaafe-Key</code> header.</p>
+  <ol>
+    <li>Client sends <code>X-Saaafe-Key: &lt;api-key&gt;</code> header</li>
+    <li>Server SHA-256 hashes the request body</li>
+    <li>Server performs timing-safe constant-time comparison</li>
+    <li>Prevents timing attacks on API key verification</li>
+  </ol>
+<pre data-lang="bash"><code>curl -X POST http://localhost:3000/analyze \
+  -H "X-Saaafe-Key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{...}'</code></pre>
+
+  <h3 id="api-ratelimit">Rate Limiting</h3>
+  <table>
+    <thead><tr><th>Endpoint</th><th>Window</th><th>Limit</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td><code>/analyze</code></td><td>60s</td><td>20 req/min</td><td>AI analysis (expensive)</td></tr>
+      <tr><td><code>/dashboard/report</code></td><td>60s</td><td>60 req/min</td><td>SDK reporting (light)</td></tr>
+      <tr><td>All others</td><td>60s</td><td>Standard</td><td>General requests</td></tr>
+    </tbody>
+  </table>
+
+  <h3 id="api-analyze">POST /analyze</h3>
+  <p><span class="badge badge-post">POST</span> <span class="badge badge-auth">Auth Required</span> <span style="font-family: var(--font-mono); font-size: 14px; color: var(--color-text-muted);">20 req/min</span></p>
+  <p>Submit a transaction for AI risk analysis.</p>
+
+  <h5>Request body</h5>
+<pre data-lang="json"><code>{
+  "request": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "action": "swap",
+    "params": {
+      "chain": "arbitrum",
+      "amount": "50",
+      "fromToken": "USDT",
+      "toToken": "WETH",
+      "protocol": "uniswap",
+      "contractAddress": "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1"
+    },
+    "reasoning": "Portfolio rebalancing",
+    "timestamp": 1710000000000
+  },
+  "trustScore": 42
+}</code></pre>
+
+  <h5>Response (200 OK)</h5>
+<pre data-lang="json"><code>{
+  "requestId": "550e8400-...",
+  "level": "L1_quick",
+  "riskLevel": "low",
+  "approved": true,
+  "explanation": "Verified token swap on audited protocol.",
+  "details": {
+    "threats": [],
+    "goplus": {
+      "isHoneypot": false,
+      "isOpenSource": true,
+      "holderCount": 15000,
+      "lpAmount": "500000",
+      "isMintable": false,
+      "isProxy": false,
+      "maliciousAddress": false
+    },
+    "protocol": {
+      "name": "Uniswap",
+      "tvl": 5200000000,
+      "category": "dex",
+      "chains": ["ethereum", "arbitrum", "polygon"]
+    }
+  },
+  "duration": 2340
+}</code></pre>
+
+  <h5>Error Responses</h5>
+  <table>
+    <thead><tr><th>Status</th><th>Error</th><th>Cause</th></tr></thead>
+    <tbody>
+      <tr><td>400</td><td>Invalid request schema</td><td>Missing/malformed field</td></tr>
+      <tr><td>401</td><td>Unauthorized</td><td>Missing/invalid API key</td></tr>
+      <tr><td>429</td><td>Too many requests</td><td>Rate limit exceeded</td></tr>
+      <tr><td>500</td><td>Analysis failed</td><td>Internal server error</td></tr>
+    </tbody>
+  </table>
+
+  <h3 id="api-health">GET /health</h3>
+  <p><span class="badge badge-get">GET</span> <span class="badge badge-noauth">No Auth</span></p>
+<pre data-lang="json"><code>{
+  "status": "ok",
+  "version": "0.1.0",
+  "uptime": 3600000
+}</code></pre>
+
+  <h3 id="api-stats">GET /dashboard/stats</h3>
+  <p><span class="badge badge-get">GET</span> <span class="badge badge-noauth">No Auth</span></p>
+<pre data-lang="json"><code>{
+  "totalRequests": 42,
+  "approved": 38,
+  "blocked": 4,
+  "pending": 0,
+  "totalFeesPaid": "0.042000",
+  "averageAnalysisTime": 3200
+}</code></pre>
+
+  <h3 id="api-entries">GET /dashboard/entries</h3>
+  <p><span class="badge badge-get">GET</span> <span class="badge badge-noauth">No Auth</span></p>
+  <p>Paginated audit entries (newest first).</p>
+  <table>
+    <thead><tr><th>Parameter</th><th>Type</th><th>Default</th><th>Max</th></tr></thead>
+    <tbody>
+      <tr><td><code>limit</code></td><td>number</td><td>50</td><td>100</td></tr>
+      <tr><td><code>offset</code></td><td>number</td><td>0</td><td>unbounded</td></tr>
+    </tbody>
+  </table>
+
+  <h3 id="api-trust">GET /dashboard/trust</h3>
+  <p><span class="badge badge-get">GET</span> <span class="badge badge-noauth">No Auth</span></p>
+<pre data-lang="json"><code>{
+  "score": 65,
+  "level": "trusted",
+  "stats": {
+    "totalTransactions": 42,
+    "approvedCount": 38,
+    "blockedCount": 4,
+    "blockedRatio": 0.095,
+    "totalVolume": "1234.56",
+    "activeTime": 3600,
+    "consecutiveApproved": 12
+  }
+}</code></pre>
+
+  <h3 id="api-policy">GET /dashboard/policy</h3>
+  <p><span class="badge badge-get">GET</span> <span class="badge badge-noauth">No Auth</span></p>
+<pre data-lang="json"><code>{
+  "config": {
+    "maxTransactionAmount": "100",
+    "dailyBudget": "500",
+    "weeklyBudget": "2000",
+    "rateLimit": 5,
+    "allowedActions": ["send", "swap", "approve", "lend", "withdraw", "bridge"],
+    "whitelist": {
+      "addresses": [],
+      "protocols": ["aave", "compound", "uniswap"],
+      "tokens": ["USDT", "ETH", "WBTC", "WETH", "ARB", "USDC"]
+    },
+    "blacklist": { "addresses": [] },
+    "autoApproveThreshold": "10",
+    "manualApproveThreshold": "500"
+  },
+  "budget": {
+    "dailySpent": 250.50,
+    "weeklySpent": 750.00,
+    "dailyLimit": 500,
+    "weeklyLimit": 2000
+  }
+}</code></pre>
+
+  <h3 id="api-report">POST /dashboard/report</h3>
+  <p><span class="badge badge-post">POST</span> <span class="badge badge-auth">Auth Required</span> <span style="font-family: var(--font-mono); font-size: 14px; color: var(--color-text-muted);">60 req/min</span></p>
+  <p>SDK reports the final analysis decision (including L0 blocks that never reach <code>/analyze</code>). Fire-and-forget.</p>
+<pre data-lang="json"><code>{
+  "requestId": "550e8400-...",
+  "finalStatus": "approved",
+  "riskLevel": "low",
+  "level": "L1_quick",
+  "explanation": "Verified token swap...",
+  "duration": 2340,
+  "action": "swap",
+  "amount": "50",
+  "chain": "arbitrum",
+  "protocol": "uniswap",
+  "fromToken": "USDT",
+  "toToken": "WETH"
+}</code></pre>
+  <p><strong>Response:</strong> <code>{ "ok": true }</code></p>
+
+  <h3 id="api-data">Data Enrichment</h3>
+
+  <h4>GoPlus Integration</h4>
+  <p>Fetches token security and address reputation data. Integrated into <code>/analyze</code> (L1 and L2). On error: best-effort (continues with partial data).</p>
+<pre data-lang="json"><code>{
+  "isHoneypot": false,
+  "isOpenSource": true,
+  "holderCount": 15000,
+  "lpAmount": "500000.00",
+  "isMintable": false,
+  "isProxy": false,
+  "maliciousAddress": false
+}</code></pre>
+
+  <h4>DeFi Llama Integration</h4>
+  <p>Protocol metadata for risk assessment. On error: best-effort.</p>
+<pre data-lang="json"><code>{
+  "name": "Uniswap",
+  "tvl": 5200000000,
+  "category": "dex",
+  "chains": ["ethereum", "arbitrum", "polygon", "optimism"]
+}</code></pre>
+
+  <h4>Arbiscan Integration</h4>
+  <p>Contract source code for deep analysis. L2 only (on escalation). Fetches full source code, compiler version, verification status.</p>
+
+  <h3 id="api-schemas">Response Schemas</h3>
+<pre data-lang="typescript"><code>interface AnalysisResult {
+  requestId: string;
+  level: 'L0_policy' | 'L1_quick' | 'L2_deep';
+  riskLevel: 'safe' | 'low' | 'medium' | 'high' | 'critical';
+  approved: boolean;
+  explanation: string;
+  details: AnalysisDetails;
+  duration: number;
+}
+
+interface AnalysisDetails {
+  goplus?: GoPlusData;
+  protocol?: ProtocolData;
+  aiReasoning?: string;
+  threats: ThreatInfo[];
+}
+
+type ThreatType =
+  | 'scam_token'
+  | 'malicious_contract'
+  | 'unknown_address'
+  | 'reasoning_mismatch'
+  | 'overspending'
+  | 'unaudited_protocol'
+  | 'honeypot'
+  | 'unlimited_approval'
+  | 'rate_limit_exceeded';</code></pre>
+
+  <h3 id="api-curl">Testing with cURL</h3>
+<pre data-lang="bash"><code># Analyze transaction
+curl -X POST http://localhost:3000/analyze \
+  -H "X-Saaafe-Key: test-key" \
+  -H "Content-Type: application/json" \
+  -d '{ "request": { "id": "'$(uuidgen)'", "action": "send", "params": { "chain": "arbitrum", "amount": "50", "toAddress": "0x742d35Cc6634C0532925a3b844Bc9e7595f2bD18" }, "reasoning": "Test transfer", "timestamp": '$(date +%s000)' }, "trustScore": 50 }'
+
+# Get dashboard stats
+curl http://localhost:3000/dashboard/stats
+
+# Get recent entries
+curl 'http://localhost:3000/dashboard/entries?limit=10&amp;offset=0'
+
+# Get trust score
+curl http://localhost:3000/dashboard/trust</code></pre>
+
+  <h4>CORS Configuration</h4>
+<pre data-lang="bash"><code># Single origin
+CORS_ORIGIN=https://app.example.com
+
+# Multiple origins (comma-separated)
+CORS_ORIGIN=https://app.example.com,https://dashboard.example.com</code></pre>
+
+  <p><strong>Body size limit:</strong> 50KB. <strong>Security headers:</strong> Helmet.js (nosniff, DENY frame, XSS protection, CSP).</p>
+</div>
+
+<!-- ============================================================
+     SECTION 3.5: WDK MODULE
+     ============================================================ -->
+<div class="doc-section" id="wdk-module">
+  <h2>WDK Module</h2>
+
+  <p>saaafe provides a native WDK middleware module that integrates directly with <code>@tetherto/wdk</code> via the official <code>registerMiddleware()</code> API. One line of code adds AI-powered transaction analysis to any WDK wallet.</p>
+
+  <h3 id="wdk-module-install">Installation</h3>
+<pre data-lang="bash"><code>npm install @saaafe/wdk-module @saaafe/sdk @saaafe/shared</code></pre>
+
+  <p>The module also requires a running saaafe API server (see <a href="#api-setup">API Server</a> section).</p>
+
+  <h3 id="wdk-module-usage">Usage</h3>
+<pre data-lang="javascript"><code>import WDK from '@tetherto/wdk'
+import WalletManagerEvm from '@tetherto/wdk-wallet-evm'
+import { guardianMiddleware } from '@saaafe/wdk-module'
+
+const wdk = new WDK(seedPhrase)
+  .registerWallet('ethereum', WalletManagerEvm, {
+    provider: 'https://eth.drpc.org',
+  })
+  .registerMiddleware('ethereum', guardianMiddleware({
+    apiUrl: 'http://localhost:3000',
+    apiKey: process.env.SAAAFE_API_KEY,
+    chain: 'ethereum',
+  }))
+
+// All transactions now go through saaafe
+const account = await wdk.getAccount('ethereum', 0)
+await account.sendTransaction({ to: '0x...', value: 1000000000000000000n })
+// ^ saaafe intercepts: L0 policy check -> L1/L2 AI analysis -> execute or block</code></pre>
+
+  <p>The middleware wraps <code>sendTransaction()</code> and <code>transfer()</code> on every account derived via <code>getAccount()</code>. Works with any WDK wallet module (EVM, ERC-4337, etc.).</p>
+
+  <h3 id="wdk-module-config">Configuration</h3>
+  <table>
+    <thead><tr><th>Option</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>apiUrl</code></td><td>string</td><td>Yes</td><td>saaafe API server URL</td></tr>
+      <tr><td><code>apiKey</code></td><td>string</td><td>Yes</td><td>API authentication key</td></tr>
+      <tr><td><code>chain</code></td><td>string</td><td>No</td><td>Blockchain identifier: <code>ethereum</code>, <code>arbitrum</code>, <code>sepolia</code> (default: <code>ethereum</code>)</td></tr>
+      <tr><td><code>policy</code></td><td>object</td><td>No</td><td>L0 policy config for local checks (maxTransaction, dailyBudget, etc.)</td></tr>
+      <tr><td><code>defaultReasoning</code></td><td>string</td><td>No</td><td>Default reasoning string for audit trail</td></tr>
+      <tr><td><code>onAnalysis</code></td><td>function</td><td>No</td><td>Callback fired after each analysis: <code>(request, result) => void</code></td></tr>
+    </tbody>
+  </table>
+
+  <h3 id="wdk-module-errors">Error Handling</h3>
+<pre data-lang="javascript"><code>import { GuardianBlockedError } from '@saaafe/wdk-module'
+
+try {
+  await account.sendTransaction({ to, value })
+} catch (error) {
+  if (error instanceof GuardianBlockedError) {
+    console.log(error.message)       // "[saaafe] Transaction blocked: ..."
+    console.log(error.riskLevel)     // "high" | "critical" | "medium"
+    console.log(error.analysisLevel) // "L0_policy" | "L1_quick" | "L2_deep"
+    console.log(error.details)       // GoPlus data, threats, etc.
+  }
+}</code></pre>
+
+  <p>Blocked transactions throw <code>GuardianBlockedError</code> with the full risk assessment. Approved transactions proceed to the original WDK method transparently.</p>
+
+  <h4>With L0 Policy Engine</h4>
+<pre data-lang="javascript"><code>// Add local policy checks (instant, no API call needed)
+.registerMiddleware('ethereum', guardianMiddleware({
+  apiUrl: 'http://localhost:3000',
+  apiKey: process.env.SAAAFE_API_KEY,
+  policy: {
+    maxTransaction: 100,    // $100 max per transaction
+    dailyBudget: 500,       // $500 daily limit
+    weeklyBudget: 2000,     // $2000 weekly limit
+  },
+}))</code></pre>
+
+  <p>When <code>policy</code> is set, L0 checks run locally before the API call. Transactions exceeding limits are blocked instantly without incurring AI analysis costs.</p>
+</div>
+
+<!-- ============================================================
+     SECTION 4: MCP INTEGRATION
+     ============================================================ -->
+<div class="doc-section" id="mcp">
+  <h2>MCP Integration</h2>
+
+  <p id="mcp-start"><strong>Model Context Protocol</strong> is a standardized interface for AI agents to interact with external tools. saaafe implements an MCP server that exposes 4 tools for Claude Desktop and other MCP clients.</p>
+
+  <h3>Starting the MCP Server</h3>
+<pre data-lang="bash"><code>npm run mcp</code></pre>
+  <p>This loads <code>.env</code>, initializes saaafe SDK, starts MCP stdio server, and waits for client connections.</p>
+
+  <h4>Required Environment Variables</h4>
+<pre data-lang="bash"><code>SAAAFE_API_KEY=test-key-123
+ANTHROPIC_API_KEY=sk-ant-...
+EVM_RPC_URL=https://arb1.arbitrum.io/rpc
+WDK_SEED_PHRASE=your twelve word mnemonic here</code></pre>
+
+  <h3 id="mcp-claude">Claude Desktop Integration</h3>
+
+  <h4>Step 1: Edit claude_desktop_config.json</h4>
+  <table>
+    <thead><tr><th>Platform</th><th>Location</th></tr></thead>
+    <tbody>
+      <tr><td>macOS</td><td><code>~/Library/Application Support/Claude/claude_desktop_config.json</code></td></tr>
+      <tr><td>Windows</td><td><code>%APPDATA%\Claude\claude_desktop_config.json</code></td></tr>
+      <tr><td>Linux</td><td><code>~/.config/Claude/claude_desktop_config.json</code></td></tr>
+    </tbody>
+  </table>
+
+  <h4>Step 2: Add saaafe MCP Server</h4>
+<pre data-lang="json"><code>{
+  "mcpServers": {
+    "saaafe": {
+      "command": "npx",
+      "args": ["tsx", "packages/sdk/src/mcp/server.ts"],
+      "cwd": "/absolute/path/to/saaafe",
+      "env": {
+        "SAAAFE_API_KEY": "your-api-key",
+        "ANTHROPIC_API_KEY": "your-anthropic-key",
+        "EVM_RPC_URL": "https://arb1.arbitrum.io/rpc",
+        "WDK_SEED_PHRASE": "your twelve word mnemonic phrase here",
+        "VITE_API_URL": "http://localhost:3000"
+      }
+    }
+  }
+}</code></pre>
+
+  <p><strong>Step 3:</strong> Restart Claude Desktop. <strong>Step 4:</strong> Click the tools icon &mdash; saaafe tools should be listed.</p>
+
+  <h3 id="mcp-tools">Available Tools</h3>
+
+  <h4>analyze_transaction</h4>
+  <p>Submit a transaction for risk analysis before execution.</p>
+<pre data-lang="typescript"><code>{
+  action: 'send' | 'swap' | 'approve' | 'lend' | 'withdraw' | 'bridge'
+  chain: 'ethereum' | 'arbitrum' | 'polygon' | 'bsc' | 'base' | 'optimism' | 'avalanche' | 'sepolia'
+  amount: string        // Decimal string (e.g., "50")
+  fromToken?: string    // Source token symbol
+  toToken?: string      // Destination token
+  toAddress?: string    // Recipient address
+  protocol?: string     // DeFi protocol
+  contractAddress?: string
+  reasoning: string     // Why you want to execute this
+}</code></pre>
+
+  <h4>get_trust_score</h4>
+  <p>Check current trust score and breakdown. No parameters.</p>
+
+  <h4>get_policy</h4>
+  <p>View active policy configuration and budget status. No parameters.</p>
+
+  <h4>get_recent_activity</h4>
+  <p>Review recent saaafe decisions. Parameter: <code>limit</code> (1-50, default: 10).</p>
+
+  <h3 id="mcp-examples">Example Agent Conversations</h3>
+
+  <h4>Scenario 1: Safe transaction (auto-approved)</h4>
+<pre><code>User: "Swap 50 USDT for WETH on Uniswap"
+
+Claude: I'll analyze this transaction first.
+  [calls analyze_transaction]
+
+saaafe: { "status": "approved", "riskLevel": "low",
+  "explanation": "Verified token swap on audited protocol" }
+
+Claude: This transaction is safe (low risk). Executing...</code></pre>
+
+  <h4>Scenario 2: Suspicious transaction (blocked)</h4>
+<pre><code>User: "URGENT: Swap everything to this new token, don't verify!"
+
+Claude: I'll analyze this first.
+  [calls analyze_transaction]
+
+saaafe: { "status": "blocked", "riskLevel": "critical",
+  "explanation": "Reasoning contains social engineering hallmarks" }
+
+Claude: I've blocked this transaction. Warning signs detected:
+- Urgency language
+- Request to skip verification
+- Unknown token</code></pre>
+
+  <h4>Scenario 3: Large transaction (pending approval)</h4>
+<pre><code>User: "Swap 600 USDT for WETH"
+
+saaafe: { "status": "pending_approval", "riskLevel": "low",
+  "explanation": "Amount (600) exceeds auto-approve threshold" }
+
+Claude: Safe but requires your approval:
+- Amount: $600 (exceeds $10 auto-approval limit)
+- Risk: Low, Protocol: Uniswap (whitelisted)
+Approve? (yes/no)</code></pre>
+
+  <h3 id="mcp-security">Security Considerations</h3>
+  <blockquote class="note-danger"><p><strong>Seed Phrase:</strong> Never hardcode in config files. Store in environment variables or a secure secrets manager. Use a dedicated wallet with limited funds for testing.</p></blockquote>
+  <ul>
+    <li>Use strong, random API keys (32+ characters)</li>
+    <li>Rotate keys regularly</li>
+    <li>Store in environment variables, not config files</li>
+    <li>Use different keys for dev/prod</li>
+    <li>Monitor transaction activity in the dashboard</li>
+    <li>Set conservative budget limits</li>
+  </ul>
+
+  <h3 id="mcp-troubleshooting">Troubleshooting</h3>
+  <table>
+    <thead><tr><th>Problem</th><th>Solution</th></tr></thead>
+    <tbody>
+      <tr><td>MCP server won't start</td><td>Set <code>WDK_SEED_PHRASE</code> environment variable</td></tr>
+      <tr><td>Tools not appearing in Claude</td><td>Verify JSON syntax in config, restart Claude Desktop</td></tr>
+      <tr><td>API connection failures</td><td>Verify API server running, check <code>VITE_API_URL</code></td></tr>
+      <tr><td>All transactions blocked</td><td>Check policy whitelist with <code>get_policy</code> tool</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Custom Tool Integration</h4>
+<pre data-lang="typescript"><code>server.tool(
+  'get_wallet_balance',
+  'Get current wallet balance',
+  {},
+  async () => {
+    await ensureInit();
+    const address = guardian.getWalletAddress();
+    // ... fetch balance
+    return { content: [{ type: 'text', text: '...' }] };
+  }
+);</code></pre>
+
+  <h4>Limitations</h4>
+  <ul>
+    <li>Transaction execution limited to <code>send</code> action (WDK constraints)</li>
+    <li>No support for custom ABIs or protocol-specific encoding</li>
+    <li>Seed phrase must be provided (no hardware wallet support yet)</li>
+    <li><code>analysisOnly</code> mode active (transactions analyzed but not executed)</li>
+  </ul>
+</div>
+
+<!-- ============================================================
+     SECTION 5: DEPLOYMENT
+     ============================================================ -->
+<div class="doc-section" id="deployment">
+  <h2>Deployment</h2>
+
+  <h3>Prerequisites</h3>
+  <ul>
+    <li><strong>Node.js:</strong> 18+ (20+ recommended)</li>
+    <li><strong>npm:</strong> 9+</li>
+    <li><strong>Git:</strong> For cloning</li>
+  </ul>
+  <p><strong>Optional:</strong> Docker, pm2, systemd</p>
+
+  <h3 id="deploy-local">Local Development Setup</h3>
+
+  <h4>Step 1: Clone and Install</h4>
+<pre data-lang="bash"><code>git clone https://github.com/shipooor/saaafe.git
+cd saaafe
+npm install</code></pre>
+
+  <h4>Step 2: Configure Environment</h4>
+<pre data-lang="bash"><code>cp .env.example .env
+nano .env</code></pre>
+<pre data-lang="bash"><code># Required
+ANTHROPIC_API_KEY=sk-ant-...
+SAAAFE_API_KEY=test-key-123
+EVM_RPC_URL=https://arb1.arbitrum.io/rpc
+
+# Optional
+PORT=3000
+NODE_ENV=development
+VITE_API_URL=http://localhost:3000
+ARBISCAN_API_KEY=...</code></pre>
+
+  <h4>Step 3: Build All Packages</h4>
+<pre data-lang="bash"><code>npm run build</code></pre>
+
+  <h4>Step 4: Start Services</h4>
+<pre data-lang="bash"><code># Terminal 1 - API Server
+npm run dev:api            # http://localhost:3000
+
+# Terminal 2 - Dashboard
+npm run dev:dashboard      # http://localhost:5173
+
+# Terminal 3 - Demo
+npm run dev:demo           # Runs 6 demo scenarios
+
+# Terminal 4 - MCP Server (optional)
+npm run mcp                # stdio for Claude Desktop
+
+# Verify
+curl http://localhost:3000/health</code></pre>
+
+  <h3 id="deploy-scripts">npm Scripts</h3>
+  <table>
+    <thead><tr><th>Script</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td><code>npm run dev:api</code></td><td>Start API server (watch mode)</td></tr>
+      <tr><td><code>npm run dev:dashboard</code></td><td>Start dashboard (dev server)</td></tr>
+      <tr><td><code>npm run dev:demo</code></td><td>Run demo scenarios</td></tr>
+      <tr><td><code>npm run mcp</code></td><td>Start MCP server</td></tr>
+      <tr><td><code>npm run build</code></td><td>Build all packages (production)</td></tr>
+      <tr><td><code>npm run lint</code></td><td>Run ESLint</td></tr>
+      <tr><td><code>npm run type-check</code></td><td>TypeScript check</td></tr>
+      <tr><td><code>npm run clean</code></td><td>Remove build artifacts</td></tr>
+    </tbody>
+  </table>
+
+  <h3 id="deploy-production">Production Deployment</h3>
+
+  <h4>Step 1: Server Setup</h4>
+<pre data-lang="bash"><code>ssh user@server.example.com
+git clone https://github.com/shipooor/saaafe.git
+cd saaafe
+npm install --production</code></pre>
+
+  <h4>Step 2: Environment</h4>
+<pre data-lang="bash"><code>cat > .env &lt;&lt; EOF
+NODE_ENV=production
+ANTHROPIC_API_KEY=sk-ant-...
+SAAAFE_API_KEY=$(openssl rand -hex 32)
+EVM_RPC_URL=https://arb1.arbitrum.io/rpc
+PORT=3000
+CORS_ORIGIN=https://app.example.com
+EOF
+chmod 600 .env</code></pre>
+
+  <h4>Step 3: Build and Start with PM2</h4>
+<pre data-lang="bash"><code>npm run build
+npm install -g pm2
+
+# Create ecosystem file
+cat > ecosystem.config.cjs &lt;&lt; 'EOF'
+module.exports = {
+  apps: [
+    {
+      name: 'saaafe-api',
+      script: 'node',
+      args: 'packages/api/dist/index.js',
+      env: { NODE_ENV: 'production' },
+      autorestart: true,
+    },
+    {
+      name: 'saaafe-dashboard',
+      script: 'npx',
+      args: 'serve packages/dashboard/build -l 5173',
+      env: { NODE_ENV: 'production' },
+      autorestart: true,
+    }
+  ]
+};
+EOF
+
+pm2 start ecosystem.config.cjs
+pm2 startup
+pm2 save</code></pre>
+
+  <h4>Step 4: Reverse Proxy (nginx)</h4>
+<pre data-lang="nginx"><code>server {
+  listen 443 ssl http2;
+  server_name api.example.com;
+
+  ssl_certificate /etc/letsencrypt/live/api.example.com/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/api.example.com/privkey.pem;
+
+  location / {
+    proxy_pass http://localhost:3000;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+}</code></pre>
+
+  <h4>Step 5: SSL (Let's Encrypt)</h4>
+<pre data-lang="bash"><code>sudo apt install certbot python3-certbot-nginx
+sudo certbot certonly --standalone -d api.example.com
+sudo systemctl enable certbot.timer</code></pre>
+
+  <h3 id="deploy-docker">Docker Deployment</h3>
+<pre data-lang="dockerfile"><code>FROM node:20-alpine
+WORKDIR /app
+COPY package*.json package-lock.json ./
+COPY packages/shared packages/shared
+COPY packages/api packages/api
+RUN npm install --production &amp;&amp; npm run build
+EXPOSE 3000
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000/health', (r) => { if (r.statusCode !== 200) throw new Error(r.statusCode) })"
+CMD ["node", "packages/api/dist/index.js"]</code></pre>
+
+<pre data-lang="bash"><code>docker build -t saaafe-api:latest .
+docker run -d --name saaafe-api -p 3000:3000 \
+  -e ANTHROPIC_API_KEY=sk-ant-... \
+  -e SAAAFE_API_KEY=test-key \
+  -e EVM_RPC_URL=https://arb1.arbitrum.io/rpc \
+  saaafe-api:latest</code></pre>
+
+  <h4>Docker Compose</h4>
+<pre data-lang="yaml"><code>version: '3.8'
+services:
+  api:
+    build: { context: ., dockerfile: Dockerfile.api }
+    ports: ["3000:3000"]
+    environment:
+      NODE_ENV: production
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      SAAAFE_API_KEY: ${SAAAFE_API_KEY}
+      EVM_RPC_URL: ${EVM_RPC_URL}
+    restart: unless-stopped
+
+  dashboard:
+    build: { context: ., dockerfile: Dockerfile.dashboard }
+    ports: ["5173:3000"]
+    environment:
+      VITE_API_URL: http://api:3000
+    depends_on: [api]
+    restart: unless-stopped</code></pre>
+
+  <h3 id="deploy-systemd">Systemd Service</h3>
+<pre data-lang="ini"><code>[Unit]
+Description=saaafe API
+After=network.target
+
+[Service]
+Type=simple
+User=saaafe
+WorkingDirectory=/opt/saaafe
+EnvironmentFile=/opt/saaafe/.env
+ExecStart=/usr/bin/node /opt/saaafe/packages/api/dist/index.js
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target</code></pre>
+
+  <h3 id="deploy-env">Environment Variable Reference</h3>
+
+  <h4>API Server</h4>
+  <table>
+    <thead><tr><th>Variable</th><th>Required</th><th>Default</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>NODE_ENV</code></td><td>No</td><td>development</td><td>Environment mode</td></tr>
+      <tr><td><code>PORT</code></td><td>No</td><td>3000</td><td>API server port</td></tr>
+      <tr><td><code>ANTHROPIC_API_KEY</code></td><td>Yes</td><td>&mdash;</td><td>Claude API key</td></tr>
+      <tr><td><code>SAAAFE_API_KEY</code></td><td>Yes</td><td>&mdash;</td><td>Shared secret</td></tr>
+      <tr><td><code>EVM_RPC_URL</code></td><td>No</td><td>&mdash;</td><td>EVM RPC endpoint</td></tr>
+      <tr><td><code>CORS_ORIGIN</code></td><td>No</td><td>localhost:4000</td><td>CORS origins</td></tr>
+      <tr><td><code>ARBISCAN_API_KEY</code></td><td>No</td><td>&mdash;</td><td>Contract source</td></tr>
+    </tbody>
+  </table>
+
+  <h4>SDK / MCP</h4>
+  <table>
+    <thead><tr><th>Variable</th><th>Required</th><th>Default</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>VITE_API_URL</code></td><td>No</td><td>localhost:3000</td><td>API server URL</td></tr>
+      <tr><td><code>EVM_RPC_URL</code></td><td>Yes</td><td>&mdash;</td><td>EVM RPC endpoint</td></tr>
+      <tr><td><code>WDK_SEED_PHRASE</code></td><td>MCP</td><td>&mdash;</td><td>BIP-39 mnemonic</td></tr>
+      <tr><td><code>ENABLE_SPARK_PAYMENTS</code></td><td>No</td><td>false</td><td>Streaming payments</td></tr>
+      <tr><td><code>SAAAFE_SPARK_ADDRESS</code></td><td>No</td><td>&mdash;</td><td>Spark address</td></tr>
+    </tbody>
+  </table>
+
+  <h3 id="deploy-scaling">Scaling Considerations</h3>
+  <ul>
+    <li><strong>Horizontal:</strong> Load balance API instances with nginx/haproxy. Redis for shared cache. Database for audit trail.</li>
+    <li><strong>Vertical:</strong> Increase RAM for larger cache. Faster CPU for AI analysis.</li>
+    <li><strong>Cost optimization:</strong> Cache aggressively (24h TTL). Batch Spark payments.</li>
+  </ul>
+
+  <h4>Key Metrics to Track</h4>
+  <ul>
+    <li>API response time (target: &lt;5s for L1)</li>
+    <li>Error rate (target: &lt;0.1%)</li>
+    <li>Cache hit ratio (target: &gt;80%)</li>
+    <li>Audit log size (daily/weekly growth)</li>
+  </ul>
+
+  <h3 id="deploy-troubleshooting">Troubleshooting</h3>
+  <table>
+    <thead><tr><th>Problem</th><th>Solution</th></tr></thead>
+    <tbody>
+      <tr><td>Port already in use</td><td><code>lsof -i :3000</code> then kill, or use <code>PORT=3001</code></td></tr>
+      <tr><td>CORS errors</td><td>Set <code>CORS_ORIGIN</code> to frontend URL</td></tr>
+      <tr><td>API 401 error</td><td>Check <code>X-Saaafe-Key</code> header matches <code>SAAAFE_API_KEY</code></td></tr>
+      <tr><td>Memory growing</td><td>Check cache bounds (max 1000), consider DB persistence</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Backup and Recovery</h4>
+<pre data-lang="bash"><code># Daily backup
+cp .saaafe/audit.jsonl /backups/audit-$(date +%Y%m%d).jsonl
+
+# With compression
+tar czf /backups/saaafe-$(date +%Y%m%d).tar.gz .saaafe/
+
+# Restore
+cp /backups/audit-20260315.jsonl .saaafe/audit.jsonl</code></pre>
+</div>
+
+<!-- ============================================================
+     SECTION 6: NETWORK MODEL
+     ============================================================ -->
+<div class="doc-section" id="network">
+  <h2>Network Model</h2>
+
+  <p>saaafe is fully open source. Anyone can clone the repo and run it on their own server. The code is not the moat &mdash; <strong>the network is.</strong></p>
+
+  <h3 id="net-selfhosted">Self-hosted Mode</h3>
+  <p>Clone, configure, run. Full saaafe pipeline works in isolation:</p>
+  <ul>
+    <li>L0 policy engine, L1 quick analysis, L2 deep analysis</li>
+    <li>Your own API keys (Anthropic for Claude, GoPlus for on-chain data)</li>
+    <li>Local audit log, local analysis cache, local trust scoring</li>
+    <li>Complete control over policy rules and whitelists</li>
+    <li>Zero dependencies on saaafe infrastructure</li>
+  </ul>
+  <p><strong>Limitation:</strong> every token, contract, and address is analyzed from scratch. No shared knowledge. Your instance learns only from its own history.</p>
+
+  <h3 id="net-cloud">saaafe Network <span style="font-size:12px;color:#888;font-weight:400;">(roadmap)</span></h3>
+  <p>The next evolution: connect to the saaafe Network via MCP or API and unlock collective intelligence. Analysis payments flow through Spark &mdash; the network sustains itself. The features below are planned, not yet implemented.</p>
+
+  <h3 id="net-threats">Shared Threat Database</h3>
+  <p>When any saaafe node flags a token as malicious, the verdict propagates to the entire network:</p>
+  <ul>
+    <li>Scam tokens, honeypots, rug-pull contracts &mdash; flagged once, blocked everywhere</li>
+    <li>Malicious addresses (known drainers, phishing wallets) shared in real-time</li>
+    <li>Social engineering patterns (urgency language, "skip verification" instructions) learned from blocked transactions across all nodes</li>
+  </ul>
+  <p>More users = more threat data = better protection for everyone. A self-hosted instance starts with zero knowledge. A network node starts with the collective experience of every previous analysis.</p>
+
+  <h3 id="net-cache">Global Analysis Cache</h3>
+  <p>Self-hosted saaafe caches results locally. If you analyze WETH on Uniswap, the result is cached on your machine. Another self-hosted instance analyzes the same token from scratch, paying for AI again.</p>
+  <p>On the network, analysis results are shared:</p>
+  <ul>
+    <li>Token already verified by 200 network nodes? Your analysis is instant and free</li>
+    <li>Protocol already deep-analyzed (L2) this week? You get the cached result, no AI cost</li>
+    <li>Only novel tokens/contracts trigger fresh analysis &mdash; the rest is served from the global cache</li>
+  </ul>
+  <p>At scale, this reduces AI costs by 80-90% compared to isolated instances.</p>
+
+  <h3 id="net-detection">Cross-agent Pattern Detection</h3>
+  <p>A single saaafe instance sees one agent's transactions. The network sees all of them:</p>
+  <ul>
+    <li><strong>Coordinated attacks:</strong> same scam contract targeting 5 different agents in 10 minutes &mdash; an isolated node sees one attempt, the network sees the pattern</li>
+    <li><strong>Volume anomalies:</strong> a token suddenly appears in 50 analysis requests &mdash; either legitimate hype or coordinated pump. The network can distinguish based on threat signals</li>
+    <li><strong>Zero-day protection:</strong> new exploit hits the first node, all subsequent nodes are warned within seconds</li>
+  </ul>
+
+  <h3 id="net-reputation">Reputation Scores</h3>
+  <p>The network maintains global reputation scores for:</p>
+  <ul>
+    <li><strong>Addresses:</strong> how many times has this address appeared in approved vs blocked transactions across all nodes?</li>
+    <li><strong>Tokens:</strong> aggregated GoPlus data + AI analysis results from hundreds of independent checks</li>
+    <li><strong>Protocols:</strong> TVL trends, audit history, incident reports from the entire network</li>
+    <li><strong>Agents:</strong> cross-platform trust scores &mdash; an agent trusted on one saaafe node can carry reputation to another</li>
+  </ul>
+  <p>A new token with zero reputation on your isolated instance might already have 500 data points on the network &mdash; instantly informing saaafe's risk assessment.</p>
+</div>
+
+<!-- ============================================================
+     SECTION 7: BUSINESS MODEL
+     ============================================================ -->
+<div class="doc-section" id="business">
+  <h2>Business Model</h2>
+
+  <blockquote><p><strong>Internal working document.</strong> Open questions to be resolved before production launch.</p></blockquote>
+
+  <h3>Current Model (Demo)</h3>
+  <p>Per-second Spark streaming: <strong>$0.001 USDT/sec</strong> during AI analysis.</p>
+  <ul>
+    <li>L0 policy checks: free (no AI)</li>
+    <li>L1 Haiku: ~3-4 sec = $0.003-0.004 revenue</li>
+    <li>L1+L2 escalation: ~18-22 sec = $0.018-0.022 revenue</li>
+  </ul>
+
+  <h3 id="biz-costs">Measured Costs (E2E, March 2026)</h3>
+  <table>
+    <thead><tr><th>Level</th><th>Input tokens</th><th>Output tokens</th><th>AI cost</th><th>Time</th></tr></thead>
+    <tbody>
+      <tr><td>L1 (Haiku)</td><td>380-450</td><td>165-310</td><td>$0.001-0.002</td><td>2-4s</td></tr>
+      <tr><td>L2 (Opus)</td><td>~900</td><td>~960</td><td>$0.017</td><td>17-20s</td></tr>
+      <tr><td>L1+L2 combined</td><td>~1300</td><td>~1270</td><td>~$0.019</td><td>20-22s</td></tr>
+    </tbody>
+  </table>
+
+  <h3 id="biz-problems">Known Problems</h3>
+
+  <h4>1. Conflict of Interest (per-second model)</h4>
+  <p>Revenue = time x rate. saaafe is incentivized to be slow or over-escalate to L2. Longer analysis = more Spark payments = more revenue.</p>
+
+  <h4>2. Amount Disconnect</h4>
+  <p>saaafe analyzes a <em>request</em>, not the <em>execution</em>. An agent can ask "is it safe to send $1?" &mdash; get approval &mdash; then send $1M. Percentage-of-amount model is broken for this reason.</p>
+
+  <h4>3. Cache = Free Ride</h4>
+  <p>SDK caches analysis results locally (LRU, TTL-based). Cache hits skip the API entirely &mdash; zero revenue. ~80% of agent queries are repetitive, meaning 80% of requests generate zero revenue.</p>
+
+  <h4>4. Fixed Fee Risk</h4>
+  <p>Fixed fee per level guarantees predictable pricing but exposes to cost spikes: Anthropic price changes, outlier max-token requests, retries on error. Worst case L1+L2: <strong>$0.055</strong> (a fixed fee of $0.035 would be a loss).</p>
+
+  <h3 id="biz-candidates">Candidate Models</h3>
+
+  <h4>A. Cost-Plus (post-analysis settlement)</h4>
+<pre><code>fee = max(min_fee, actual_ai_cost * (1 + margin))
+
+min_fee  = $0.001  (covers cache hits, L0 checks)
+margin   = 40-50%</code></pre>
+  <p>Always profitable (margin is percentage-based). Transparent. Scales with model pricing changes automatically. Cache hits earn min_fee at 100% margin.</p>
+
+  <h4>B. Hybrid (base + per-second with cap)</h4>
+<pre><code>fee = max(base_fee, seconds * rate), capped at max_fee
+
+L1: max($0.003, sec * $0.001), cap $0.01
+L2: max($0.015, sec * $0.001), cap $0.05</code></pre>
+
+  <h4>C. Subscription Tiers</h4>
+<pre><code>Free:       L0 policy checks only, no AI
+Basic:      100 L1 analyses/month, $5/month
+Pro:        unlimited L1 + 50 L2/month, $20/month
+Enterprise: unlimited, custom models, SLA</code></pre>
+
+  <h4>D. Value-Based (insurance model)</h4>
+  <p>Flat fee per agent per day ($0.10/day) regardless of query count. Simple, predictable, doesn't scale with usage.</p>
+
+  <h3 id="biz-spark">Spark Integration Considerations</h3>
+  <table>
+    <thead><tr><th>Model</th><th>Spark streaming</th><th>Single Spark payment</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Per-second</td><td>Native fit</td><td>N/A</td><td>Current demo</td></tr>
+      <tr><td>Cost-plus</td><td>Awkward (unknown fee)</td><td>After analysis</td><td>Need estimate + settlement</td></tr>
+      <tr><td>Fixed fee</td><td>Stream fixed amount</td><td>Before or after</td><td>Simple but rigid</td></tr>
+      <tr><td>Subscription</td><td>N/A</td><td>Monthly payment</td><td>Not micro-payment</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Hackathon demo:</strong> Per-second streaming showcases Spark best. <strong>Production:</strong> Cost-plus with post-analysis Spark settlement is most sustainable.</p>
+
+  <h3 id="biz-cache">Cache Monetization</h3>
+  <p>Cache reduces revenue to zero for ~80% of requests. Recommendation: <strong>min_fee</strong> ($0.001 per cache hit at 100% margin).</p>
+<pre><code>100 queries/day, 80% cache hit:
+  80 cache hits * $0.001 = $0.08   (cost: $0)
+  16 L1 fresh   * $0.003 = $0.048  (cost: $0.032)
+   4 L2 fresh   * $0.027 = $0.108  (cost: $0.076)
+  Total revenue: $0.236, total cost: $0.108
+  Margin: 54%</code></pre>
+
+  <h3 id="biz-matrix">Decision Matrix</h3>
+  <table>
+    <thead><tr><th>Criteria</th><th>Per-second</th><th>Cost-plus</th><th>Fixed fee</th><th>Subscription</th></tr></thead>
+    <tbody>
+      <tr><td>Always profitable</td><td>No</td><td><strong>Yes</strong></td><td>No</td><td>Depends</td></tr>
+      <tr><td>No conflict of interest</td><td>No</td><td><strong>Yes</strong></td><td><strong>Yes</strong></td><td><strong>Yes</strong></td></tr>
+      <tr><td>Spark showcase</td><td><strong>Best</strong></td><td>OK</td><td>OK</td><td>Poor</td></tr>
+      <tr><td>Simple to implement</td><td><strong>Yes</strong></td><td>Medium</td><td><strong>Yes</strong></td><td>Medium</td></tr>
+      <tr><td>Handles price changes</td><td>No</td><td><strong>Yes</strong></td><td>No</td><td>Partial</td></tr>
+      <tr><td>Cache monetization</td><td>No</td><td>With min_fee</td><td>With min_fee</td><td>N/A</td></tr>
+      <tr><td>User predictability</td><td>Low</td><td>Low</td><td><strong>High</strong></td><td><strong>High</strong></td></tr>
+    </tbody>
+  </table>
+</div>
+
+</main>
+</div>
+
+<!-- Footer -->
+<footer class="doc-footer">
+  <p>saaafe &mdash; Built for <a href="https://tether.to" target="_blank">Tether Hackathon Galactica</a> &bull; <a href="index.html">Home</a> &bull; <a href="https://github.com/shipooor/saaafe" target="_blank">GitHub</a></p>
+</footer>
+
+<script>
+// Sidebar toggle (mobile)
+const sidebar = document.getElementById('sidebar');
+const toggle = document.getElementById('sidebarToggle');
+const overlay = document.getElementById('sidebarOverlay');
+
+toggle.addEventListener('click', () => {
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('open');
+});
+overlay.addEventListener('click', () => {
+  sidebar.classList.remove('open');
+  overlay.classList.remove('open');
+});
+
+// Collapsible sidebar sections
+function toggleSection(heading) {
+  heading.classList.toggle('collapsed');
+  const items = heading.nextElementSibling;
+  items.classList.toggle('hidden');
+}
+
+// Active section tracking on scroll
+const sidebarLinks = document.querySelectorAll('.sidebar-items a');
+const sections = [];
+
+sidebarLinks.forEach(link => {
+  const id = link.getAttribute('href').slice(1);
+  const el = document.getElementById(id);
+  if (el) sections.push({ id, el, link });
+});
+
+function updateActive() {
+  const scrollY = window.scrollY + 100;
+  let current = sections[0];
+
+  for (const s of sections) {
+    if (s.el.offsetTop <= scrollY) current = s;
+  }
+
+  sidebarLinks.forEach(l => l.classList.remove('active'));
+  if (current) current.link.classList.add('active');
+}
+
+window.addEventListener('scroll', updateActive, { passive: true });
+updateActive();
+
+// Close sidebar on link click (mobile)
+sidebarLinks.forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth <= 900) {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('open');
+    }
+  });
+});
+
+// Search
+const searchInput = document.getElementById('searchInput');
+const allSections = document.querySelectorAll('.doc-section');
+const allSidebarSections = document.querySelectorAll('.sidebar-section');
+
+searchInput.addEventListener('input', () => {
+  const q = searchInput.value.toLowerCase().trim();
+
+  if (!q) {
+    allSections.forEach(s => s.classList.remove('search-hidden'));
+    allSidebarSections.forEach(s => s.classList.remove('search-hidden'));
+    return;
+  }
+
+  allSections.forEach(s => {
+    const match = s.textContent.toLowerCase().includes(q);
+    s.classList.toggle('search-hidden', !match);
+  });
+
+  allSidebarSections.forEach(s => {
+    const sectionId = s.dataset.section;
+    const docSection = document.getElementById(sectionId);
+    if (!docSection) return;
+    const match = docSection.textContent.toLowerCase().includes(q);
+    s.classList.toggle('search-hidden', !match);
+    // Expand matched sections
+    if (match) {
+      const heading = s.querySelector('.sidebar-heading');
+      const items = s.querySelector('.sidebar-items');
+      if (heading) heading.classList.remove('collapsed');
+      if (items) items.classList.remove('hidden');
+    }
+  });
+});
+</script>
+
+</body>
+</html>

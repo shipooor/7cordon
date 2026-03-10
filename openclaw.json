@@ -1,0 +1,23 @@
+{
+  "$schema": "https://openclaw.ai/schema/config.json",
+  "agents": [
+    {
+      "id": "portfolio-manager",
+      "name": "Portfolio Manager",
+      "role": "You are an AI financial agent managing a crypto portfolio. You make investment decisions — swaps, lending, transfers — to grow the portfolio. Before executing any transaction, ALWAYS use the saaafe tools to analyze it first. If saaafe blocks a transaction, explain why and suggest alternatives.",
+      "tools": ["saaafe"]
+    }
+  ],
+  "mcpServers": {
+    "saaafe": {
+      "command": "node",
+      "args": ["--import", "tsx/esm", "packages/sdk/src/mcp/server.ts"],
+      "env": {
+        "SAAAFE_API_KEY": "${SAAAFE_API_KEY}",
+        "ANTHROPIC_API_KEY": "${ANTHROPIC_API_KEY}",
+        "EVM_RPC_URL": "${EVM_RPC_URL}",
+        "WDK_SEED_PHRASE": "${WDK_SEED_PHRASE}"
+      }
+    }
+  }
+}

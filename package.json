@@ -1,0 +1,39 @@
+{
+  "name": "saaafe",
+  "description": "AI-powered trust and safety layer for autonomous financial agents on Tether WDK",
+  "author": "shipooor",
+  "homepage": "https://saaafe.me",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shipooor/saaafe.git"
+  },
+  "private": true,
+  "workspaces": [
+    "packages/shared",
+    "packages/sdk",
+    "packages/api",
+    "packages/wdk-module",
+    "packages/dashboard",
+    "packages/demo"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "dev:api": "npm run dev -w packages/api",
+    "dev:dashboard": "npm run dev -w packages/dashboard",
+    "dev:demo": "npm run dev -w packages/demo",
+    "mcp": "node --import tsx/esm packages/sdk/src/mcp/server.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "clean": "rm -rf packages/*/dist"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "tsx": "^4.7",
+    "typescript": "^5.4",
+    "vitest": "^4.1.0"
+  }
+}

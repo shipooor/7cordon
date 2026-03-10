@@ -1,0 +1,44 @@
+{
+  "name": "@saaafe/sdk",
+  "version": "0.1.0",
+  "description": "SDK for saaafe — AI-powered trust and safety layer for autonomous financial agents",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shipooor/saaafe.git",
+    "directory": "packages/sdk"
+  },
+  "keywords": ["saaafe", "trust-safety", "ai", "policy-engine", "wdk", "tether"],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@saaafe/shared": "0.1.0",
+    "@modelcontextprotocol/sdk": "^1.27.1",
+    "@tetherto/wdk": "^1.0.0-beta.6",
+    "@tetherto/wdk-wallet-evm": "^1.0.0-beta.8",
+    "@tetherto/wdk-wallet-evm-erc-4337": "^1.0.0-beta.5",
+    "@tetherto/wdk-wallet-spark": "^1.0.0-beta.11",
+    "dotenv": "^16.4",
+    "zod": "^3.22"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "tsx": "^4.7",
+    "typescript": "^5.4"
+  }
+}

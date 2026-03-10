@@ -1,0 +1,31 @@
+{
+  "name": "@saaafe/shared",
+  "version": "0.1.0",
+  "description": "Shared types, constants, and validation for saaafe",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shipooor/saaafe.git",
+    "directory": "packages/shared"
+  },
+  "keywords": ["saaafe", "trust-safety", "types", "wdk", "tether"],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.4"
+  }
+}

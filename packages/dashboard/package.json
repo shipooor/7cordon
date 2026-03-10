@@ -1,0 +1,23 @@
+{
+  "name": "@saaafe/dashboard",
+  "version": "0.1.0",
+  "description": "Real-time monitoring dashboard for saaafe",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-check --tsconfig ./tsconfig.json"
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-static": "^3",
+    "@sveltejs/kit": "^2",
+    "@sveltejs/vite-plugin-svelte": "^5",
+    "svelte": "^5",
+    "svelte-check": "^4",
+    "typescript": "^5.4",
+    "vite": "^6"
+  }
+}
