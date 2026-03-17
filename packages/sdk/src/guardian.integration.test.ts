@@ -249,15 +249,11 @@ describe('Guardian.request()', () => {
       const analysisResult = createAnalysisResult({ approved: true, riskLevel: 'safe' });
       mockApiClientInstance.analyze.mockResolvedValue(analysisResult);
 
-      // Use amount that is > manualApproveThreshold (500 default) but within max transaction amount
-      // Our config has maxTransactionAmount: 100 and dailyBudget: 10000, so use less than 100
+      // amount 99 < manualApproveThreshold (500), so safe risk + medium amount = approved
       const request = createRequest({ params: { chain: 'ethereum', amount: '99', toAddress: '0xrecipient' } });
       const result = await guardian.request(request);
 
-      // With safe risk, this should pass L0 and L1, then get pending_approval because amount > manualApproveThreshold
-      // But actually, this amount (99) is NOT > manualApproveThreshold (500), so it would be auto-approved
-      // Let me test a different scenario: safe risk with an amount that's still reasonable
-      expect(result.status).toBe('approved'); // 99 < manualApproveThreshold (500)
+      expect(result.status).toBe('approved');
       expect(result.riskLevel).toBe('safe');
     });
 
