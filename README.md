@@ -125,7 +125,8 @@ See [`.env.example`](.env.example) for all configuration options.
 | `SAAAFE_JWT_SECRET` | One of these | JWT signing secret for wallet-based auth (required in production) |
 | `PORT` | No | API server port (default: 3000) |
 | `EVM_RPC_URL` | For SDK | Arbitrum/Sepolia RPC endpoint |
-| `VITE_API_URL` | No | API URL for demo/dashboard (default: `http://localhost:3000`) |
+| `API_URL` | No | API URL for demo/MCP (default: `http://localhost:3000`) |
+| `VITE_API_URL` | No | API URL for dashboard (default: `http://localhost:3000`) |
 | `WDK_SEED_PHRASE` | For MCP | BIP-39 mnemonic for wallet initialization |
 | `ARBISCAN_API_KEY` | No | Arbiscan API key for contract source verification |
 | `ENABLE_SPARK_PAYMENTS` | No | Set to `true` to enable streaming micropayments |
@@ -424,6 +425,12 @@ This creates a **fair, usage-based pricing model**: fast L1-only analyses cost ~
 | API Server | Express.js + TypeScript |
 | Dashboard | Svelte 5 + SvelteKit |
 | Monorepo | npm workspaces |
+
+## Hackathon
+
+Built for [Tether Hackathon Galactica](https://dorahacks.io/hackathon/tether-galactica) (March 2026).
+
+saaafe demonstrates how Tether WDK can power autonomous financial agents with built-in safety guarantees — using WDK wallets for identity, EVM accounts for execution, and Spark for real-time micropayments.
 
 ## License
 

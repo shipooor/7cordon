@@ -28,7 +28,7 @@ import {
   sleep,
 } from './printer.js';
 
-const API_URL = process.env.API_URL || 'http://localhost:3000';
+const API_URL = process.env.API_URL || process.env.VITE_API_URL || 'http://localhost:3000';
 const API_KEY = process.env.SAAAFE_API_KEY;
 const SEED_PHRASE = process.env.WDK_SEED_PHRASE;
 const EVM_RPC = process.env.EVM_RPC_URL || 'https://arb-sepolia.g.alchemy.com/v2/demo';
@@ -98,6 +98,11 @@ async function main() {
     const { Wallet } = await import('ethers');
     const ephemeral = Wallet.createRandom();
     await guardian.init(ephemeral.mnemonic!.phrase);
+  }
+
+  if (!process.env.EVM_RPC_URL) {
+    console.log('  WARNING: EVM_RPC_URL not set — using Alchemy demo endpoint (rate-limited).');
+    console.log('  Set EVM_RPC_URL in .env for reliable operation.\n');
   }
 
   if (USE_WALLET_AUTH) {

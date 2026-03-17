@@ -11,3 +11,5 @@ build/
 .svelte-kit/
 .claude/
 PLAN.md
+TEST_*.md
+RECOMMENDATIONS.md
