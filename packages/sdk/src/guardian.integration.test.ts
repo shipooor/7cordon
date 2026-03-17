@@ -128,10 +128,13 @@ describe('Guardian.request()', () => {
 
     // Initialize guardian
     await guardian.init('test seed phrase');
+
+    // Clear persisted audit log to prevent budget bleed from previous test runs
+    guardian.getAuditLog().clear();
   });
 
   afterEach(() => {
-    vi.clearAllMocks();
+    vi.restoreAllMocks();
   });
 
   describe('L0 policy blocking', () => {
