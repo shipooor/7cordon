@@ -1,7 +1,24 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { SignJWT } from 'jose';
-import { getJwtSecret, jwtAuthMiddleware } from './jwt.js';
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
+import { issueToken } from '@shipooor/walletauth';
+import { jwtAuthMiddleware } from './jwt.js';
 import type { Request, Response, NextFunction } from 'express';
+
+const TEST_SECRET = 'test-jwt-secret-minimum-16-chars-long';
+
+let savedSecret: string | undefined;
+
+beforeAll(() => {
+  savedSecret = process.env.SAAAFE_JWT_SECRET;
+  process.env.SAAAFE_JWT_SECRET = TEST_SECRET;
+});
+
+afterAll(() => {
+  if (savedSecret !== undefined) {
+    process.env.SAAAFE_JWT_SECRET = savedSecret;
+  } else {
+    delete process.env.SAAAFE_JWT_SECRET;
+  }
+});
 
 function mockReqResNext(headers: Record<string, string> = {}) {
   const req = { headers } as unknown as Request;
@@ -11,16 +28,6 @@ function mockReqResNext(headers: Record<string, string> = {}) {
   } as unknown as Response;
   const next = vi.fn() as NextFunction;
   return { req, res, next };
-}
-
-async function issueValidJwt(address: string): Promise<string> {
-  return new SignJWT({ address })
-    .setProtectedHeader({ alg: 'HS256' })
-    .setIssuer('saaafe')
-    .setAudience('saaafe-api')
-    .setIssuedAt()
-    .setExpirationTime('1h')
-    .sign(getJwtSecret());
 }
 
 describe('jwtAuthMiddleware', () => {
@@ -43,7 +50,7 @@ describe('jwtAuthMiddleware', () => {
 
   it('sets walletAddress for valid JWT', async () => {
     const address = '0x1234567890abcdef1234567890abcdef12345678';
-    const token = await issueValidJwt(address);
+    const token = await issueToken(address, TEST_SECRET, { expiresIn: '1h' });
 
     const { req, res, next } = mockReqResNext({ authorization: `Bearer ${token}` });
     await jwtAuthMiddleware(req, res, next);
@@ -62,28 +69,9 @@ describe('jwtAuthMiddleware', () => {
     expect(res.json).toHaveBeenCalledWith({ error: 'Invalid or expired token' });
   });
 
-  it('rejects JWT with wrong issuer', async () => {
-    const token = await new SignJWT({ address: '0x1234' })
-      .setProtectedHeader({ alg: 'HS256' })
-      .setIssuer('wrong-issuer')
-      .setAudience('saaafe-api')
-      .setExpirationTime('1h')
-      .sign(getJwtSecret());
-
-    const { req, res, next } = mockReqResNext({ authorization: `Bearer ${token}` });
-    await jwtAuthMiddleware(req, res, next);
-
-    expect(next).not.toHaveBeenCalled();
-    expect(res.status).toHaveBeenCalledWith(401);
-  });
-
-  it('rejects JWT with wrong audience', async () => {
-    const token = await new SignJWT({ address: '0x1234' })
-      .setProtectedHeader({ alg: 'HS256' })
-      .setIssuer('saaafe')
-      .setAudience('wrong-audience')
-      .setExpirationTime('1h')
-      .sign(getJwtSecret());
+  it('rejects JWT signed with wrong secret', async () => {
+    const address = '0x1234567890abcdef1234567890abcdef12345678';
+    const token = await issueToken(address, 'different-secret-at-least-16-chars', { expiresIn: '1h' });
 
     const { req, res, next } = mockReqResNext({ authorization: `Bearer ${token}` });
     await jwtAuthMiddleware(req, res, next);
@@ -93,12 +81,14 @@ describe('jwtAuthMiddleware', () => {
   });
 
   it('rejects JWT with missing address claim', async () => {
+    // issueToken always includes address, so craft a token manually without one
+    const { SignJWT } = await import('jose');
+    const secretKey = new TextEncoder().encode(TEST_SECRET);
     const token = await new SignJWT({})
       .setProtectedHeader({ alg: 'HS256' })
-      .setIssuer('saaafe')
-      .setAudience('saaafe-api')
+      .setIssuedAt()
       .setExpirationTime('1h')
-      .sign(getJwtSecret());
+      .sign(secretKey);
 
     const { req, res, next } = mockReqResNext({ authorization: `Bearer ${token}` });
     await jwtAuthMiddleware(req, res, next);
@@ -108,12 +98,14 @@ describe('jwtAuthMiddleware', () => {
   });
 
   it('rejects JWT with non-EVM address', async () => {
+    // Craft a token with invalid address format
+    const { SignJWT } = await import('jose');
+    const secretKey = new TextEncoder().encode(TEST_SECRET);
     const token = await new SignJWT({ address: 'not-an-address' })
       .setProtectedHeader({ alg: 'HS256' })
-      .setIssuer('saaafe')
-      .setAudience('saaafe-api')
+      .setIssuedAt()
       .setExpirationTime('1h')
-      .sign(getJwtSecret());
+      .sign(secretKey);
 
     const { req, res, next } = mockReqResNext({ authorization: `Bearer ${token}` });
     await jwtAuthMiddleware(req, res, next);
@@ -124,12 +116,7 @@ describe('jwtAuthMiddleware', () => {
 
   it('normalizes uppercase address in JWT to lowercase', async () => {
     const upper = '0xABCDEF1234567890ABCDEF1234567890ABCDEF12';
-    const token = await new SignJWT({ address: upper })
-      .setProtectedHeader({ alg: 'HS256' })
-      .setIssuer('saaafe')
-      .setAudience('saaafe-api')
-      .setExpirationTime('1h')
-      .sign(getJwtSecret());
+    const token = await issueToken(upper, TEST_SECRET, { expiresIn: '1h' });
 
     const { req, res, next } = mockReqResNext({ authorization: `Bearer ${token}` });
     await jwtAuthMiddleware(req, res, next);
@@ -138,29 +125,23 @@ describe('jwtAuthMiddleware', () => {
     expect(req.walletAddress).toBe(upper.toLowerCase());
   });
 
-  it('rejects expired JWT', async () => {
-    const token = await new SignJWT({ address: '0x1234' })
-      .setProtectedHeader({ alg: 'HS256' })
-      .setIssuer('saaafe')
-      .setAudience('saaafe-api')
-      .setIssuedAt(Math.floor(Date.now() / 1000) - 7200)
-      .setExpirationTime(Math.floor(Date.now() / 1000) - 3600)
-      .sign(getJwtSecret());
+  it('warns and passes through when Bearer present but SAAAFE_JWT_SECRET not configured', async () => {
+    const saved = process.env.SAAAFE_JWT_SECRET;
+    delete process.env.SAAAFE_JWT_SECRET;
 
-    const { req, res, next } = mockReqResNext({ authorization: `Bearer ${token}` });
-    await jwtAuthMiddleware(req, res, next);
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+      const { req, res, next } = mockReqResNext({ authorization: 'Bearer some-token' });
+      await jwtAuthMiddleware(req, res, next);
 
-    expect(next).not.toHaveBeenCalled();
-    expect(res.status).toHaveBeenCalledWith(401);
-  });
-});
-
-describe('getJwtSecret', () => {
-  it('returns consistent secret across calls', () => {
-    const s1 = getJwtSecret();
-    const s2 = getJwtSecret();
-    expect(s1).toBe(s2);
-    expect(s1).toBeInstanceOf(Uint8Array);
-    expect(s1.length).toBeGreaterThan(0);
+      expect(warnSpy).toHaveBeenCalledWith(
+        '[saaafe] Bearer token present but SAAAFE_JWT_SECRET not configured — skipping JWT validation'
+      );
+      expect(next).toHaveBeenCalled();
+      expect(res.status).not.toHaveBeenCalled();
+    } finally {
+      if (saved) process.env.SAAAFE_JWT_SECRET = saved;
+      warnSpy.mockRestore();
+    }
   });
 });

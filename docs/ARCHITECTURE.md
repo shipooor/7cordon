@@ -238,10 +238,10 @@ Agent
 - Used to derive EVM and Spark wallets
 - Wallets are stored internally and disposed on `Guardian.dispose()`
 
-**API authentication** (dual auth):
-- **Wallet auth (recommended)**: EIP-191 challenge-response → JWT (HS256, 24h expiry). Zero-config — agent's WDK wallet IS its identity
+**API authentication** (dual auth, powered by [`@shipooor/walletauth`](https://www.npmjs.com/package/@shipooor/walletauth)):
+- **Wallet auth (recommended)**: stateless HMAC-signed challenges + EIP-191 wallet signatures → JWT (HS256, 24h expiry). Zero-config — agent's WDK wallet IS its identity
 - **API key (fallback)**: `X-Saaafe-Key` header, SHA-256 hash + timing-safe comparison
-- Challenge nonces are single-use (deleted after verification, replay-safe)
+- Challenges are stateless (HMAC-verified, no server-side nonce store) with built-in expiry
 - Rate limited: 20 req/min on `/analyze`, 15 req/min on `/auth`, 60 req/min on `/dashboard`
 
 ### Input Sanitization

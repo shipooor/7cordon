@@ -9,7 +9,8 @@ import type { TransactionRequest, TransactionResult, AnalysisResult } from '@saa
 
 /** Request timeout — slightly longer than L2 analysis timeout to account for network. */
 const REQUEST_TIMEOUT_MS = 45_000;
-const CHALLENGE_FORMAT_RE = /^saaafe-auth:[0-9a-f-]+:\d+$/;
+/** Nonce from walletauth is a hex string (UUID without dashes). */
+const NONCE_FORMAT_RE = /^[0-9a-f]{16,64}$/;
 
 export class GuardianApiClient {
   private baseUrl: string;
@@ -60,7 +61,7 @@ export class GuardianApiClient {
       throw new Error('Wallet auth not configured');
     }
 
-    // 1. Get challenge
+    // 1. Get challenge (returns nonce + HMAC-signed challenge blob)
     const challengeRes = await fetch(`${this.baseUrl}/auth/challenge`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -69,17 +70,17 @@ export class GuardianApiClient {
     if (!challengeRes.ok) {
       throw new Error(`Auth challenge failed: ${challengeRes.status}`);
     }
-    const { challenge } = await challengeRes.json() as { challenge: string };
+    const { nonce, challenge } = await challengeRes.json() as { nonce: string; challenge: string };
 
-    // 2. Validate challenge format before signing (defense against rogue server)
-    if (!CHALLENGE_FORMAT_RE.test(challenge)) {
+    // 2. Validate nonce format before signing (defense against rogue server)
+    if (!nonce || !NONCE_FORMAT_RE.test(nonce)) {
       throw new Error('Received invalid challenge format from server');
     }
 
-    // 3. Sign challenge
-    const signature = await this.signFn(challenge);
+    // 3. Sign the nonce with wallet private key
+    const signature = await this.signFn(nonce);
 
-    // 4. Verify and get JWT
+    // 4. Send signature + challenge blob for verification
     const verifyRes = await fetch(`${this.baseUrl}/auth/verify`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

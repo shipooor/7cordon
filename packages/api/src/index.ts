@@ -13,15 +13,8 @@ if (!process.env.ANTHROPIC_API_KEY) {
 if (!process.env.SAAAFE_API_KEY && !process.env.SAAAFE_JWT_SECRET) {
   console.warn('[saaafe] WARNING: Neither SAAAFE_API_KEY nor SAAAFE_JWT_SECRET is set. Configure at least one auth method.');
 }
-if (process.env.SAAAFE_JWT_SECRET && process.env.SAAAFE_JWT_SECRET.length < 32) {
-  console.warn('[saaafe] WARNING: SAAAFE_JWT_SECRET is shorter than 32 characters. Use a strong secret.');
-}
-if (!process.env.SAAAFE_JWT_SECRET) {
-  if (process.env.NODE_ENV === 'production') {
-    console.error('[saaafe] FATAL: SAAAFE_JWT_SECRET is required in production.');
-    process.exit(1);
-  }
-  console.warn('[saaafe] WARNING: SAAAFE_JWT_SECRET is not set. Using random secret (JWTs will not survive restarts).');
+if (process.env.SAAAFE_JWT_SECRET && process.env.SAAAFE_JWT_SECRET.length < 16) {
+  console.warn('[saaafe] WARNING: SAAAFE_JWT_SECRET is shorter than 16 characters. Use a strong secret (openssl rand -base64 32).');
 }
 
 import { createServer } from './server.js';

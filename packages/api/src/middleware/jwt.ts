@@ -1,5 +1,4 @@
-import { jwtVerify } from 'jose';
-import { randomBytes } from 'crypto';
+import { validateToken } from '@shipooor/walletauth';
 import type { Request, Response, NextFunction } from 'express';
 
 declare module 'express-serve-static-core' {
@@ -8,23 +7,8 @@ declare module 'express-serve-static-core' {
   }
 }
 
-let cachedSecret: Uint8Array | null = null;
-
-export function getJwtSecret(): Uint8Array {
-  if (cachedSecret) return cachedSecret;
-
-  const envSecret = process.env.SAAAFE_JWT_SECRET;
-  if (envSecret) {
-    cachedSecret = new TextEncoder().encode(envSecret);
-  } else {
-    cachedSecret = randomBytes(32);
-    console.warn('[saaafe] JWT: using ephemeral random secret (set SAAAFE_JWT_SECRET for persistence)');
-  }
-  return cachedSecret;
-}
-
 /**
- * JWT authentication middleware.
+ * JWT authentication middleware using @shipooor/walletauth.
  * Non-blocking: if no Bearer token is present, passes through to allow
  * API key fallback via authMiddleware. Rejects only on invalid/expired tokens.
  */
@@ -37,20 +21,32 @@ export async function jwtAuthMiddleware(req: Request, res: Response, next: NextF
   }
 
   const token = authHeader.slice(7);
-  try {
-    const { payload } = await jwtVerify(token, getJwtSecret(), {
-      issuer: 'saaafe',
-      audience: 'saaafe-api',
-      algorithms: ['HS256'],
-    });
-    const address = payload.address;
-    if (typeof address !== 'string' || !/^0x[0-9a-fA-F]{40}$/.test(address)) {
-      res.status(401).json({ error: 'Invalid or expired token' });
-      return;
-    }
-    req.walletAddress = address.toLowerCase();
+  const secret = process.env.SAAAFE_JWT_SECRET;
+  if (!secret) {
+    console.warn('[saaafe] Bearer token present but SAAAFE_JWT_SECRET not configured — skipping JWT validation');
     next();
+    return;
+  }
+
+  let payload;
+  try {
+    payload = await validateToken(token, secret);
   } catch {
     res.status(401).json({ error: 'Invalid or expired token' });
+    return;
   }
+
+  if (!payload || !payload.address) {
+    res.status(401).json({ error: 'Invalid or expired token' });
+    return;
+  }
+
+  const address = payload.address;
+  if (typeof address !== 'string' || !/^0x[0-9a-fA-F]{40}$/.test(address)) {
+    res.status(401).json({ error: 'Invalid or expired token' });
+    return;
+  }
+
+  req.walletAddress = address.toLowerCase();
+  next();
 }

@@ -4,9 +4,11 @@ export interface ChallengeRequest {
   address: string;
 }
 
-/** Server-issued challenge with expiration. */
+/** Server-issued challenge with nonce and expiration. */
 export interface ChallengeResponse {
-  /** Challenge string to sign (format: saaafe-auth:<uuid>:<timestamp>). */
+  /** Nonce string the client must sign with their wallet's private key. */
+  nonce: string;
+  /** HMAC-signed challenge blob — opaque, sent back as-is during verify. */
   challenge: string;
   /** Expiration timestamp in ms since epoch. */
   expiresAt: number;
@@ -16,9 +18,9 @@ export interface ChallengeResponse {
 export interface VerifyRequest {
   /** EVM wallet address (must match the challenge request). */
   address: string;
-  /** EIP-191 personal_sign signature of the challenge string. */
+  /** EIP-191 personal_sign signature of the nonce string. */
   signature: string;
-  /** The challenge string received from /auth/challenge. */
+  /** The HMAC-signed challenge blob received from /auth/challenge. */
   challenge: string;
 }
 

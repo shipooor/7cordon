@@ -12,7 +12,6 @@ describe('GuardianApiClient', () => {
     });
 
     it('accepts ::1 HTTP URL', () => {
-      // Node's URL parser returns '[::1]' as hostname for IPv6
       expect(() => new GuardianApiClient('http://[::1]:3000')).not.toThrow();
     });
 
@@ -34,7 +33,6 @@ describe('GuardianApiClient', () => {
 
     it('strips trailing slashes', () => {
       const client = new GuardianApiClient('http://localhost:3000///');
-      // Access private field via any for testing
       expect((client as any).baseUrl).toBe('http://localhost:3000');
     });
   });
@@ -69,12 +67,12 @@ describe('GuardianApiClient', () => {
       const mockSignFn = vi.fn().mockResolvedValue('0xsignature');
       client.setWalletAuth('0x1234567890abcdef1234567890abcdef12345678', mockSignFn);
 
-      const challenge = 'saaafe-auth:550e8400-e29b-41d4-a716-446655440000:1710000000000';
+      const nonce = 'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4';
 
-      // Mock /auth/challenge
+      // Mock /auth/challenge — walletauth returns { nonce, challenge, expiresAt }
       fetchSpy.mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ challenge, expiresAt: Date.now() + 300000 }),
+        json: async () => ({ nonce, challenge: 'opaque.hmac.blob', expiresAt: Date.now() + 300000 }),
       });
       // Mock /auth/verify
       fetchSpy.mockResolvedValueOnce({
@@ -84,39 +82,54 @@ describe('GuardianApiClient', () => {
 
       await client.authenticate();
 
-      // Verify challenge was requested
       expect(fetchSpy).toHaveBeenCalledTimes(2);
       expect(fetchSpy.mock.calls[0][0]).toBe('http://localhost:3000/auth/challenge');
 
-      // Verify challenge was signed
-      expect(mockSignFn).toHaveBeenCalledWith(challenge);
+      // Client signs the nonce (not the challenge blob)
+      expect(mockSignFn).toHaveBeenCalledWith(nonce);
 
-      // Verify JWT was stored
+      // Verify body sent to /auth/verify includes the challenge blob
+      const verifyBody = JSON.parse(fetchSpy.mock.calls[1][1].body);
+      expect(verifyBody.signature).toBe('0xsignature');
+      expect(verifyBody.challenge).toBe('opaque.hmac.blob');
+
       expect((client as any).jwt).toBe('jwt-token-here');
     });
 
-    it('rejects invalid challenge format (rogue server defense)', async () => {
+    it('rejects invalid nonce format (rogue server defense)', async () => {
       const mockSignFn = vi.fn();
       client.setWalletAuth('0x1234567890abcdef1234567890abcdef12345678', mockSignFn);
 
-      // Server returns a non-saaafe challenge (e.g., trying to trick wallet into signing a tx)
+      // Server returns a non-hex nonce (e.g., trying to trick wallet into signing something)
       fetchSpy.mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ challenge: 'sign-this-evil-transaction', expiresAt: Date.now() + 300000 }),
+        json: async () => ({ nonce: 'sign-this-evil-transaction', challenge: 'blob', expiresAt: Date.now() + 300000 }),
       });
 
       await expect(client.authenticate()).rejects.toThrow('Received invalid challenge format from server');
-      // Sign function should NOT have been called
       expect(mockSignFn).not.toHaveBeenCalled();
     });
 
-    it('rejects uppercase challenge format', async () => {
+    it('rejects uppercase nonce format', async () => {
       const mockSignFn = vi.fn();
       client.setWalletAuth('0x1234567890abcdef1234567890abcdef12345678', mockSignFn);
 
       fetchSpy.mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ challenge: 'Saaafe-Auth:550e8400-e29b-41d4-a716-446655440000:1710000000000', expiresAt: Date.now() + 300000 }),
+        json: async () => ({ nonce: 'A1B2C3D4E5F6A1B2C3D4E5F6A1B2C3D4', challenge: 'blob', expiresAt: Date.now() + 300000 }),
+      });
+
+      await expect(client.authenticate()).rejects.toThrow('Received invalid challenge format from server');
+      expect(mockSignFn).not.toHaveBeenCalled();
+    });
+
+    it('rejects empty nonce', async () => {
+      const mockSignFn = vi.fn();
+      client.setWalletAuth('0x1234567890abcdef1234567890abcdef12345678', mockSignFn);
+
+      fetchSpy.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ nonce: '', challenge: 'blob', expiresAt: Date.now() + 300000 }),
       });
 
       await expect(client.authenticate()).rejects.toThrow('Received invalid challenge format from server');
@@ -134,9 +147,10 @@ describe('GuardianApiClient', () => {
     it('throws on verify request failure', async () => {
       client.setWalletAuth('0x1234567890abcdef1234567890abcdef12345678', async () => '0x');
 
+      const nonce = 'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4';
       fetchSpy.mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ challenge: 'saaafe-auth:a1b2c3d4-e5f6-7890-abcd-ef1234567890:1234567890', expiresAt: Date.now() + 300000 }),
+        json: async () => ({ nonce, challenge: 'blob', expiresAt: Date.now() + 300000 }),
       });
       fetchSpy.mockResolvedValueOnce({ ok: false, status: 401 });
 
@@ -147,17 +161,16 @@ describe('GuardianApiClient', () => {
       const signFn = vi.fn().mockResolvedValue('0xsig');
       client.setWalletAuth('0x1234567890abcdef1234567890abcdef12345678', signFn);
 
-      const challenge = 'saaafe-auth:a1b2c3d4-e5f6-7890-abcd-ef1234567890:1234567890';
+      const nonce = 'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4';
 
       fetchSpy.mockImplementation(async (url: string) => {
         if (url.includes('/challenge')) {
           await new Promise((r) => setTimeout(r, 50));
-          return { ok: true, json: async () => ({ challenge, expiresAt: Date.now() + 300000 }) };
+          return { ok: true, json: async () => ({ nonce, challenge: 'blob', expiresAt: Date.now() + 300000 }) };
         }
         return { ok: true, json: async () => ({ token: 'jwt', expiresAt: Date.now() + 86400000 }) };
       });
 
-      // Fire two concurrent auth attempts
       const p1 = client.authenticate();
       const p2 = client.authenticate();
 
@@ -208,7 +221,6 @@ describe('GuardianApiClient', () => {
 
     it('uses Bearer header when JWT is available', async () => {
       const client = new GuardianApiClient('http://localhost:3000');
-      // Manually set JWT via authenticate mock
       (client as any).jwt = 'my-jwt-token';
 
       fetchSpy.mockResolvedValueOnce({
@@ -239,7 +251,7 @@ describe('GuardianApiClient', () => {
       const signFn = vi.fn().mockResolvedValue('0xsig');
       client.setWalletAuth('0x1234567890abcdef1234567890abcdef12345678', signFn);
 
-      const challenge = 'saaafe-auth:a1b2c3d4-e5f6-7890-abcd-ef1234567890:1234567890';
+      const nonce = 'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4';
       let callCount = 0;
 
       fetchSpy.mockImplementation(async (url: string) => {
@@ -248,12 +260,11 @@ describe('GuardianApiClient', () => {
           return { ok: false, status: 401 };
         }
         if (url.includes('/challenge')) {
-          return { ok: true, json: async () => ({ challenge, expiresAt: Date.now() + 300000 }) };
+          return { ok: true, json: async () => ({ nonce, challenge: 'blob', expiresAt: Date.now() + 300000 }) };
         }
         if (url.includes('/verify')) {
           return { ok: true, json: async () => ({ token: 'new-jwt', expiresAt: Date.now() + 86400000 }) };
         }
-        // Retry analyze succeeds
         return {
           ok: true,
           json: async () => ({
@@ -400,7 +411,6 @@ describe('GuardianApiClient', () => {
 
       fetchSpy.mockRejectedValueOnce(new Error('network down'));
 
-      // Should not throw
       await expect(
         client.reportResult(
           { id: 'req-1', action: 'send', params: { chain: 'arbitrum', amount: '1' }, timestamp: Date.now() } as any,

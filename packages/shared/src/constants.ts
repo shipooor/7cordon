@@ -85,6 +85,3 @@ export const SEPOLIA_CONTRACTS = {
   USDT: '0x7169D38820dfd117C3FA1f22a697dBA58d90BA06',
 };
 
-// Auth constants
-export const AUTH_CHALLENGE_TTL_MS = 5 * 60 * 1000; // 5 minutes
-export const AUTH_JWT_EXPIRY = '24h';

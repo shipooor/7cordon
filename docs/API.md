@@ -20,15 +20,18 @@ PORT=3001 npm run dev:api
 
 ```bash
 # Required
-ANTHROPIC_API_KEY=sk-ant-...          # Claude API key
-SAAAFE_API_KEY=your-shared-secret   # API authentication
+ANTHROPIC_API_KEY=sk-ant-...            # Claude API key
+
+# Auth (at least one required)
+SAAAFE_JWT_SECRET=your-secret-here      # JWT signing secret for wallet auth (min 16 chars)
+SAAAFE_API_KEY=your-shared-secret       # Static API key (fallback auth)
 
 # Optional
 PORT=3000                               # Server port (default: 3000)
 NODE_ENV=development|production         # Environment (default: development)
-CORS_ORIGIN=http://localhost:4000      # CORS origin (comma-separated allowed)
-ARBISCAN_API_KEY=...                   # Arbiscan API key for contract source
-ANTHROPIC_BASE_URL=...                 # Custom Anthropic endpoint (optional)
+CORS_ORIGIN=http://localhost:4000       # CORS origin (comma-separated allowed)
+ARBISCAN_API_KEY=...                    # Arbiscan API key for contract source
+ANTHROPIC_BASE_URL=...                  # Custom Anthropic endpoint (optional)
 ```
 
 ## Authentication
@@ -39,12 +42,12 @@ Two authentication methods are supported. Both can be used on protected endpoint
 
 The SDK uses the agent's WDK wallet as its identity — zero-config, no API keys needed.
 
-**Flow**:
+**Flow** (powered by [`@shipooor/walletauth`](https://www.npmjs.com/package/@shipooor/walletauth)):
 1. SDK requests a challenge: `POST /auth/challenge` (body: `{ "address": "0x..." }`)
-2. Server returns a nonce (`saaafe-auth:<uuid>:<timestamp>`)
-3. SDK signs the nonce with the agent's EVM wallet (EIP-191)
-4. SDK sends signature: `POST /auth/verify`
-5. Server verifies signature, issues JWT (24h expiry)
+2. Server returns `{ nonce, challenge, expiresAt }` — nonce is what client signs, challenge is an opaque HMAC-signed blob
+3. SDK signs the nonce with the agent's EVM wallet (EIP-191 personal_sign)
+4. SDK sends `POST /auth/verify` with `{ address, signature, challenge }`
+5. Server verifies HMAC integrity + wallet signature (stateless, no nonce store), issues JWT (24h expiry)
 6. SDK uses `Authorization: Bearer <jwt>` for subsequent requests
 
 ### API Key (Fallback)
@@ -348,7 +351,7 @@ Active policy configuration and budget status.
 
 SDK reports the final analysis decision (including L0 blocks that never reach `/analyze`).
 
-**Authentication**: Required (`X-Saaafe-Key` header)
+**Authentication**: Required (`Authorization: Bearer <jwt>` or `X-Saaafe-Key` header)
 
 **Rate limit**: 60 req/min
 
@@ -515,7 +518,7 @@ type ThreatType =
 | Status | Error | Cause | Resolution |
 |--------|-------|-------|-----------|
 | 400 | Invalid request schema | Missing/malformed field | Check request format against schema |
-| 401 | Unauthorized | Missing/invalid API key | Set `X-Saaafe-Key` header |
+| 401 | Unauthorized | Missing/invalid authentication | Provide a valid JWT or `X-Saaafe-Key` header |
 | 429 | Too many requests | Rate limit exceeded | Wait and retry |
 | 500 | Analysis failed | Internal server error | Check logs, retry |
 

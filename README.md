@@ -81,8 +81,8 @@ saaafe/
 
 - **Keys never leave the SDK** — seed phrase consumed during init, not stored
 - **Dual authentication** — wallet-based JWT (primary) or API key with SHA-256 timing-safe comparison (fallback)
-- **Challenge-response auth** — EIP-191 wallet signatures, single-use nonces, replay protection
-- **JWT security** — HS256, issuer/audience validation, 24h expiry, production-enforced secret
+- **Challenge-response auth** — stateless HMAC-signed challenges via [`@shipooor/walletauth`](https://www.npmjs.com/package/@shipooor/walletauth), EIP-191 wallet signatures
+- **JWT security** — HS256, 24h expiry, production-enforced secret
 - **LLM response validation** — schema validation, high/critical always forces block
 - **Input sanitization** — regex-based injection detection on all user-supplied fields
 - **Body size limit** — 50KB cap on API requests
@@ -139,10 +139,10 @@ saaafe supports two authentication methods:
 **Wallet Auth (recommended)** — zero-config, the agent's WDK wallet is its identity:
 ```
 1. SDK calls POST /auth/challenge with wallet address
-2. Server returns a unique challenge string
-3. SDK signs the challenge with the wallet's private key (EIP-191)
-4. SDK calls POST /auth/verify with the signature
-5. Server verifies signature via ecrecover, issues a JWT
+2. Server returns a nonce + HMAC-signed challenge blob
+3. SDK signs the nonce with the wallet's private key (EIP-191)
+4. SDK calls POST /auth/verify with { signature, challenge }
+5. Server verifies HMAC + wallet signature (stateless), issues a JWT
 6. All subsequent requests use the JWT (Authorization: Bearer <token>)
 ```
 
@@ -166,7 +166,8 @@ Request a challenge nonce for wallet-based authentication.
 **Response**:
 ```json
 {
-  "challenge": "saaafe-auth:550e8400-...:1710000000000",
+  "nonce": "a1b2c3d4e5f6...",
+  "challenge": "<opaque HMAC-signed blob>",
   "expiresAt": 1710000300000
 }
 ```
@@ -180,7 +181,7 @@ Verify a signed challenge and receive a JWT.
 {
   "address": "0x1234...abcd",
   "signature": "0xabcd...1234",
-  "challenge": "saaafe-auth:550e8400-...:1710000000000"
+  "challenge": "<opaque HMAC-signed blob from /auth/challenge>"
 }
 ```
 
