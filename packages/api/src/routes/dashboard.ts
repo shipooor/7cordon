@@ -86,7 +86,9 @@ dashboardRouter.post('/report', jwtAuthMiddleware, authMiddleware, (req, res) =>
     fromToken: typeof r.fromToken === 'string' ? r.fromToken.slice(0, 20) : undefined,
     toToken: typeof r.toToken === 'string' ? r.toToken.slice(0, 20) : undefined,
     toAddress: typeof r.toAddress === 'string' ? r.toAddress.slice(0, 42) : undefined,
-    agentReasoning: typeof r.agentReasoning === 'string' ? r.agentReasoning.slice(0, 1000) : undefined,
+    agentReasoning: typeof r.agentReasoning === 'string'
+      ? r.agentReasoning.replace(/[\u0000-\u001F\u200B-\u200F\u2028-\u202F\u2060-\u206F\uFEFF]/g, '').slice(0, 1000)
+      : undefined,
   });
 
   res.json({ ok: true });

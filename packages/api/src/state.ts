@@ -66,7 +66,9 @@ class ServerState {
       fromToken: request.params.fromToken,
       toToken: request.params.toToken,
       toAddress: request.params.toAddress,
-      agentReasoning: request.reasoning,
+      agentReasoning: request.reasoning
+        ? request.reasoning.replace(/[\u0000-\u001F\u200B-\u200F\u2028-\u202F\u2060-\u206F\uFEFF]/g, '').slice(0, 1000)
+        : undefined,
     });
     this.entryIndex.set(request.id, idx);
 

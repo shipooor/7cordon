@@ -11,7 +11,8 @@ if (!process.env.ANTHROPIC_API_KEY) {
   process.exit(1);
 }
 if (!process.env.SAAAFE_API_KEY && !process.env.SAAAFE_JWT_SECRET) {
-  console.warn('[saaafe] WARNING: Neither SAAAFE_API_KEY nor SAAAFE_JWT_SECRET is set. Configure at least one auth method.');
+  console.error('[saaafe] FATAL: Neither SAAAFE_API_KEY nor SAAAFE_JWT_SECRET is set. Configure at least one auth method.');
+  process.exit(1);
 }
 if (process.env.SAAAFE_JWT_SECRET && process.env.SAAAFE_JWT_SECRET.length < 16) {
   console.warn('[saaafe] WARNING: SAAAFE_JWT_SECRET is shorter than 16 characters. Use a strong secret (openssl rand -base64 32).');
