@@ -37,7 +37,7 @@ import type { TransactionRequest, TransactionAction, Chain } from '@saaafe/share
 import { VALID_ACTIONS, VALID_CHAINS } from '@saaafe/shared';
 
 const API_URL = process.env.API_URL || process.env.VITE_API_URL || 'http://localhost:3000';
-const API_KEY = process.env.SAAAFE_API_KEY || '';
+const API_KEY = process.env.SAAAFE_API_KEY;
 const EVM_RPC = process.env.EVM_RPC_URL || 'https://arb-sepolia.g.alchemy.com/v2/demo';
 if (!process.env.EVM_RPC_URL) {
   console.error('[MCP] WARNING: EVM_RPC_URL not set — using Alchemy demo endpoint (rate-limited)');
