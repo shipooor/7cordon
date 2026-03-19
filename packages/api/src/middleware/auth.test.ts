@@ -19,11 +19,11 @@ function mockReqResNext(headers: Record<string, string> = {}, walletAddress?: st
 
 describe('authMiddleware', () => {
   beforeEach(() => {
-    process.env.SAAAFE_API_KEY = REAL_KEY;
+    process.env.CORDON7_API_KEY = REAL_KEY;
   });
 
   afterEach(() => {
-    delete process.env.SAAAFE_API_KEY;
+    delete process.env.CORDON7_API_KEY;
   });
 
   it('passes through when walletAddress is already set (JWT auth)', () => {
@@ -35,7 +35,7 @@ describe('authMiddleware', () => {
   });
 
   it('passes with valid API key', () => {
-    const { req, res, next } = mockReqResNext({ 'x-saaafe-key': REAL_KEY });
+    const { req, res, next } = mockReqResNext({ 'x-cordon7-key': REAL_KEY });
     authMiddleware(req, res, next);
 
     expect(next).toHaveBeenCalled();
@@ -43,7 +43,7 @@ describe('authMiddleware', () => {
   });
 
   it('rejects invalid API key', () => {
-    const { req, res, next } = mockReqResNext({ 'x-saaafe-key': 'wrong-key' });
+    const { req, res, next } = mockReqResNext({ 'x-cordon7-key': 'wrong-key' });
     authMiddleware(req, res, next);
 
     expect(next).not.toHaveBeenCalled();
@@ -60,8 +60,8 @@ describe('authMiddleware', () => {
   });
 
   it('rejects when no API key configured on server', () => {
-    delete process.env.SAAAFE_API_KEY;
-    const { req, res, next } = mockReqResNext({ 'x-saaafe-key': 'any-key' });
+    delete process.env.CORDON7_API_KEY;
+    const { req, res, next } = mockReqResNext({ 'x-cordon7-key': 'any-key' });
     authMiddleware(req, res, next);
 
     expect(next).not.toHaveBeenCalled();

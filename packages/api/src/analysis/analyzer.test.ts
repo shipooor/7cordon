@@ -5,7 +5,7 @@ import { Level2Analyzer } from './level2.js';
 import * as goplus from '../data/goplus.js';
 import * as defillama from '../data/defillama.js';
 import * as arbiscan from '../data/arbiscan.js';
-import type { TransactionRequest, AnalysisResult, RiskLevel } from '@saaafe/shared';
+import type { TransactionRequest, AnalysisResult, RiskLevel } from '@7cordon/shared';
 
 // Mock dependencies
 vi.mock('../data/goplus.js');

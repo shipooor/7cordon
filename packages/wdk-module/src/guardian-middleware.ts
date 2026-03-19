@@ -1,12 +1,12 @@
 /**
- * saaafe Middleware
+ * 7cordon Middleware
  *
  * Native WDK middleware that intercepts sendTransaction() and transfer()
  * calls, runs them through the Guardian analysis pipeline, and blocks
  * risky transactions before they reach the blockchain.
  *
  * Usage:
- *   import { guardianMiddleware } from '@saaafe/wdk-module'
+ *   import { guardianMiddleware } from '@7cordon/wdk-module'
  *
  *   const wdk = new WDK(seedPhrase)
  *     .registerWallet('ethereum', WalletManagerEvm, { provider: '...' })
@@ -22,9 +22,9 @@ import type {
   Chain,
   AnalysisResult,
   PolicyConfig,
-} from '@saaafe/shared';
-import { GuardianApiClient } from '@saaafe/sdk';
-import { PolicyEngine } from '@saaafe/sdk';
+} from '@7cordon/shared';
+import { GuardianApiClient } from '@7cordon/sdk';
+import { PolicyEngine } from '@7cordon/sdk';
 import { GuardianBlockedError } from './errors.js';
 
 /** WDK Transaction shape (from @tetherto/wdk-wallet) */
@@ -53,7 +53,7 @@ export interface GuardianAnalysisCallback {
 }
 
 export interface GuardianMiddlewareConfig {
-  /** saaafe API server URL */
+  /** 7cordon API server URL */
   apiUrl: string;
   /** API authentication key */
   apiKey: string;

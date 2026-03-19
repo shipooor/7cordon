@@ -1,5 +1,5 @@
 /**
- * Guardian — Main orchestrator for the saaafe SDK.
+ * Guardian — Main orchestrator for the 7cordon SDK.
  *
  * Receives transaction requests from AI agents, evaluates them through
  * the policy engine (L0), delegates to the remote AI API (L1/L2),
@@ -19,8 +19,8 @@ import type {
   TransactionResult,
   AnalysisResult,
   AuditEntry,
-} from '@saaafe/shared';
-import { DEFAULT_POLICY } from '@saaafe/shared';
+} from '@7cordon/shared';
+import { DEFAULT_POLICY } from '@7cordon/shared';
 import { WalletManager } from './wdk/wallet-manager.js';
 import type { Erc4337Config } from './wdk/wallet-manager.js';
 import { SparkPayer } from './wdk/spark-payer.js';
@@ -123,7 +123,7 @@ export class Guardian {
       try {
         await this.apiClient.authenticate();
       } catch (err) {
-        console.warn('[saaafe] Wallet auth failed, will retry on first request:', (err as Error).message);
+        console.warn('[7cordon] Wallet auth failed, will retry on first request:', (err as Error).message);
       }
     }
 

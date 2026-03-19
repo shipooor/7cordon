@@ -7,7 +7,7 @@ import {
 } from './sanitize.js';
 import { buildL1Prompt } from './level1.js';
 import { buildL2Prompt } from './level2.js';
-import type { TransactionRequest, GoPlusData, ProtocolData } from '@saaafe/shared';
+import type { TransactionRequest, GoPlusData, ProtocolData } from '@7cordon/shared';
 
 describe('Sanitization Functions', () => {
   describe('sanitizeReasoning', () => {

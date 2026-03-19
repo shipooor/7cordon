@@ -1,12 +1,12 @@
 /**
  * TrustScorer — Progressive agent trust score
  *
- * Computes stats from audit log, delegates formula to @saaafe/shared.
+ * Computes stats from audit log, delegates formula to @7cordon/shared.
  * Higher score = more autonomy (higher limits, fewer manual approvals).
  */
 
-import type { TrustScore, TrustStats, AuditEntry } from '@saaafe/shared';
-import { calculateTrustScore } from '@saaafe/shared';
+import type { TrustScore, TrustStats, AuditEntry } from '@7cordon/shared';
+import { calculateTrustScore } from '@7cordon/shared';
 
 export class TrustScorer {
   /** Calculate trust score from audit entries. */

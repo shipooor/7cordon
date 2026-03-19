@@ -21,9 +21,9 @@ export async function jwtAuthMiddleware(req: Request, res: Response, next: NextF
   }
 
   const token = authHeader.slice(7);
-  const secret = process.env.SAAAFE_JWT_SECRET;
+  const secret = process.env.CORDON7_JWT_SECRET;
   if (!secret) {
-    console.warn('[saaafe] Bearer token present but SAAAFE_JWT_SECRET not configured — skipping JWT validation');
+    console.warn('[7cordon] Bearer token present but CORDON7_JWT_SECRET not configured — skipping JWT validation');
     next();
     return;
   }

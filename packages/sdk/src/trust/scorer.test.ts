@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { TrustScorer } from './scorer.js';
-import type { AuditEntry } from '@saaafe/shared';
+import type { AuditEntry } from '@7cordon/shared';
 
 describe('TrustScorer', () => {
   const createAuditEntry = (overrides: Partial<AuditEntry> = {}): AuditEntry => ({

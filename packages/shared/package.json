@@ -1,15 +1,15 @@
 {
-  "name": "@saaafe/shared",
+  "name": "@7cordon/shared",
   "version": "0.1.0",
-  "description": "Shared types, constants, and validation for saaafe",
+  "description": "Shared types, constants, and validation for 7cordon",
   "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/shipooor/saaafe.git",
+    "url": "https://github.com/shipooor/7cordon.git",
     "directory": "packages/shared"
   },
-  "keywords": ["saaafe", "trust-safety", "types", "wdk", "tether"],
+  "keywords": ["7cordon", "trust-safety", "types", "wdk", "tether"],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {

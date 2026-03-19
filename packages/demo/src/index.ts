@@ -1,7 +1,7 @@
 /**
- * saaafe — Live Demo
+ * 7cordon — Live Demo
  *
- * Runs 6 real scenarios through the saaafe analysis pipeline.
+ * Runs 6 real scenarios through the 7cordon analysis pipeline.
  * Requires: API server running, ANTHROPIC_API_KEY set.
  *
  * Usage:
@@ -15,8 +15,8 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
-import { createGuardian } from '@saaafe/sdk';
-import type { GuardianConfig, Erc4337Config } from '@saaafe/sdk';
+import { createGuardian } from '@7cordon/sdk';
+import type { GuardianConfig, Erc4337Config } from '@7cordon/sdk';
 import { scenarios } from './scenarios.js';
 import {
   printBanner,
@@ -29,17 +29,17 @@ import {
 } from './printer.js';
 
 const API_URL = process.env.API_URL || process.env.VITE_API_URL || 'http://localhost:3000';
-const API_KEY = process.env.SAAAFE_API_KEY;
+const API_KEY = process.env.CORDON7_API_KEY;
 const SEED_PHRASE = process.env.WDK_SEED_PHRASE;
 const EVM_RPC = process.env.EVM_RPC_URL || 'https://arb-sepolia.g.alchemy.com/v2/demo';
-const SPARK_ADDRESS = process.env.SAAAFE_SPARK_ADDRESS;
+const SPARK_ADDRESS = process.env.CORDON7_SPARK_ADDRESS;
 const ENABLE_SPARK = process.env.ENABLE_SPARK_PAYMENTS === 'true' && !!SPARK_ADDRESS;
 const BUNDLER_URL = process.env.ERC4337_BUNDLER_URL;
 const PAYMASTER_URL = process.env.ERC4337_PAYMASTER_URL;
 
 const USE_WALLET_AUTH = !API_KEY;
-if (!API_KEY && !process.env.SAAAFE_JWT_SECRET) {
-  console.error('ERROR: Set SAAAFE_API_KEY (API key auth) or SAAAFE_JWT_SECRET (wallet auth)');
+if (!API_KEY && !process.env.CORDON7_JWT_SECRET) {
+  console.error('ERROR: Set CORDON7_API_KEY (API key auth) or CORDON7_JWT_SECRET (wallet auth)');
   process.exit(1);
 }
 
@@ -51,7 +51,7 @@ async function main() {
     const healthRes = await fetch(`${API_URL}/health`, { signal: AbortSignal.timeout(5000) });
     if (!healthRes.ok) throw new Error(`HTTP ${healthRes.status}`);
   } catch {
-    console.error(`\n  ERROR: saaafe API not reachable at ${API_URL}`);
+    console.error(`\n  ERROR: 7cordon API not reachable at ${API_URL}`);
     console.error('  Start the API server first: npm run dev:api\n');
     process.exit(1);
   }

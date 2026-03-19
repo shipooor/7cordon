@@ -34,7 +34,7 @@
     if (pRes.status === 'fulfilled') policy = pRes.value;
 
     const allFailed = [sRes, eRes, tRes, pRes].every(r => r.status === 'rejected');
-    error = allFailed ? 'Unable to reach saaafe API' : null;
+    error = allFailed ? 'Unable to reach 7cordon API' : null;
     loading = false;
   }
 
@@ -80,13 +80,13 @@
 {#if loading}
   <div class="loading-state">
     <div class="spinner"></div>
-    <p>Connecting to saaafe API…</p>
+    <p>Connecting to 7cordon API…</p>
   </div>
 {:else}
 
 {#if error}
   <div class="error-banner">
-    <span>Unable to connect to saaafe API</span>
+    <span>Unable to connect to 7cordon API</span>
     <span class="error-detail">{error}</span>
   </div>
 {/if}
@@ -210,7 +210,7 @@
             <span class="entry-risk" style="color: {riskColors[entry.riskLevel] || 'var(--color-text-muted)'}">{entry.riskLevel}</span>
           </div>
           <div class="entry-body">
-            <span class="entry-explanation"><span class="reasoning-label">saaafe:</span> {entry.explanation.slice(0, 150)}{entry.explanation.length > 150 ? '…' : ''}</span>
+            <span class="entry-explanation"><span class="reasoning-label">7cordon:</span> {entry.explanation.slice(0, 150)}{entry.explanation.length > 150 ? '…' : ''}</span>
           </div>
           <div class="entry-footer">
             <span class="entry-level">{entry.level}</span>

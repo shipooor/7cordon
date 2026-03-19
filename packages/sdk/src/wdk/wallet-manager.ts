@@ -6,7 +6,7 @@
  * Keys never leave this module. Seed phrase is cleared after initialization.
  */
 
-import type { Chain } from '@saaafe/shared';
+import type { Chain } from '@7cordon/shared';
 
 /** Minimal typed interface for WDK EVM account (avoids `any`) */
 interface WdkEvmAccount {

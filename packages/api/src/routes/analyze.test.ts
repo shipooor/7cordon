@@ -54,16 +54,16 @@ let savedApiKey: string | undefined;
 
 beforeAll(() => {
   // Set API key for auth tests
-  savedApiKey = process.env.SAAAFE_API_KEY;
-  process.env.SAAAFE_API_KEY = 'test-api-key-123';
+  savedApiKey = process.env.CORDON7_API_KEY;
+  process.env.CORDON7_API_KEY = 'test-api-key-123';
 });
 
 afterAll(() => {
   // Restore original API key
   if (savedApiKey !== undefined) {
-    process.env.SAAAFE_API_KEY = savedApiKey;
+    process.env.CORDON7_API_KEY = savedApiKey;
   } else {
-    delete process.env.SAAAFE_API_KEY;
+    delete process.env.CORDON7_API_KEY;
   }
 });
 
@@ -95,7 +95,7 @@ describe('POST /analyze', () => {
             params: { chain: 'ethereum', amount: '10.5' },
           },
         },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       // Should pass auth and validation. Analysis may fail (500) without Anthropic key,
@@ -114,7 +114,7 @@ describe('POST /analyze', () => {
             params: { chain: 'ethereum', amount: '10.5' },
           },
         },
-        { 'X-Saaafe-Key': 'wrong-key' }
+        { 'X-Cordon7-Key': 'wrong-key' }
       );
 
       expect(res.status).toBe(401);
@@ -134,7 +134,7 @@ describe('POST /analyze', () => {
         app,
         '/',
         { request: validRequest },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect(res.status).toBe(400);
@@ -146,7 +146,7 @@ describe('POST /analyze', () => {
         app,
         '/',
         { request: { ...validRequest, id: 12345 } },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect(res.status).toBe(400);
@@ -158,7 +158,7 @@ describe('POST /analyze', () => {
         app,
         '/',
         { request: { ...validRequest, id: 'not-a-uuid' } },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect(res.status).toBe(400);
@@ -170,7 +170,7 @@ describe('POST /analyze', () => {
         app,
         '/',
         { request: { ...validRequest, id: '550e8400-e29b-41d4-a716-' } },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect(res.status).toBe(400);
@@ -182,7 +182,7 @@ describe('POST /analyze', () => {
         app,
         '/',
         { request: { ...validRequest, id: '550e8400-e29b-41d4-a716-446655440000' } },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect([200, 500]).toContain(res.status);
@@ -193,7 +193,7 @@ describe('POST /analyze', () => {
         app,
         '/',
         { request: { ...validRequest, id: '550E8400-E29B-41D4-A716-446655440000' } },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect([200, 500]).toContain(res.status);
@@ -212,7 +212,7 @@ describe('POST /analyze', () => {
         app,
         '/',
         { request: baseRequest },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect(res.status).toBe(400);
@@ -224,7 +224,7 @@ describe('POST /analyze', () => {
         app,
         '/',
         { request: { ...baseRequest, action: 'invalid_action' } },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect(res.status).toBe(400);
@@ -240,7 +240,7 @@ describe('POST /analyze', () => {
           app,
           '/',
           { request: { ...baseRequest, action } },
-          { 'X-Saaafe-Key': 'test-api-key-123' }
+          { 'X-Cordon7-Key': 'test-api-key-123' }
         );
 
         expect([200, 500]).toContain(res.status);
@@ -252,7 +252,7 @@ describe('POST /analyze', () => {
         app,
         '/',
         { request: { ...baseRequest, action: 'SEND' } },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect(res.status).toBe(400);
@@ -271,7 +271,7 @@ describe('POST /analyze', () => {
         app,
         '/',
         { request: baseRequest },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect(res.status).toBe(400);
@@ -283,7 +283,7 @@ describe('POST /analyze', () => {
         app,
         '/',
         { request: { ...baseRequest, params: 'invalid' } },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect(res.status).toBe(400);
@@ -304,7 +304,7 @@ describe('POST /analyze', () => {
         app,
         '/',
         { request: baseRequest },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect(res.status).toBe(400);
@@ -316,7 +316,7 @@ describe('POST /analyze', () => {
         app,
         '/',
         { request: { ...baseRequest, params: { chain: 'ethereum', amount: 10.5 } } },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect(res.status).toBe(400);
@@ -328,7 +328,7 @@ describe('POST /analyze', () => {
         app,
         '/',
         { request: { ...baseRequest, params: { chain: 'ethereum', amount: 'abc' } } },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect(res.status).toBe(400);
@@ -340,7 +340,7 @@ describe('POST /analyze', () => {
         app,
         '/',
         { request: { ...baseRequest, params: { chain: 'ethereum', amount: '1e10' } } },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect(res.status).toBe(400);
@@ -352,7 +352,7 @@ describe('POST /analyze', () => {
         app,
         '/',
         { request: { ...baseRequest, params: { chain: 'ethereum', amount: '-10.5' } } },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect(res.status).toBe(400);
@@ -364,7 +364,7 @@ describe('POST /analyze', () => {
         app,
         '/',
         { request: { ...baseRequest, params: { chain: 'ethereum', amount: '10' } } },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect([200, 500]).toContain(res.status);
@@ -375,7 +375,7 @@ describe('POST /analyze', () => {
         app,
         '/',
         { request: { ...baseRequest, params: { chain: 'ethereum', amount: '10.5' } } },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect([200, 500]).toContain(res.status);
@@ -386,7 +386,7 @@ describe('POST /analyze', () => {
         app,
         '/',
         { request: { ...baseRequest, params: { chain: 'ethereum', amount: '123456789.987654321' } } },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect([200, 500]).toContain(res.status);
@@ -397,7 +397,7 @@ describe('POST /analyze', () => {
         app,
         '/',
         { request: { ...baseRequest, params: { chain: 'ethereum', amount: '0' } } },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect([200, 500]).toContain(res.status);
@@ -408,7 +408,7 @@ describe('POST /analyze', () => {
         app,
         '/',
         { request: { ...baseRequest, params: { chain: 'ethereum', amount: '0.000001' } } },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect([200, 500]).toContain(res.status);
@@ -428,7 +428,7 @@ describe('POST /analyze', () => {
         app,
         '/',
         { request: baseRequest },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect(res.status).toBe(400);
@@ -440,7 +440,7 @@ describe('POST /analyze', () => {
         app,
         '/',
         { request: { ...baseRequest, params: { ...baseRequest.params, chain: 'invalid_chain' } } },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect(res.status).toBe(400);
@@ -456,7 +456,7 @@ describe('POST /analyze', () => {
           app,
           '/',
           { request: { ...baseRequest, params: { ...baseRequest.params, chain } } },
-          { 'X-Saaafe-Key': 'test-api-key-123' }
+          { 'X-Cordon7-Key': 'test-api-key-123' }
         );
 
         expect([200, 500]).toContain(res.status);
@@ -468,7 +468,7 @@ describe('POST /analyze', () => {
         app,
         '/',
         { request: { ...baseRequest, params: { ...baseRequest.params, chain: 'ETHEREUM' } } },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect(res.status).toBe(400);
@@ -488,7 +488,7 @@ describe('POST /analyze', () => {
         app,
         '/',
         { request: baseRequest },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect([200, 500]).toContain(res.status);
@@ -499,7 +499,7 @@ describe('POST /analyze', () => {
         app,
         '/',
         { request: baseRequest, trustScore: null },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       // null is not === undefined, so null will fail the type check
@@ -512,7 +512,7 @@ describe('POST /analyze', () => {
         app,
         '/',
         { request: baseRequest, trustScore: '50' },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect(res.status).toBe(400);
@@ -524,7 +524,7 @@ describe('POST /analyze', () => {
         app,
         '/',
         { request: baseRequest, trustScore: -1 },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect(res.status).toBe(400);
@@ -537,7 +537,7 @@ describe('POST /analyze', () => {
         app,
         '/',
         { request: baseRequest, trustScore: 101 },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect(res.status).toBe(400);
@@ -550,7 +550,7 @@ describe('POST /analyze', () => {
         app,
         '/',
         { request: baseRequest, trustScore: 0 },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect([200, 500]).toContain(res.status);
@@ -561,7 +561,7 @@ describe('POST /analyze', () => {
         app,
         '/',
         { request: baseRequest, trustScore: 100 },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect([200, 500]).toContain(res.status);
@@ -572,7 +572,7 @@ describe('POST /analyze', () => {
         app,
         '/',
         { request: baseRequest, trustScore: 50 },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect([200, 500]).toContain(res.status);
@@ -583,7 +583,7 @@ describe('POST /analyze', () => {
         app,
         '/',
         { request: baseRequest, trustScore: 50.5 },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect([200, 500]).toContain(res.status);
@@ -604,7 +604,7 @@ describe('POST /analyze', () => {
             params: { chain: 'ethereum', amount: '10.5' },
           },
         },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       // Either 200 (success) or 500 (no Anthropic key) are acceptable
@@ -631,7 +631,7 @@ describe('POST /analyze', () => {
           },
           trustScore: 75,
         },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect([200, 500]).toContain(res.status);
@@ -648,7 +648,7 @@ describe('POST /analyze', () => {
             params: { chain: 'ethereum', amount: '10.5' },
           },
         },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect([200, 500]).toContain(res.status);
@@ -666,7 +666,7 @@ describe('POST /analyze', () => {
             reasoning: '',
           },
         },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect([200, 500]).toContain(res.status);
@@ -684,7 +684,7 @@ describe('POST /analyze', () => {
             reasoning: 'This is a test transaction',
           },
         },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect([200, 500]).toContain(res.status);
@@ -705,7 +705,7 @@ describe('POST /analyze', () => {
             params: { chain: 'invalid_chain', amount: 'invalid_amount' },
           },
         },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
 
       expect(res.status).toBe(400);
@@ -727,7 +727,7 @@ describe('POST /analyze', () => {
             params: { chain: 'bad', amount: 'bad' },
           },
         },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
       expect(res.body.error).toContain('request.id');
 
@@ -742,7 +742,7 @@ describe('POST /analyze', () => {
             params: undefined,
           },
         },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
       expect(res.body.error).toContain('action');
 
@@ -757,7 +757,7 @@ describe('POST /analyze', () => {
             params: undefined,
           },
         },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
       expect(res.body.error).toContain('params');
 
@@ -772,7 +772,7 @@ describe('POST /analyze', () => {
             params: { amount: 'bad', chain: 'bad' },
           },
         },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
       expect(res.body.error).toContain('amount');
 
@@ -788,7 +788,7 @@ describe('POST /analyze', () => {
           },
           trustScore: 'bad',
         },
-        { 'X-Saaafe-Key': 'test-api-key-123' }
+        { 'X-Cordon7-Key': 'test-api-key-123' }
       );
       expect(res.body.error).toContain('chain');
     });

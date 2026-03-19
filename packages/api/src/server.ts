@@ -20,7 +20,7 @@ export function createServer(): express.Express {
   // Global middleware
   const rawCorsOrigin = process.env.CORS_ORIGIN || 'http://localhost:4000';
   if (process.env.NODE_ENV === 'production' && !process.env.CORS_ORIGIN) {
-    console.warn('[saaafe] WARNING: CORS_ORIGIN not set in production. Defaulting to localhost.');
+    console.warn('[7cordon] WARNING: CORS_ORIGIN not set in production. Defaulting to localhost.');
   }
   // Support comma-separated origins (e.g. "https://app.example.com,https://dashboard.example.com")
   const corsOrigins = rawCorsOrigin.includes(',')
@@ -78,7 +78,7 @@ export function createServer(): express.Express {
 
   // Global error handler
   app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
-    console.error(`[saaafe] Unhandled error: ${err.message}`, err.stack);
+    console.error(`[7cordon] Unhandled error: ${err.message}`, err.stack);
     if (res.headersSent) return;
     res.status(500).json({
       error: 'Internal server error',

@@ -1,4 +1,4 @@
-import type { Chain } from '@saaafe/shared';
+import type { Chain } from '@7cordon/shared';
 import { fetchWithTimeout, EVM_ADDRESS_REGEX } from './fetch-utils.js';
 
 /** Etherscan-compatible explorer API URLs per chain. */

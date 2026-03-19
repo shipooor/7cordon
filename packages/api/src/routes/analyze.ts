@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import { RiskAnalyzer } from '../analysis/analyzer.js';
-import { VALID_ACTIONS, VALID_CHAINS, UUID_REGEX } from '@saaafe/shared';
+import { VALID_ACTIONS, VALID_CHAINS, UUID_REGEX } from '@7cordon/shared';
 import { serverState } from '../state.js';
 
-import type { TransactionRequest } from '@saaafe/shared';
+import type { TransactionRequest } from '@7cordon/shared';
 
 export const analyzeRouter = Router();
 

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import type { PolicyViolation } from '@saaafe/shared';
+import type { PolicyViolation } from '@7cordon/shared';
 import {
   checkAmount,
   checkBudget,

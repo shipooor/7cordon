@@ -33,7 +33,7 @@
   <header class="header">
     <div class="logo">
       <span class="shield">&#x1f6e1;</span>
-      <h1>saaafe</h1>
+      <h1>7cordon</h1>
     </div>
     <div class="status" role="status" aria-label={connected ? 'Server connected' : 'Server disconnected'}>
       {#if connected && health}

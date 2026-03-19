@@ -5,7 +5,7 @@
  * All amount comparisons use string-to-number conversion with NaN/negative guards.
  */
 
-import type { PolicyViolation, TransactionAction } from '@saaafe/shared';
+import type { PolicyViolation, TransactionAction } from '@7cordon/shared';
 
 /**
  * Parse a string amount into a validated number.

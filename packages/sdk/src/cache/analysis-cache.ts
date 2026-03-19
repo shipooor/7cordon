@@ -8,8 +8,8 @@
 import { writeFile } from 'fs/promises';
 import { readFileSync, existsSync, mkdirSync } from 'fs';
 import path from 'path';
-import type { AnalysisResult } from '@saaafe/shared';
-import { CACHE_TTL } from '@saaafe/shared';
+import type { AnalysisResult } from '@7cordon/shared';
+import { CACHE_TTL } from '@7cordon/shared';
 
 interface CacheEntry {
   result: AnalysisResult;
@@ -25,7 +25,7 @@ export class AnalysisCache {
   private filePath: string;
 
   constructor(cacheDir?: string) {
-    const dir = cacheDir || path.join(process.cwd(), '.saaafe');
+    const dir = cacheDir || path.join(process.cwd(), '.7cordon');
     if (!existsSync(dir)) {
       mkdirSync(dir, { recursive: true, mode: 0o700 });
     }

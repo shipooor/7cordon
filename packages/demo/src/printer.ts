@@ -3,7 +3,7 @@
  * ANSI colors and structured layout for terminal and video recording.
  */
 
-import type { TransactionResult, AuditStats, TrustScore } from '@saaafe/shared';
+import type { TransactionResult, AuditStats, TrustScore } from '@7cordon/shared';
 import type { Scenario } from './scenarios.js';
 
 // ANSI color codes
@@ -40,7 +40,7 @@ const RISK_COLORS: Record<string, string> = {
 export function printBanner(): void {
   console.log(`
 ${C.magenta}${C.bold}${'='.repeat(58)}${C.reset}
-${C.magenta}${C.bold}              saaafe — Live Demo${C.reset}
+${C.magenta}${C.bold}              7cordon — Live Demo${C.reset}
 ${C.magenta}${C.bold}${'='.repeat(58)}${C.reset}
 ${C.dim}  AI-powered trust layer for autonomous financial agents${C.reset}
 ${C.dim}  Three-level defense: L0 Policy -> L1 Quick -> L2 Deep${C.reset}

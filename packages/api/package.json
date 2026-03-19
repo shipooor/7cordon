@@ -1,16 +1,16 @@
 {
-  "name": "@saaafe/api",
+  "name": "@7cordon/api",
   "version": "0.1.0",
-  "description": "AI analysis API server for saaafe — multi-level risk assessment",
+  "description": "AI analysis API server for 7cordon — multi-level risk assessment",
   "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/shipooor/saaafe.git",
+    "url": "https://github.com/shipooor/7cordon.git",
     "directory": "packages/api"
   },
   "keywords": [
-    "saaafe",
+    "7cordon",
     "ai",
     "risk-analysis",
     "claude",
@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.78.0",
-    "@saaafe/shared": "0.1.0",
+    "@7cordon/shared": "0.1.0",
     "@shipooor/walletauth": "^0.1.1",
     "cors": "^2.8",
     "dotenv": "^16.4",

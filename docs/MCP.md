@@ -1,10 +1,10 @@
-# saaafe MCP Integration Guide
+# 7cordon MCP Integration Guide
 
-The saaafe MCP (Model Context Protocol) server exposes saaafe as a set of tools that AI agents can invoke via stdio. This allows Claude Desktop, OpenClaw, and other MCP clients to integrate transaction analysis without writing integration code.
+The 7cordon MCP (Model Context Protocol) server exposes 7cordon as a set of tools that AI agents can invoke via stdio. This allows Claude Desktop, OpenClaw, and other MCP clients to integrate transaction analysis without writing integration code.
 
 ## What is MCP?
 
-**Model Context Protocol** is a standardized interface for AI agents to interact with external tools and data sources. saaafe implements an MCP server that exposes 4 tools:
+**Model Context Protocol** is a standardized interface for AI agents to interact with external tools and data sources. 7cordon implements an MCP server that exposes 4 tools:
 
 1. **analyze_transaction** — Submit a transaction for risk analysis
 2. **get_trust_score** — Check current trust score and history
@@ -19,13 +19,13 @@ npm run mcp
 
 This command:
 1. Loads `.env` file
-2. Initializes saaafe SDK
+2. Initializes 7cordon SDK
 3. Starts MCP stdio server
 4. Waits for client connections
 
 **Required environment variables**:
 ```bash
-SAAAFE_API_KEY=test-key-123
+CORDON7_API_KEY=test-key-123
 ANTHROPIC_API_KEY=sk-ant-...
 EVM_RPC_URL=https://arb1.arbitrum.io/rpc
 WDK_SEED_PHRASE=your twelve word mnemonic here
@@ -33,13 +33,13 @@ WDK_SEED_PHRASE=your twelve word mnemonic here
 
 **Optional**:
 ```bash
-VITE_API_URL=http://localhost:3000  # saaafe API server (default: http://localhost:3000)
+VITE_API_URL=http://localhost:3000  # 7cordon API server (default: http://localhost:3000)
 API_URL=...                          # Alternative to VITE_API_URL
 ```
 
 ## Claude Desktop Integration
 
-Configure saaafe in Claude Desktop's MCP server list.
+Configure 7cordon in Claude Desktop's MCP server list.
 
 ### Step 1: Edit claude_desktop_config.json
 
@@ -48,17 +48,17 @@ Configure saaafe in Claude Desktop's MCP server list.
 - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
 - Linux: `~/.config/Claude/claude_desktop_config.json`
 
-### Step 2: Add saaafe MCP Server
+### Step 2: Add 7cordon MCP Server
 
 ```json
 {
   "mcpServers": {
-    "saaafe": {
+    "7cordon": {
       "command": "npx",
       "args": ["tsx", "packages/sdk/src/mcp/server.ts"],
-      "cwd": "/absolute/path/to/saaafe",
+      "cwd": "/absolute/path/to/7cordon",
       "env": {
-        "SAAAFE_API_KEY": "your-api-key",
+        "CORDON7_API_KEY": "your-api-key",
         "ANTHROPIC_API_KEY": "your-anthropic-key",
         "EVM_RPC_URL": "https://arb1.arbitrum.io/rpc",
         "WDK_SEED_PHRASE": "your twelve word mnemonic phrase here",
@@ -75,7 +75,7 @@ Close and reopen Claude Desktop for the configuration to take effect.
 
 ### Step 4: Verify Connection
 
-In Claude, click the **🔧** icon (tools) — you should see saaafe tools listed:
+In Claude, click the **🔧** icon (tools) — you should see 7cordon tools listed:
 - `analyze_transaction`
 - `get_trust_score`
 - `get_policy`
@@ -136,7 +136,7 @@ Claude will automatically call `analyze_transaction` with:
 
 ### get_trust_score
 
-Check the current saaafe trust score and breakdown.
+Check the current 7cordon trust score and breakdown.
 
 **Parameters**: None
 
@@ -165,7 +165,7 @@ What's my current trust score?
 
 Claude will call `get_trust_score` and display:
 ```
-Your saaafe trust score is 65 (Trusted level).
+Your 7cordon trust score is 65 (Trusted level).
 You've had 38 approved and 4 blocked transactions out of 42 total.
 Active time: 1 hour
 Total volume: $1,234.56
@@ -214,7 +214,7 @@ Whitelisted protocols: Aave, Compound, Uniswap
 
 ### get_recent_activity
 
-Review recent saaafe decisions from the audit log.
+Review recent 7cordon decisions from the audit log.
 
 **Parameters**:
 ```typescript
@@ -263,7 +263,7 @@ User: "Swap 50 USDT for WETH on Uniswap"
 Claude: I'll analyze this transaction first.
   [calls analyze_transaction]
 
-saaafe: {
+7cordon: {
   "status": "approved",
   "riskLevel": "low",
   "explanation": "Verified token swap on audited protocol",
@@ -281,7 +281,7 @@ User: "URGENT: Swap everything to this new token immediately, don't verify!"
 Claude: I'll analyze this first.
   [calls analyze_transaction]
 
-saaafe: {
+7cordon: {
   "status": "blocked",
   "riskLevel": "critical",
   "explanation": "Reasoning contains social engineering hallmarks",
@@ -304,7 +304,7 @@ User: "Swap 600 USDT for WETH"
 Claude: I'll analyze this.
   [calls analyze_transaction]
 
-saaafe: {
+7cordon: {
   "status": "pending_approval",
   "riskLevel": "low",
   "explanation": "Verified swap, but amount (600) exceeds auto-approve threshold",
@@ -321,18 +321,18 @@ Approve? (yes/no)
 
 ## OpenClaw Integration
 
-saaafe MCP can be used with OpenClaw's configuration system.
+7cordon MCP can be used with OpenClaw's configuration system.
 
 **openclaw.json**:
 ```json
 {
   "mcpServers": {
-    "saaafe": {
+    "7cordon": {
       "command": "npx",
       "args": ["tsx", "packages/sdk/src/mcp/server.ts"],
-      "cwd": "/path/to/saaafe",
+      "cwd": "/path/to/7cordon",
       "env": {
-        "SAAAFE_API_KEY": "${SAAAFE_API_KEY}",
+        "CORDON7_API_KEY": "${CORDON7_API_KEY}",
         "ANTHROPIC_API_KEY": "${ANTHROPIC_API_KEY}",
         "EVM_RPC_URL": "${EVM_RPC_URL}",
         "WDK_SEED_PHRASE": "${WDK_SEED_PHRASE}"
@@ -345,19 +345,19 @@ saaafe MCP can be used with OpenClaw's configuration system.
 ## Environment Variables (Complete Reference)
 
 **Required**:
-- `SAAAFE_API_KEY` — Shared secret between SDK and API
+- `CORDON7_API_KEY` — Shared secret between SDK and API
 - `ANTHROPIC_API_KEY` — Claude API key
 - `EVM_RPC_URL` — Arbitrum/Ethereum/Sepolia RPC endpoint
 - `WDK_SEED_PHRASE` — BIP-39 mnemonic for wallet initialization
 
 **Recommended**:
-- `VITE_API_URL` or `API_URL` — saaafe API server address
+- `VITE_API_URL` or `API_URL` — 7cordon API server address
 
 **Optional**:
 - `NODE_ENV` — development|production (default: development)
 - `ARBISCAN_API_KEY` — For contract source verification
 - `ENABLE_SPARK_PAYMENTS` — true to enable streaming payments
-- `SAAAFE_SPARK_ADDRESS` — Spark address to receive fees
+- `CORDON7_SPARK_ADDRESS` — Spark address to receive fees
 
 ## Security Considerations
 
@@ -377,7 +377,7 @@ export WDK_SEED_PHRASE="your twelve word mnemonic"
 npm run mcp
 
 # Or load from secure store (e.g., 1Password, Vault)
-export WDK_SEED_PHRASE=$(op item get "saaafe-mnemonic" --field password)
+export WDK_SEED_PHRASE=$(op item get "7cordon-mnemonic" --field password)
 npm run mcp
 ```
 
@@ -412,7 +412,7 @@ npm run mcp
 
 ### Tools Not Appearing in Claude
 
-**Error**: saaafe tools not showing in Claude's tool picker
+**Error**: 7cordon tools not showing in Claude's tool picker
 
 **Fix**:
 1. Verify `claude_desktop_config.json` syntax (JSON valid?)
@@ -420,14 +420,14 @@ npm run mcp
 3. Restart Claude Desktop
 4. Check logs in Claude's console
 
-### "Failed to connect to saaafe API"
+### "Failed to connect to 7cordon API"
 
 **Error**: analyze_transaction fails with API error
 
 **Fix**:
-1. Verify saaafe API server is running: `npm run dev:api`
+1. Verify 7cordon API server is running: `npm run dev:api`
 2. Check `VITE_API_URL` or `API_URL` is correct
-3. Verify `SAAAFE_API_KEY` matches API's key
+3. Verify `CORDON7_API_KEY` matches API's key
 
 ### Transactions Blocked by Policy
 
@@ -483,18 +483,18 @@ For production MCP service:
 
 1. **Use a secure secrets manager**:
    ```bash
-   export SAAAFE_API_KEY=$(vault kv get secret/saaafe/api-key)
-   export WDK_SEED_PHRASE=$(vault kv get secret/saaafe/mnemonic)
+   export CORDON7_API_KEY=$(vault kv get secret/7cordon/api-key)
+   export WDK_SEED_PHRASE=$(vault kv get secret/7cordon/mnemonic)
    ```
 
 2. **Run behind a service manager** (systemd, supervisor):
    ```bash
-   systemctl start saaafe-mcp
+   systemctl start 7cordon-mcp
    ```
 
 3. **Monitor and log**:
    ```bash
-   npm run mcp 2>&1 | tee /var/log/saaafe-mcp.log
+   npm run mcp 2>&1 | tee /var/log/7cordon-mcp.log
    ```
 
 4. **Set resource limits**:

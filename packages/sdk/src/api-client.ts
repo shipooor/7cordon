@@ -5,7 +5,7 @@
  * remote AI analysis and returns structured risk assessments.
  */
 
-import type { TransactionRequest, TransactionResult, AnalysisResult } from '@saaafe/shared';
+import type { TransactionRequest, TransactionResult, AnalysisResult } from '@7cordon/shared';
 
 /** Request timeout — slightly longer than L2 analysis timeout to account for network. */
 const REQUEST_TIMEOUT_MS = 45_000;
@@ -28,7 +28,7 @@ export class GuardianApiClient {
     const parsedHost = new URL(this.baseUrl).hostname;
     const isLocal = parsedHost === 'localhost' || parsedHost === '127.0.0.1' || parsedHost === '[::1]';
     if (!isLocal && !this.baseUrl.startsWith('https://')) {
-      throw new Error('saaafe API URL must use HTTPS for non-local connections');
+      throw new Error('7cordon API URL must use HTTPS for non-local connections');
     }
   }
 
@@ -103,7 +103,7 @@ export class GuardianApiClient {
     if (this.jwt) {
       headers['Authorization'] = `Bearer ${this.jwt}`;
     } else if (this.apiKey) {
-      headers['X-Saaafe-Key'] = this.apiKey;
+      headers['X-Cordon7-Key'] = this.apiKey;
     }
     return headers;
   }
@@ -154,7 +154,7 @@ export class GuardianApiClient {
           // Ignore body read errors
         }
         throw new Error(
-          `saaafe API error ${response.status}: ${body || response.statusText}`
+          `7cordon API error ${response.status}: ${body || response.statusText}`
         );
       }
 
@@ -167,16 +167,16 @@ export class GuardianApiClient {
         typeof data.approved !== 'boolean' ||
         typeof data.explanation !== 'string'
       ) {
-        throw new Error('saaafe API returned malformed AnalysisResult');
+        throw new Error('7cordon API returned malformed AnalysisResult');
       }
 
       return data as AnalysisResult;
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') {
-        throw new Error(`saaafe API request timed out after ${REQUEST_TIMEOUT_MS}ms`);
+        throw new Error(`7cordon API request timed out after ${REQUEST_TIMEOUT_MS}ms`);
       }
       if (error instanceof TypeError) {
-        throw new Error(`saaafe API network error: ${error.message}`);
+        throw new Error(`7cordon API network error: ${error.message}`);
       }
       throw error;
     } finally {

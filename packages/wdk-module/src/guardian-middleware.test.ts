@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import type { TransactionRequest, AnalysisResult, PolicyConfig } from '@saaafe/shared';
+import type { TransactionRequest, AnalysisResult, PolicyConfig } from '@7cordon/shared';
 import { guardianMiddleware } from './guardian-middleware.js';
 import { GuardianBlockedError } from './errors.js';
 
@@ -9,7 +9,7 @@ let mockEvaluateFn = vi.fn();
 let mockRecordTransactionFn = vi.fn();
 
 // Mock GuardianApiClient and PolicyEngine
-vi.mock('@saaafe/sdk', () => {
+vi.mock('@7cordon/sdk', () => {
   return {
     GuardianApiClient: class MockGuardianApiClient {
       constructor(public baseUrl: string, public apiKey: string) {}

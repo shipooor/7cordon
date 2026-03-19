@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import type { TransactionRequest } from '@saaafe/shared';
+import type { TransactionRequest } from '@7cordon/shared';
 import { Guardian } from './guardian.js';
 
 /**

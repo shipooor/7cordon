@@ -1,4 +1,4 @@
-import type { TransactionRequest, GoPlusData, ProtocolData } from '@saaafe/shared';
+import type { TransactionRequest, GoPlusData, ProtocolData } from '@7cordon/shared';
 import { sanitizeReasoning, sanitizeField } from './sanitize.js';
 import type { PromptPair } from './sanitize.js';
 
@@ -12,7 +12,7 @@ export function buildL1Prompt(
   trustScore?: number,
   protocolData?: ProtocolData | null,
 ): PromptPair {
-  const system = `You are saaafe, a security analyst for blockchain transactions. Analyze the transaction and return a JSON risk assessment.
+  const system = `You are 7cordon, a security analyst for blockchain transactions. Analyze the transaction and return a JSON risk assessment.
 
 RESPOND ONLY WITH VALID JSON, no markdown, no explanation outside JSON.
 

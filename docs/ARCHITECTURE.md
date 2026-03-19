@@ -1,8 +1,8 @@
-# saaafe Architecture
+# 7cordon Architecture
 
 ## System Overview
 
-saaafe is an AI-powered trust and safety layer that sits between autonomous financial agents and blockchain transactions. It uses a multi-level risk analysis pipeline combined with local policy enforcement to protect users from unauthorized or dangerous transactions.
+7cordon is an AI-powered trust and safety layer that sits between autonomous financial agents and blockchain transactions. It uses a multi-level risk analysis pipeline combined with local policy enforcement to protect users from unauthorized or dangerous transactions.
 
 ```
                      AI Agent
@@ -10,7 +10,7 @@ saaafe is an AI-powered trust and safety layer that sits between autonomous fina
          "swap 50 USDT for TOKEN-X"
                         |
             +--------+--------+
-            |   saaafe SDK    |
+            |   7cordon SDK    |
             +--------+--------+
                      |
          +-----------+-----------+
@@ -38,7 +38,7 @@ saaafe is an AI-powered trust and safety layer that sits between autonomous fina
 ## Package Architecture
 
 ```
-saaafe/
+7cordon/
 ├── packages/shared             Types, constants, formulas (shared by SDK & API)
 │   ├── types/
 │   │   ├── analysis.ts         RiskLevel, AnalysisResult, GoPlusData
@@ -60,7 +60,7 @@ saaafe/
 │   │   └── analysis-cache.ts   LRU cache with file persistence
 │   ├── audit/
 │   │   └── logger.ts           Append-only audit trail (JSONL)
-│   ├── api-client.ts           HTTP client to saaafe API
+│   ├── api-client.ts           HTTP client to 7cordon API
 │   ├── wdk/
 │   │   ├── wallet-manager.ts   WDK wrapper (EVM, ERC-4337)
 │   │   └── spark-payer.ts      Spark micropayment streaming
@@ -186,7 +186,7 @@ Agent
        │
        ├─ Remote AI Analysis
        │  │
-       │  └─ POST /analyze to saaafe API
+       │  └─ POST /analyze to 7cordon API
        │      │
        │      ├─ Fetch GoPlus data (parallel)
        │      ├─ Fetch protocol info (parallel)
@@ -210,7 +210,7 @@ Agent
        │
        └─ Log Audit Entry
           └─ AuditLogger.append()
-             └─ Write to .saaafe/audit.jsonl (file persistence)
+             └─ Write to .7cordon/audit.jsonl (file persistence)
 ```
 
 ### Data Enrichment Sources
@@ -240,7 +240,7 @@ Agent
 
 **API authentication** (dual auth, powered by [`@shipooor/walletauth`](https://www.npmjs.com/package/@shipooor/walletauth)):
 - **Wallet auth (recommended)**: stateless HMAC-signed challenges + EIP-191 wallet signatures → JWT (HS256, 24h expiry). Zero-config — agent's WDK wallet IS its identity
-- **API key (fallback)**: `X-Saaafe-Key` header, SHA-256 hash + timing-safe comparison
+- **API key (fallback)**: `X-Cordon7-Key` header, SHA-256 hash + timing-safe comparison
 - Challenges are stateless (HMAC-verified, no server-side nonce store) with built-in expiry
 - Rate limited: 20 req/min on `/analyze`, 15 req/min on `/auth`, 60 req/min on `/dashboard`
 
@@ -265,7 +265,7 @@ Agent
 ## Cache System
 
 **Type**: In-memory LRU Map with file persistence
-**Location**: `.saaafe/analysis-cache.json`
+**Location**: `.7cordon/analysis-cache.json`
 **Max size**: 1,000 entries
 
 **Cache keys** (built from transaction):
@@ -278,7 +278,7 @@ Agent
 **Key design**:
 - Amount is **NOT** included in cache key
 - Same token/protocol analyzed once, reused for all amounts
-- Amount thresholds applied post-cache by saaafe decision logic
+- Amount thresholds applied post-cache by 7cordon decision logic
 
 **TTLs by type**:
 | Type | TTL |
@@ -301,7 +301,7 @@ Agent
 - L2 analysis: ~$0.015 USDT (includes L1)
 
 **Spark streaming model**:
-- While API analyzes, SDK streams $0.001 USDT per second to saaafe operator wallet
+- While API analyzes, SDK streams $0.001 USDT per second to 7cordon operator wallet
 - Analysis duration = fee amount
 - Example: 3 second L1 analysis = $0.003 fee
 - Safety cap: auto-stops after 60 seconds to prevent wallet drain
@@ -346,7 +346,7 @@ Score = (40% × approval_ratio) +
 ## Audit Trail
 
 **Format**: JSON Lines (JSONL) — one JSON object per line
-**Location**: `.saaafe/audit.jsonl`
+**Location**: `.7cordon/audit.jsonl`
 **Mode**: Append-only (immutable history)
 
 **Each entry includes**:
@@ -375,7 +375,7 @@ Score = (40% × approval_ratio) +
 ```
 Agent starts request
       ↓
-saaafe analyzes (3 seconds)
+7cordon analyzes (3 seconds)
       ├─ Time 0s: Stream payment #1 ($0.001)
       ├─ Time 1s: Stream payment #2 ($0.001)
       ├─ Time 2s: Stream payment #3 ($0.001)
@@ -387,7 +387,7 @@ Total paid: $0.003 for 3-second L1 analysis
 
 **Implementation** (`SparkPayer`):
 - Sequential payment loop (one at a time, no concurrency)
-- Each payment sent to the saaafe operator's Spark address
+- Each payment sent to the 7cordon operator's Spark address
 - Interval: 1 second between payments
 - Safety cap: 60-second limit (prevents wallet drain if API hangs)
 - Failure handling: 3 consecutive failures stop streaming
@@ -443,8 +443,8 @@ Total paid: $0.003 for 3-second L1 analysis
 
 **Local development**:
 - SDK and API run on same machine
-- Audit logs stored in `.saaafe/` directory
-- Cache in `.saaafe/analysis-cache.json`
+- Audit logs stored in `.7cordon/` directory
+- Cache in `.7cordon/analysis-cache.json`
 - No HTTPS required (localhost exemption)
 
 **Production**:
@@ -479,11 +479,11 @@ get_recent_activity(limit)
 ```json
 {
   "mcpServers": {
-    "saaafe": {
+    "7cordon": {
       "command": "npx",
       "args": ["tsx", "packages/sdk/src/mcp/server.ts"],
       "env": {
-        "SAAAFE_API_KEY": "your-key",
+        "CORDON7_API_KEY": "your-key",
         "ANTHROPIC_API_KEY": "your-key",
         "EVM_RPC_URL": "https://arb1.arbitrum.io/rpc",
         "WDK_SEED_PHRASE": "your twelve word mnemonic"
@@ -495,7 +495,7 @@ get_recent_activity(limit)
 
 ## Summary
 
-saaafe provides **progressive, multi-layered defense** against unauthorized or dangerous transactions:
+7cordon provides **progressive, multi-layered defense** against unauthorized or dangerous transactions:
 
 1. **L0 (Policy)**: Instant, local, free — catches obvious violations
 2. **L1 (Quick)**: 2-5s, $0.003 — verifies on-chain data and basic threats

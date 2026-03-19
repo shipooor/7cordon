@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>saaafe</title>
+  <title>7cordon</title>
   <meta name="description" content="AI trust & safety layer for autonomous financial agents. Three-level defense pipeline protecting crypto wallets from scams, honeypots, and unauthorized spending.">
-  <meta property="og:title" content="saaafe">
+  <meta property="og:title" content="7cordon">
   <meta property="og:description" content="AI trust & safety layer for autonomous financial agents on Tether WDK">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://saaafe.me">
+  <meta property="og:url" content="https://7cordon.xyz">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="saaafe">
+  <meta name="twitter:title" content="7cordon">
   <meta name="twitter:description" content="AI trust & safety layer for autonomous financial agents on Tether WDK">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1319,9 +1319,9 @@
 
 <!-- Top bar -->
 <nav class="topbar">
-  <span class="topbar-name">saaafe</span>
+  <span class="topbar-name">7cordon</span>
   <div class="topbar-links">
-    <a href="https://github.com/shipooor/saaafe" target="_blank">GitHub</a>
+    <a href="https://github.com/shipooor/7cordon" target="_blank">GitHub</a>
     <a href="docs.html">Docs</a>
     <a href="#how-it-works" class="hide-small">How it works</a>
     <a href="#integration" class="hide-small">Integration</a>
@@ -1440,7 +1440,7 @@
                 </div>
               </div>
               <div class="verdict-panel">
-                <div class="panel-label">saaafe Verdict</div>
+                <div class="panel-label">7cordon Verdict</div>
                 <div class="verdict-level">Level 1 &mdash; AI Quick Analysis</div>
                 <div class="verdict-result approved">APPROVED</div>
                 <div class="verdict-risk">risk: low</div>
@@ -1493,7 +1493,7 @@
                 </div>
               </div>
               <div class="verdict-panel">
-                <div class="panel-label">saaafe Verdict</div>
+                <div class="panel-label">7cordon Verdict</div>
                 <div class="verdict-level">Level 1 &mdash; AI Quick Analysis</div>
                 <div class="verdict-result blocked">BLOCKED</div>
                 <div class="verdict-risk">risk: critical</div>
@@ -1549,7 +1549,7 @@
                 </div>
               </div>
               <div class="verdict-panel">
-                <div class="panel-label">saaafe Verdict</div>
+                <div class="panel-label">7cordon Verdict</div>
                 <div class="verdict-level">Level 0 &mdash; Policy Engine (instant)</div>
                 <div class="verdict-result blocked">BLOCKED</div>
                 <div class="verdict-risk">no AI needed</div>
@@ -1601,7 +1601,7 @@
                 </div>
               </div>
               <div class="verdict-panel">
-                <div class="panel-label">saaafe Verdict</div>
+                <div class="panel-label">7cordon Verdict</div>
                 <div class="verdict-level">Level 1 &mdash; AI Quick Analysis</div>
                 <div class="verdict-result approved">APPROVED</div>
                 <div class="verdict-risk">risk: low</div>
@@ -1737,12 +1737,12 @@
             <li>You control when to update &mdash; no forced changes</li>
           </ul>
           <div class="network-install">
-            <code>npm install @saaafe/sdk @saaafe/api</code>
+            <code>npm install @7cordon/sdk @7cordon/api</code>
           </div>
         </div>
         <div class="network-mode cloud">
           <div class="network-mode-header">
-            <span class="network-mode-title">saaafe Network</span>
+            <span class="network-mode-title">7cordon Network</span>
             <span class="network-mode-tag next">ALPHA</span>
           </div>
           <ul>
@@ -1752,14 +1752,14 @@
             <li>Network effect &mdash; more agents = better protection for all</li>
           </ul>
           <div class="network-install">
-            <code>apiUrl: 'https://saaafe.me'</code>
+            <code>apiUrl: 'https://7cordon.xyz'</code>
           </div>
         </div>
       </div>
 
       <div class="network-insight anim-target anim-up">
         <em>Same analysis engine, two ways to run it.</em>
-        Need full privacy? Self-host. Want to skip the setup? Point to saaafe.me &mdash; your agent authenticates with its WDK wallet, no API keys needed.
+        Need full privacy? Self-host. Want to skip the setup? Point to 7cordon.xyz &mdash; your agent authenticates with its WDK wallet, no API keys needed.
       </div>
     </div>
   </section>
@@ -1834,7 +1834,7 @@
           <div class="integration-label">WDK Module <span style="color:var(--green);font-size:11px;font-weight:400;">native middleware</span></div>
           <div class="code-block"><span class="s-kw">import</span> WDK <span class="s-kw">from</span> <span class="s-str">'@tetherto/wdk'</span>
 <span class="s-kw">import</span> WalletManagerEvm <span class="s-kw">from</span> <span class="s-str">'@tetherto/wdk-wallet-evm'</span>
-<span class="s-kw">import</span> <span class="s-p">{</span> <span class="s-fn">guardianMiddleware</span> <span class="s-p">}</span> <span class="s-kw">from</span> <span class="s-str">'@saaafe/wdk-module'</span>
+<span class="s-kw">import</span> <span class="s-p">{</span> <span class="s-fn">guardianMiddleware</span> <span class="s-p">}</span> <span class="s-kw">from</span> <span class="s-str">'@7cordon/wdk-module'</span>
 
 <span class="s-kw">const</span> <span class="s-const">wdk</span> <span class="s-p">=</span> <span class="s-kw">new</span> <span class="s-fn">WDK</span><span class="s-p">(</span>seedPhrase<span class="s-p">)</span>
   <span class="s-p">.</span><span class="s-fn">registerWallet</span><span class="s-p">(</span><span class="s-str">'ethereum'</span><span class="s-p">,</span> WalletManagerEvm<span class="s-p">,</span> <span class="s-p">{</span> <span class="s-prop">provider</span> <span class="s-p">})</span>
@@ -1842,8 +1842,8 @@
     <span class="s-cmt">// Self-hosted: your server, your data</span>
     <span class="s-prop">apiUrl</span><span class="s-p">:</span> <span class="s-str">'http://localhost:3000'</span><span class="s-p">,</span>
     <span class="s-cmt">// Network (next): wallet auth, no API key needed</span>
-    <span class="s-cmt">// apiUrl: 'https://saaafe.me',</span>
-    <span class="s-prop">apiKey</span><span class="s-p">:</span> process<span class="s-p">.</span>env<span class="s-p">.</span><span class="s-const">SAAAFE_API_KEY</span><span class="s-p">,</span>
+    <span class="s-cmt">// apiUrl: 'https://7cordon.xyz',</span>
+    <span class="s-prop">apiKey</span><span class="s-p">:</span> process<span class="s-p">.</span>env<span class="s-p">.</span><span class="s-const">CORDON7_API_KEY</span><span class="s-p">,</span>
   <span class="s-p">}))</span>
 
 <span class="s-cmt">// Same code, two modes — just change the URL</span>
@@ -1855,11 +1855,11 @@
           <div class="integration-label">MCP for AI Agents</div>
           <div class="code-block"><span class="s-p">{</span>
   <span class="s-prop">"mcpServers"</span><span class="s-p">:</span> <span class="s-p">{</span>
-    <span class="s-prop">"saaafe"</span><span class="s-p">:</span> <span class="s-p">{</span>
+    <span class="s-prop">"7cordon"</span><span class="s-p">:</span> <span class="s-p">{</span>
       <span class="s-prop">"command"</span><span class="s-p">:</span> <span class="s-str">"npx"</span><span class="s-p">,</span>
       <span class="s-prop">"args"</span><span class="s-p">:</span> <span class="s-p">[</span><span class="s-str">"tsx"</span><span class="s-p">,</span> <span class="s-str">"packages/sdk/src/mcp/server.ts"</span><span class="s-p">],</span>
       <span class="s-prop">"env"</span><span class="s-p">:</span> <span class="s-p">{</span>
-        <span class="s-prop">"SAAAFE_API_KEY"</span><span class="s-p">:</span> <span class="s-str">"your-key"</span><span class="s-p">,</span>
+        <span class="s-prop">"CORDON7_API_KEY"</span><span class="s-p">:</span> <span class="s-str">"your-key"</span><span class="s-p">,</span>
         <span class="s-prop">"WDK_SEED_PHRASE"</span><span class="s-p">:</span> <span class="s-str">"your mnemonic"</span>
       <span class="s-p">}</span>
     <span class="s-p">}</span>
@@ -1936,7 +1936,7 @@
             <span class="roadmap-tag future">VISION</span>
           </div>
           <ul>
-            <li>saaafe Network &mdash; shared threat intelligence</li>
+            <li>7cordon Network &mdash; shared threat intelligence</li>
             <li>Non-EVM chains (Solana, TON, Bitcoin)</li>
             <li>Cross-agent scam pattern detection</li>
             <li>Global analysis cache across all nodes</li>
@@ -1972,7 +1972,7 @@
       </div>
 
       <div class="summary-links anim-target anim-up">
-        <a class="summary-link" href="https://github.com/shipooor/saaafe" target="_blank">GitHub</a>
+        <a class="summary-link" href="https://github.com/shipooor/7cordon" target="_blank">GitHub</a>
         <a class="summary-link" href="docs.html">Documentation</a>
         <a class="summary-link" href="#how-it-works">How it works</a>
         <a class="summary-link" href="#integration">Integration</a>

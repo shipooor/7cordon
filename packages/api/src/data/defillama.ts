@@ -1,4 +1,4 @@
-import type { ProtocolData } from '@saaafe/shared';
+import type { ProtocolData } from '@7cordon/shared';
 import { fetchWithTimeout, SAFE_SLUG_REGEX } from './fetch-utils.js';
 
 const DEFILLAMA_BASE_URL = 'https://api.llama.fi';

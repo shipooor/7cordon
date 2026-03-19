@@ -2,7 +2,7 @@ import { createHash, timingSafeEqual } from 'crypto';
 import type { Request, Response, NextFunction } from 'express';
 
 /**
- * Validates the X-Saaafe-Key header against the configured API key.
+ * Validates the X-Cordon7-Key header against the configured API key.
  * Uses hash-then-compare to prevent timing attacks and key length leakage.
  * Reads the env var on each request to support runtime config changes.
  */
@@ -13,11 +13,11 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction):
     return;
   }
 
-  const configuredKey = process.env.SAAAFE_API_KEY;
-  const providedKey = req.headers['x-saaafe-key'] as string | undefined;
+  const configuredKey = process.env.CORDON7_API_KEY;
+  const providedKey = req.headers['x-cordon7-key'] as string | undefined;
 
   if (!configuredKey || !providedKey) {
-    res.status(401).json({ error: 'Unauthorized: provide a valid JWT (Authorization: Bearer) or API key (X-Saaafe-Key)' });
+    res.status(401).json({ error: 'Unauthorized: provide a valid JWT (Authorization: Bearer) or API key (X-Cordon7-Key)' });
     return;
   }
 

@@ -1,4 +1,4 @@
-import type { TransactionRequest, GoPlusData, ProtocolData } from '@saaafe/shared';
+import type { TransactionRequest, GoPlusData, ProtocolData } from '@7cordon/shared';
 import { sanitizeReasoning, sanitizeHexData, sanitizeField, sanitizeContractSource } from './sanitize.js';
 import type { PromptPair } from './sanitize.js';
 
@@ -13,7 +13,7 @@ export function buildL2Prompt(
   protocolData?: ProtocolData | null,
   contractSource?: string | null,
 ): PromptPair {
-  const system = `You are saaafe, an advanced AI security analyst specializing in blockchain transaction verification. You provide deep analysis of financial transactions initiated by AI agents.
+  const system = `You are 7cordon, an advanced AI security analyst specializing in blockchain transaction verification. You provide deep analysis of financial transactions initiated by AI agents.
 
 Your job is to protect users from:
 1. Malicious contracts (honeypots, rug pulls, drain contracts)

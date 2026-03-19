@@ -1,12 +1,12 @@
 /**
  * SparkPayer — Streaming USDT micropayments via Spark.
  *
- * While saaafe API analyzes a transaction,
- * user's Spark wallet streams $0.001/sec USDT to saaafe operator's wallet.
+ * While 7cordon API analyzes a transaction,
+ * user's Spark wallet streams $0.001/sec USDT to 7cordon operator's wallet.
  * Uses sequential payment loop to prevent concurrent sends.
  */
 
-import { SPARK_FEE_PER_SECOND, SPARK_PAYMENT_INTERVAL_MS } from '@saaafe/shared';
+import { SPARK_FEE_PER_SECOND, SPARK_PAYMENT_INTERVAL_MS } from '@7cordon/shared';
 
 /** Minimal typed interface for WDK Spark account. */
 interface WdkSparkAccount {
@@ -89,7 +89,7 @@ export class SparkPayer {
   }
 
   /**
-   * Start streaming micropayments to saaafe.
+   * Start streaming micropayments to 7cordon.
    * Uses a sequential loop — each payment completes before the next starts.
    * Call stopStreaming() to stop and get the total paid.
    */
@@ -102,7 +102,7 @@ export class SparkPayer {
     this.startTime = Date.now();
 
     this.loopPromise = this.runPaymentLoop().catch((err) => {
-      console.error('[saaafe] Payment loop error:', err);
+      console.error('[7cordon] Payment loop error:', err);
       this.streaming = false;
     });
   }
@@ -156,7 +156,7 @@ export class SparkPayer {
     while (this.streaming) {
       // Safety cap: auto-stop after max duration to prevent wallet drain
       if (Date.now() - this.startTime > MAX_STREAMING_MS) {
-        console.warn(`[saaafe] Safety cap reached (${MAX_STREAMING_MS}ms). Auto-stopping.`);
+        console.warn(`[7cordon] Safety cap reached (${MAX_STREAMING_MS}ms). Auto-stopping.`);
         this.streaming = false;
         break;
       }
@@ -171,9 +171,9 @@ export class SparkPayer {
       } catch (err) {
         consecutiveFailures++;
         const msg = err instanceof Error ? err.message : 'Unknown error';
-        console.warn(`[saaafe] Payment failed (${consecutiveFailures}x): ${msg}`);
+        console.warn(`[7cordon] Payment failed (${consecutiveFailures}x): ${msg}`);
         if (consecutiveFailures >= 3) {
-          console.error('[saaafe] 3 consecutive failures. Stopping streaming.');
+          console.error('[7cordon] 3 consecutive failures. Stopping streaming.');
           this.streaming = false;
           break;
         }

@@ -1,6 +1,6 @@
-# saaafe Deployment Guide
+# 7cordon Deployment Guide
 
-Complete guide to setting up, building, and running saaafe in development and production environments.
+Complete guide to setting up, building, and running 7cordon in development and production environments.
 
 ## Prerequisites
 
@@ -18,8 +18,8 @@ Complete guide to setting up, building, and running saaafe in development and pr
 ### Step 1: Clone and Install
 
 ```bash
-git clone https://github.com/shipooor/saaafe.git
-cd saaafe
+git clone https://github.com/shipooor/7cordon.git
+cd 7cordon
 npm install
 ```
 
@@ -36,7 +36,7 @@ nano .env
 **Required environment variables**:
 ```bash
 ANTHROPIC_API_KEY=sk-ant-...          # Claude API key
-SAAAFE_API_KEY=test-key-123         # Shared secret
+CORDON7_API_KEY=test-key-123         # Shared secret
 EVM_RPC_URL=https://arb1.arbitrum.io/rpc  # Arbitrum RPC
 ```
 
@@ -99,7 +99,7 @@ curl http://localhost:3000/health
 ## Project Structure
 
 ```
-saaafe/
+7cordon/
 ├── packages/
 │   ├── shared/               Types, constants (compiled to dist/)
 │   ├── sdk/                  Client SDK (compiled to dist/)
@@ -170,7 +170,7 @@ PORT=3001 npm run dev:api
 **Required**:
 ```bash
 ANTHROPIC_API_KEY=sk-ant-...        # Claude API key
-SAAAFE_API_KEY=your-secret-key    # API authentication
+CORDON7_API_KEY=your-secret-key    # API authentication
 ```
 
 **Optional**:
@@ -271,8 +271,8 @@ npm run dev:dashboard -- --port 5000
 ssh user@server.example.com
 
 # Clone repository
-git clone https://github.com/shipooor/saaafe.git
-cd saaafe
+git clone https://github.com/shipooor/7cordon.git
+cd 7cordon
 
 # Install dependencies
 npm install --production
@@ -285,7 +285,7 @@ npm install --production
 cat > .env << EOF
 NODE_ENV=production
 ANTHROPIC_API_KEY=sk-ant-...
-SAAAFE_API_KEY=$(openssl rand -hex 32)
+CORDON7_API_KEY=$(openssl rand -hex 32)
 EVM_RPC_URL=https://arb1.arbitrum.io/rpc
 PORT=3000
 CORS_ORIGIN=https://app.example.com,https://dashboard.example.com
@@ -313,7 +313,7 @@ cat > ecosystem.config.cjs << 'EOF'
 module.exports = {
   apps: [
     {
-      name: 'saaafe-api',
+      name: '7cordon-api',
       script: 'node',
       args: 'packages/api/dist/index.js',
       env: {
@@ -321,19 +321,19 @@ module.exports = {
       },
       instances: 1,
       exec_mode: 'cluster',
-      error_file: 'logs/saaafe-api-error.log',
-      out_file: 'logs/saaafe-api-out.log',
+      error_file: 'logs/7cordon-api-error.log',
+      out_file: 'logs/7cordon-api-out.log',
       autorestart: true,
     },
     {
-      name: 'saaafe-dashboard',
+      name: '7cordon-dashboard',
       script: 'npx',
       args: 'serve packages/dashboard/build -l 5173',
       env: {
         NODE_ENV: 'production'
       },
-      error_file: 'logs/saaafe-dashboard-error.log',
-      out_file: 'logs/saaafe-dashboard-out.log',
+      error_file: 'logs/7cordon-dashboard-error.log',
+      out_file: 'logs/7cordon-dashboard-out.log',
       autorestart: true,
     }
   ]
@@ -351,7 +351,7 @@ pm2 save
 ### Step 5: Reverse Proxy (nginx)
 
 ```nginx
-# /etc/nginx/sites-available/saaafe
+# /etc/nginx/sites-available/7cordon
 upstream api_backend {
   server localhost:3000;
 }
@@ -401,7 +401,7 @@ server {
 
 Enable:
 ```bash
-sudo ln -s /etc/nginx/sites-available/saaafe /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/7cordon /etc/nginx/sites-enabled/
 sudo nginx -t
 sudo systemctl restart nginx
 ```
@@ -423,14 +423,14 @@ sudo systemctl enable certbot.timer
 
 ```bash
 # View PM2 logs
-pm2 logs saaafe-api
-pm2 logs saaafe-dashboard
+pm2 logs 7cordon-api
+pm2 logs 7cordon-dashboard
 
 # Monitor status
 pm2 monit
 
 # Systemd journal (if using systemd instead of PM2)
-journalctl -u saaafe-api -f
+journalctl -u 7cordon-api -f
 ```
 
 ## Docker Deployment
@@ -465,19 +465,19 @@ CMD ["node", "packages/api/dist/index.js"]
 
 ```bash
 # Build image
-docker build -t saaafe-api:latest .
+docker build -t 7cordon-api:latest .
 
 # Run container
 docker run -d \
-  --name saaafe-api \
+  --name 7cordon-api \
   -p 3000:3000 \
   -e ANTHROPIC_API_KEY=sk-ant-... \
-  -e SAAAFE_API_KEY=test-key \
+  -e CORDON7_API_KEY=test-key \
   -e EVM_RPC_URL=https://arb1.arbitrum.io/rpc \
-  saaafe-api:latest
+  7cordon-api:latest
 
 # View logs
-docker logs -f saaafe-api
+docker logs -f 7cordon-api
 ```
 
 ### Docker Compose
@@ -495,7 +495,7 @@ services:
     environment:
       NODE_ENV: production
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
-      SAAAFE_API_KEY: ${SAAAFE_API_KEY}
+      CORDON7_API_KEY: ${CORDON7_API_KEY}
       EVM_RPC_URL: ${EVM_RPC_URL}
     restart: unless-stopped
     healthcheck:
@@ -530,15 +530,15 @@ docker-compose logs -f
 
 ```ini
 [Unit]
-Description=saaafe API
+Description=7cordon API
 After=network.target
 
 [Service]
 Type=simple
-User=saaafe
-WorkingDirectory=/opt/saaafe
-EnvironmentFile=/opt/saaafe/.env
-ExecStart=/usr/bin/node /opt/saaafe/packages/api/dist/index.js
+User=7cordon
+WorkingDirectory=/opt/7cordon
+EnvironmentFile=/opt/7cordon/.env
+ExecStart=/usr/bin/node /opt/7cordon/packages/api/dist/index.js
 Restart=always
 RestartSec=10
 StandardOutput=journal
@@ -550,16 +550,16 @@ WantedBy=multi-user.target
 
 Install and start:
 ```bash
-sudo cp saaafe-api.service /etc/systemd/system/
+sudo cp 7cordon-api.service /etc/systemd/system/
 sudo systemctl daemon-reload
-sudo systemctl enable saaafe-api
-sudo systemctl start saaafe-api
+sudo systemctl enable 7cordon-api
+sudo systemctl start 7cordon-api
 
 # Check status
-sudo systemctl status saaafe-api
+sudo systemctl status 7cordon-api
 
 # View logs
-journalctl -u saaafe-api -f
+journalctl -u 7cordon-api -f
 ```
 
 ## Environment Variable Reference
@@ -571,7 +571,7 @@ journalctl -u saaafe-api -f
 | `NODE_ENV` | No | development | development \| production |
 | `PORT` | No | 3000 | API server port |
 | `ANTHROPIC_API_KEY` | Yes | — | Claude API key |
-| `SAAAFE_API_KEY` | Yes | — | Shared secret for authentication |
+| `CORDON7_API_KEY` | Yes | — | Shared secret for authentication |
 | `EVM_RPC_URL` | No | — | EVM RPC endpoint |
 | `CORS_ORIGIN` | No | http://localhost:4000 | CORS allowed origins |
 | `ARBISCAN_API_KEY` | No | — | Arbiscan API key |
@@ -580,11 +580,11 @@ journalctl -u saaafe-api -f
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `VITE_API_URL` | No | http://localhost:3000 | saaafe API server URL |
+| `VITE_API_URL` | No | http://localhost:3000 | 7cordon API server URL |
 | `EVM_RPC_URL` | Yes | — | EVM RPC endpoint |
 | `WDK_SEED_PHRASE` | For MCP | — | BIP-39 mnemonic for wallet |
 | `ENABLE_SPARK_PAYMENTS` | No | false | Enable streaming payments |
-| `SAAAFE_SPARK_ADDRESS` | No | — | Spark address for payments |
+| `CORDON7_SPARK_ADDRESS` | No | — | Spark address for payments |
 
 ## Performance Tuning
 
@@ -687,13 +687,13 @@ PORT=3001 npm run dev:api
 CORS_ORIGIN=https://dashboard.example.com npm run dev:api
 ```
 
-### "saaafe API error 401"
+### "7cordon API error 401"
 
 **Error**: API key not provided or incorrect
 
-**Fix**: Check `X-Saaafe-Key` header and `SAAAFE_API_KEY` match:
+**Fix**: Check `X-Cordon7-Key` header and `CORDON7_API_KEY` match:
 ```bash
-curl -H "X-Saaafe-Key: your-api-key" http://localhost:3000/health
+curl -H "X-Cordon7-Key: your-api-key" http://localhost:3000/health
 ```
 
 ### Memory Leak
@@ -711,17 +711,17 @@ curl -H "X-Saaafe-Key: your-api-key" http://localhost:3000/health
 
 ```bash
 # Daily backup
-cp .saaafe/audit.jsonl /backups/audit-$(date +%Y%m%d).jsonl
+cp .7cordon/audit.jsonl /backups/audit-$(date +%Y%m%d).jsonl
 
 # With compression
-tar czf /backups/saaafe-$(date +%Y%m%d).tar.gz .saaafe/
+tar czf /backups/7cordon-$(date +%Y%m%d).tar.gz .7cordon/
 ```
 
 ### Restore from Backup
 
 ```bash
 # Restore audit log
-cp /backups/audit-20260315.jsonl .saaafe/audit.jsonl
+cp /backups/audit-20260315.jsonl .7cordon/audit.jsonl
 
 # Audit log is append-only — new entries will be added
 npm run dev:api

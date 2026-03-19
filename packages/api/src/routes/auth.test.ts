@@ -67,15 +67,15 @@ async function post(app: express.Express, path: string, body: unknown) {
 let savedSecret: string | undefined;
 
 beforeAll(() => {
-  savedSecret = process.env.SAAAFE_JWT_SECRET;
-  process.env.SAAAFE_JWT_SECRET = TEST_SECRET;
+  savedSecret = process.env.CORDON7_JWT_SECRET;
+  process.env.CORDON7_JWT_SECRET = TEST_SECRET;
 });
 
 afterAll(() => {
   if (savedSecret !== undefined) {
-    process.env.SAAAFE_JWT_SECRET = savedSecret;
+    process.env.CORDON7_JWT_SECRET = savedSecret;
   } else {
-    delete process.env.SAAAFE_JWT_SECRET;
+    delete process.env.CORDON7_JWT_SECRET;
   }
 });
 

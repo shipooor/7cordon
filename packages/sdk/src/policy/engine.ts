@@ -12,8 +12,8 @@ import type {
   PolicyViolation,
   TransactionRequest,
   AuditEntry,
-} from '@saaafe/shared';
-import { DEFAULT_POLICY } from '@saaafe/shared';
+} from '@7cordon/shared';
+import { DEFAULT_POLICY } from '@7cordon/shared';
 import {
   checkAmount,
   checkBudget,

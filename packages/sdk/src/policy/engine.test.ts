@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import type { TransactionRequest, AuditEntry } from '@saaafe/shared';
-import { DEFAULT_POLICY } from '@saaafe/shared';
+import type { TransactionRequest, AuditEntry } from '@7cordon/shared';
+import { DEFAULT_POLICY } from '@7cordon/shared';
 import { PolicyEngine } from './engine.js';
 
 describe('PolicyEngine', () => {

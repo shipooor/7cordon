@@ -4,9 +4,9 @@ import { Level2Analyzer } from './level2.js';
 import { getTokenSecurity, getAddressSecurity } from '../data/goplus.js';
 import { getProtocolData } from '../data/defillama.js';
 import { getContractSource } from '../data/arbiscan.js';
-import { RISK_THRESHOLDS, DEFAULT_POLICY } from '@saaafe/shared';
+import { RISK_THRESHOLDS, DEFAULT_POLICY } from '@7cordon/shared';
 
-import type { TransactionRequest, AnalysisResult, GoPlusData, ProtocolData, RiskLevel } from '@saaafe/shared';
+import type { TransactionRequest, AnalysisResult, GoPlusData, ProtocolData, RiskLevel } from '@7cordon/shared';
 
 const RISK_SEVERITY: Record<RiskLevel, number> = {
   safe: 0,

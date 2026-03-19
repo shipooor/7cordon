@@ -8,7 +8,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { validateAIResponse } from './validate.js';
 
-import type { TransactionRequest, AnalysisResult, AnalysisLevel, GoPlusData, ProtocolData, ThreatInfo, RiskLevel } from '@saaafe/shared';
+import type { TransactionRequest, AnalysisResult, AnalysisLevel, GoPlusData, ProtocolData, ThreatInfo, RiskLevel } from '@7cordon/shared';
 import type { PromptPair } from '../prompts/sanitize.js';
 
 export interface AnalyzerConfig {

@@ -3,7 +3,7 @@
  * Ensures the AI output conforms to the expected schema before use.
  */
 
-import { VALID_RISK_LEVELS, VALID_THREAT_TYPES } from '@saaafe/shared';
+import { VALID_RISK_LEVELS, VALID_THREAT_TYPES } from '@7cordon/shared';
 
 const MAX_EXPLANATION_LENGTH = 1000;
 const MAX_DESCRIPTION_LENGTH = 500;

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import type { AnalysisResult } from '@saaafe/shared';
+import type { AnalysisResult } from '@7cordon/shared';
 import { AnalysisCache } from './analysis-cache.js';
 import * as fsPromises from 'fs/promises';
 import * as fs from 'fs';

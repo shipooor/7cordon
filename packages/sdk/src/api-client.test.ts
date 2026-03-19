@@ -21,13 +21,13 @@ describe('GuardianApiClient', () => {
 
     it('rejects HTTP remote URL', () => {
       expect(() => new GuardianApiClient('http://api.example.com')).toThrow(
-        'saaafe API URL must use HTTPS for non-local connections'
+        '7cordon API URL must use HTTPS for non-local connections'
       );
     });
 
     it('rejects localhost.evil.com (hostname bypass attempt)', () => {
       expect(() => new GuardianApiClient('http://localhost.evil.com')).toThrow(
-        'saaafe API URL must use HTTPS'
+        '7cordon API URL must use HTTPS'
       );
     });
 
@@ -215,7 +215,7 @@ describe('GuardianApiClient', () => {
       } as any);
 
       const headers = fetchSpy.mock.calls[0][1].headers;
-      expect(headers['X-Saaafe-Key']).toBe('my-key');
+      expect(headers['X-Cordon7-Key']).toBe('my-key');
       expect(headers['Authorization']).toBeUndefined();
     });
 
@@ -243,7 +243,7 @@ describe('GuardianApiClient', () => {
 
       const headers = fetchSpy.mock.calls[0][1].headers;
       expect(headers['Authorization']).toBe('Bearer my-jwt-token');
-      expect(headers['X-Saaafe-Key']).toBeUndefined();
+      expect(headers['X-Cordon7-Key']).toBeUndefined();
     });
 
     it('retries on 401 with wallet auth', async () => {
@@ -304,7 +304,7 @@ describe('GuardianApiClient', () => {
           params: { chain: 'arbitrum', amount: '1' },
           timestamp: Date.now(),
         } as any)
-      ).rejects.toThrow('saaafe API returned malformed AnalysisResult');
+      ).rejects.toThrow('7cordon API returned malformed AnalysisResult');
     });
 
     it('throws on timeout (AbortError)', async () => {
@@ -323,7 +323,7 @@ describe('GuardianApiClient', () => {
           params: { chain: 'arbitrum', amount: '1' },
           timestamp: Date.now(),
         } as any)
-      ).rejects.toThrow('saaafe API request timed out');
+      ).rejects.toThrow('7cordon API request timed out');
     });
 
     it('wraps network TypeError', async () => {
@@ -338,7 +338,7 @@ describe('GuardianApiClient', () => {
           params: { chain: 'arbitrum', amount: '1' },
           timestamp: Date.now(),
         } as any)
-      ).rejects.toThrow('saaafe API network error: Failed to fetch');
+      ).rejects.toThrow('7cordon API network error: Failed to fetch');
     });
 
     it('includes error body in non-ok response', async () => {
@@ -358,7 +358,7 @@ describe('GuardianApiClient', () => {
           params: { chain: 'arbitrum', amount: '1' },
           timestamp: Date.now(),
         } as any)
-      ).rejects.toThrow('saaafe API error 500: something broke');
+      ).rejects.toThrow('7cordon API error 500: something broke');
     });
   });
 
@@ -429,7 +429,7 @@ describe('GuardianApiClient', () => {
       );
 
       const headers = fetchSpy.mock.calls[0][1].headers;
-      expect(headers['X-Saaafe-Key']).toBe('my-key');
+      expect(headers['X-Cordon7-Key']).toBe('my-key');
     });
   });
 });

@@ -8,7 +8,7 @@
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync, appendFileSync } from 'fs';
 import path from 'path';
-import type { AuditEntry, AuditStats } from '@saaafe/shared';
+import type { AuditEntry, AuditStats } from '@7cordon/shared';
 
 /** Directory permissions: owner only. */
 const DIR_MODE = 0o700;
@@ -23,7 +23,7 @@ export class AuditLogger {
   private entries: AuditEntry[] = [];
 
   constructor(logDir?: string) {
-    const dir = logDir || path.join(process.cwd(), '.saaafe');
+    const dir = logDir || path.join(process.cwd(), '.7cordon');
     if (!existsSync(dir)) {
       mkdirSync(dir, { recursive: true, mode: DIR_MODE });
     }
@@ -46,7 +46,7 @@ export class AuditLogger {
       appendFileSync(this.logPath, line, { mode: FILE_MODE });
     } catch (err) {
       // Entry exists in memory — visible in current session but lost on crash
-      console.warn(`[saaafe] Audit log write failed: ${err instanceof Error ? err.message : 'unknown error'}`);
+      console.warn(`[7cordon] Audit log write failed: ${err instanceof Error ? err.message : 'unknown error'}`);
     }
   }
 

@@ -1,15 +1,15 @@
 {
-  "name": "@saaafe/sdk",
+  "name": "@7cordon/sdk",
   "version": "0.1.0",
-  "description": "SDK for saaafe — AI-powered trust and safety layer for autonomous financial agents",
+  "description": "SDK for 7cordon — AI-powered trust and safety layer for autonomous financial agents",
   "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/shipooor/saaafe.git",
+    "url": "https://github.com/shipooor/7cordon.git",
     "directory": "packages/sdk"
   },
-  "keywords": ["saaafe", "trust-safety", "ai", "policy-engine", "wdk", "tether"],
+  "keywords": ["7cordon", "trust-safety", "ai", "policy-engine", "wdk", "tether"],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
@@ -27,7 +27,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@saaafe/shared": "0.1.0",
+    "@7cordon/shared": "0.1.0",
     "@modelcontextprotocol/sdk": "^1.27.1",
     "@tetherto/wdk": "^1.0.0-beta.6",
     "@tetherto/wdk-wallet-evm": "^1.0.0-beta.8",

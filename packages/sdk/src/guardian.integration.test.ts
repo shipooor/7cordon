@@ -13,7 +13,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import type { TransactionRequest, AnalysisResult } from '@saaafe/shared';
+import type { TransactionRequest, AnalysisResult } from '@7cordon/shared';
 import { Guardian } from './guardian.js';
 
 // Store mock instances for test setup

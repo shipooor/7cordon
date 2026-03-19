@@ -12,10 +12,10 @@
  * MCP client config (claude_desktop_config.json):
  *   {
  *     "mcpServers": {
- *       "saaafe": {
+ *       "7cordon": {
  *         "command": "npx",
  *         "args": ["tsx", "packages/sdk/src/mcp/server.ts"],
- *         "env": { "SAAAFE_API_KEY": "...", "ANTHROPIC_API_KEY": "..." }
+ *         "env": { "CORDON7_API_KEY": "...", "ANTHROPIC_API_KEY": "..." }
  *       }
  *     }
  *   }
@@ -33,11 +33,11 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { z } from 'zod';
 import { createGuardian } from '../guardian.js';
 import type { GuardianConfig } from '../guardian.js';
-import type { TransactionRequest, TransactionAction, Chain } from '@saaafe/shared';
-import { VALID_ACTIONS, VALID_CHAINS } from '@saaafe/shared';
+import type { TransactionRequest, TransactionAction, Chain } from '@7cordon/shared';
+import { VALID_ACTIONS, VALID_CHAINS } from '@7cordon/shared';
 
 const API_URL = process.env.API_URL || process.env.VITE_API_URL || 'http://localhost:3000';
-const API_KEY = process.env.SAAAFE_API_KEY;
+const API_KEY = process.env.CORDON7_API_KEY;
 const EVM_RPC = process.env.EVM_RPC_URL || 'https://arb-sepolia.g.alchemy.com/v2/demo';
 if (!process.env.EVM_RPC_URL) {
   console.error('[MCP] WARNING: EVM_RPC_URL not set — using Alchemy demo endpoint (rate-limited)');
@@ -75,14 +75,14 @@ function ensureInit(): Promise<void> {
 // --- MCP Server ---
 
 const server = new McpServer({
-  name: 'saaafe',
+  name: '7cordon',
   version: '0.1.0',
 });
 
 // Tool: analyze_transaction
 server.tool(
   'analyze_transaction',
-  'Submit a transaction for saaafe risk analysis. Returns approval status, risk level, and explanation. ' +
+  'Submit a transaction for 7cordon risk analysis. Returns approval status, risk level, and explanation. ' +
   'Use this BEFORE executing any blockchain transaction to ensure it is safe.',
   {
     action: z.enum(VALID_ACTIONS as unknown as readonly [string, ...string[]]).describe('Transaction type'),
@@ -136,7 +136,7 @@ server.tool(
 // Tool: get_trust_score
 server.tool(
   'get_trust_score',
-  'Get the current saaafe trust score (0-100) based on transaction history. ' +
+  'Get the current 7cordon trust score (0-100) based on transaction history. ' +
   'Higher scores mean faster approvals and less scrutiny.',
   {},
   async () => {
@@ -159,7 +159,7 @@ server.tool(
 // Tool: get_policy
 server.tool(
   'get_policy',
-  'Get the active saaafe policy configuration — budget limits, allowed tokens, protocols, and rate limits. ' +
+  'Get the active 7cordon policy configuration — budget limits, allowed tokens, protocols, and rate limits. ' +
   'Check this to understand what transactions are allowed before submitting.',
   {},
   async () => {
@@ -192,7 +192,7 @@ server.tool(
 // Tool: get_recent_activity
 server.tool(
   'get_recent_activity',
-  'Get recent saaafe audit log entries. Shows past transaction decisions with status, risk level, and explanation.',
+  'Get recent 7cordon audit log entries. Shows past transaction decisions with status, risk level, and explanation.',
   {
     limit: z.number().min(1).max(50).default(10).describe('Number of entries to return'),
   },
@@ -227,7 +227,7 @@ async function main() {
 }
 
 function shutdown(signal: string) {
-  console.error(`[MCP] ${signal} received. Disposing saaafe...`);
+  console.error(`[MCP] ${signal} received. Disposing 7cordon...`);
   guardian.dispose().catch(() => {}).finally(() => process.exit(0));
   setTimeout(() => process.exit(1), 5_000).unref();
 }
@@ -236,6 +236,6 @@ process.on('SIGTERM', () => shutdown('SIGTERM'));
 process.on('SIGINT', () => shutdown('SIGINT'));
 
 main().catch((err) => {
-  console.error('saaafe MCP server failed:', err);
+  console.error('7cordon MCP server failed:', err);
   process.exit(1);
 });

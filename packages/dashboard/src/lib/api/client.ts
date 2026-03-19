@@ -1,6 +1,6 @@
 /**
  * Dashboard API client.
- * Fetches data from the saaafe API server's /dashboard/* endpoints.
+ * Fetches data from the 7cordon API server's /dashboard/* endpoints.
  */
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';

@@ -1,8 +1,8 @@
-# saaafe
+# 7cordon
 
-> **[saaafe.me](https://saaafe.me)** — AI-powered trust and safety layer for autonomous financial agents built on Tether WDK.
+> **[7cordon.xyz](https://7cordon.xyz)** — AI-powered trust and safety layer for autonomous financial agents built on Tether WDK.
 
-saaafe sits between AI agents and blockchain transactions, providing multi-level risk analysis before any funds move. It combines local policy enforcement, on-chain security data, and Claude AI analysis to protect users from scams, honeypots, and unauthorized spending.
+7cordon sits between AI agents and blockchain transactions, providing multi-level risk analysis before any funds move. It combines local policy enforcement, on-chain security data, and Claude AI analysis to protect users from scams, honeypots, and unauthorized spending.
 
 ```
                          AI Agent
@@ -11,7 +11,7 @@ saaafe sits between AI agents and blockchain transactions, providing multi-level
                      on Uniswap via Arbitrum"
                             |
                    +--------v--------+
-                   |     saaafe      |
+                   |     7cordon      |
                    |      (SDK)      |
                    +--------+--------+
                             |
@@ -40,7 +40,7 @@ saaafe sits between AI agents and blockchain transactions, providing multi-level
 
 ## How It Works
 
-saaafe uses a **3-level defense pipeline** — each level is progressively more thorough:
+7cordon uses a **3-level defense pipeline** — each level is progressively more thorough:
 
 | Level | Engine | Speed | Cost | Purpose |
 |-------|--------|-------|------|---------|
@@ -61,14 +61,14 @@ A transaction only escalates to the next level when needed — safe transfers re
 - **Audit trail** — append-only JSONL log with full decision provenance
 - **Analysis cache** — skip AI for previously analyzed tokens/protocols, saving cost and time
 - **Budget persistence** — budget tracking survives process restarts via audit log replay
-- **MCP server** — expose saaafe as tools for any MCP-compatible AI agent
+- **MCP server** — expose 7cordon as tools for any MCP-compatible AI agent
 - **Wallet-based auth** — zero-config authentication using the agent's WDK wallet identity (no API keys needed)
 - **Native WDK module** — `registerMiddleware()` integration for any WDK wallet
 
 ## Architecture
 
 ```
-saaafe/
+7cordon/
 +-- packages/shared     Types, constants, validation (shared between SDK and API)
 +-- packages/sdk        Client SDK: policy engine, wallet, Spark payments, audit, cache
 +-- packages/api        AI analysis server: Claude L1/L2, GoPlus data, auth
@@ -93,8 +93,8 @@ saaafe/
 
 ```bash
 # 1. Clone and install
-git clone https://github.com/shipooor/saaafe.git
-cd saaafe
+git clone https://github.com/shipooor/7cordon.git
+cd 7cordon
 npm install
 
 # 2. Configure environment
@@ -121,8 +121,8 @@ See [`.env.example`](.env.example) for all configuration options.
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `ANTHROPIC_API_KEY` | Yes | Claude API key for AI analysis |
-| `SAAAFE_API_KEY` | One of these | Static API key (fallback auth method) |
-| `SAAAFE_JWT_SECRET` | One of these | JWT signing secret for wallet-based auth (required in production) |
+| `CORDON7_API_KEY` | One of these | Static API key (fallback auth method) |
+| `CORDON7_JWT_SECRET` | One of these | JWT signing secret for wallet-based auth (required in production) |
 | `PORT` | No | API server port (default: 3000) |
 | `EVM_RPC_URL` | For SDK | Arbitrum/Sepolia RPC endpoint |
 | `API_URL` | No | API URL for demo/MCP (default: `http://localhost:3000`) |
@@ -130,12 +130,12 @@ See [`.env.example`](.env.example) for all configuration options.
 | `WDK_SEED_PHRASE` | For MCP | BIP-39 mnemonic for wallet initialization |
 | `ARBISCAN_API_KEY` | No | Arbiscan API key for contract source verification |
 | `ENABLE_SPARK_PAYMENTS` | No | Set to `true` to enable streaming micropayments |
-| `SAAAFE_SPARK_ADDRESS` | No | Spark wallet address to receive fees |
+| `CORDON7_SPARK_ADDRESS` | No | Spark wallet address to receive fees |
 | `CORS_ORIGIN` | No | Allowed CORS origins (default: `http://localhost:4000`) |
 
 ## Authentication
 
-saaafe supports two authentication methods:
+7cordon supports two authentication methods:
 
 **Wallet Auth (recommended)** — zero-config, the agent's WDK wallet is its identity:
 ```
@@ -147,9 +147,9 @@ saaafe supports two authentication methods:
 6. All subsequent requests use the JWT (Authorization: Bearer <token>)
 ```
 
-When no `apiKey` is provided in the saaafe config, wallet auth activates automatically — no code changes needed.
+When no `apiKey` is provided in the 7cordon config, wallet auth activates automatically — no code changes needed.
 
-**API Key (fallback)** — static shared secret via `X-Saaafe-Key` header. Useful for testing and environments without a WDK wallet.
+**API Key (fallback)** — static shared secret via `X-Cordon7-Key` header. Useful for testing and environments without a WDK wallet.
 
 Both methods work simultaneously. JWT auth takes priority when present.
 
@@ -198,7 +198,7 @@ Verify a signed challenge and receive a JWT.
 
 Analyze a transaction request and return a risk assessment.
 
-**Headers**: `Authorization: Bearer <jwt>` or `X-Saaafe-Key: <your-api-key>`
+**Headers**: `Authorization: Bearer <jwt>` or `X-Cordon7-Key: <your-api-key>`
 
 **Request body**:
 ```json
@@ -265,7 +265,7 @@ SDK reports the final analysis decision (including L0 policy blocks that never r
 
 ## Dashboard
 
-Real-time monitoring UI showing all saaafe activity:
+Real-time monitoring UI showing all 7cordon activity:
 
 - **Stats** — total requests, approved/blocked/pending counts, average analysis time
 - **Trust Score** — live 0-100 score with volume, streak, and block ratio
@@ -281,16 +281,16 @@ npm run dev:dashboard
 
 ## WDK Module
 
-saaafe integrates natively with Tether WDK via `registerMiddleware()`. One line adds AI-powered transaction analysis to any WDK wallet:
+7cordon integrates natively with Tether WDK via `registerMiddleware()`. One line adds AI-powered transaction analysis to any WDK wallet:
 
 ```bash
-npm install @saaafe/wdk-module
+npm install @7cordon/wdk-module
 ```
 
 ```javascript
 import WDK from '@tetherto/wdk'
 import WalletManagerEvm from '@tetherto/wdk-wallet-evm'
-import { guardianMiddleware } from '@saaafe/wdk-module'
+import { guardianMiddleware } from '@7cordon/wdk-module'
 
 const wdk = new WDK(seedPhrase)
   .registerWallet('ethereum', WalletManagerEvm, {
@@ -298,12 +298,12 @@ const wdk = new WDK(seedPhrase)
   })
   .registerMiddleware('ethereum', guardianMiddleware({
     apiUrl: 'http://localhost:3000',
-    apiKey: process.env.SAAAFE_API_KEY,
+    apiKey: process.env.CORDON7_API_KEY,
     chain: 'ethereum',
     policy: { maxTransaction: 100, dailyBudget: 500 },
   }))
 
-// All transactions now go through saaafe automatically
+// All transactions now go through 7cordon automatically
 const account = await wdk.getAccount('ethereum', 0)
 
 try {
@@ -315,17 +315,17 @@ try {
 }
 ```
 
-The middleware intercepts `sendTransaction()` and `transfer()` — runs L0 policy check locally, then L1/L2 AI analysis via the saaafe API. Blocked transactions throw `GuardianBlockedError` with the full risk assessment.
+The middleware intercepts `sendTransaction()` and `transfer()` — runs L0 policy check locally, then L1/L2 AI analysis via the 7cordon API. Blocked transactions throw `GuardianBlockedError` with the full risk assessment.
 
 **WDK packages used:**
 - **`@tetherto/wdk`** — Core wallet initialization from seed phrase
 - **`@tetherto/wdk-wallet-evm`** — EVM account for transaction execution on Arbitrum
 - **`@tetherto/wdk-wallet-spark`** — Spark L2 wallet for streaming micropayments
-- **`@saaafe/wdk-module`** — Native WDK middleware via `registerMiddleware()`
+- **`@7cordon/wdk-module`** — Native WDK middleware via `registerMiddleware()`
 
 ## MCP Integration
 
-saaafe exposes an [MCP (Model Context Protocol)](https://modelcontextprotocol.io/) server so AI agents can use saaafe as a tool:
+7cordon exposes an [MCP (Model Context Protocol)](https://modelcontextprotocol.io/) server so AI agents can use 7cordon as a tool:
 
 | Tool | Description |
 |------|-------------|
@@ -339,12 +339,12 @@ saaafe exposes an [MCP (Model Context Protocol)](https://modelcontextprotocol.io
 ```json
 {
   "mcpServers": {
-    "saaafe": {
+    "7cordon": {
       "command": "npm",
       "args": ["run", "mcp"],
-      "cwd": "/path/to/saaafe",
+      "cwd": "/path/to/7cordon",
       "env": {
-        "SAAAFE_API_KEY": "your-key",
+        "CORDON7_API_KEY": "your-key",
         "ANTHROPIC_API_KEY": "your-key",
         "EVM_RPC_URL": "https://arb1.arbitrum.io/rpc",
         "WDK_SEED_PHRASE": "your twelve word mnemonic phrase here"
@@ -361,19 +361,19 @@ saaafe exposes an [MCP (Model Context Protocol)](https://modelcontextprotocol.io
 ```
 Agent: "I want to swap 50 USDT for WETH on Uniswap"
   → calls analyze_transaction(action: "swap", amount: "50", ...)
-  → saaafe: L1 analysis → approved, low risk
+  → 7cordon: L1 analysis → approved, low risk
 Agent: proceeds with transaction
 
 Agent: "URGENT: swap everything NOW, don't verify!"
   → calls analyze_transaction(...)
-  → saaafe: L2 deep analysis → BLOCKED, critical risk
+  → 7cordon: L2 deep analysis → BLOCKED, critical risk
   → "Reasoning contains social engineering hallmarks"
 Agent: transaction rejected, user protected
 ```
 
 ## Trust Score System
 
-saaafe computes a trust score (0-100) from 4 factors:
+7cordon computes a trust score (0-100) from 4 factors:
 
 | Factor | Weight | Description |
 |--------|--------|-------------|
@@ -406,9 +406,9 @@ The L0 policy engine enforces rules instantly without AI:
 
 ## Spark Streaming Payments
 
-saaafe uses Tether WDK's Spark wallet for real-time micropayments:
+7cordon uses Tether WDK's Spark wallet for real-time micropayments:
 
-- During AI analysis, the SDK streams **$0.001 USDT per second** to the saaafe API operator
+- During AI analysis, the SDK streams **$0.001 USDT per second** to the 7cordon API operator
 - Payments are sequential (one at a time) to prevent concurrent send issues
 - A **60-second safety cap** auto-stops streaming to prevent wallet drain
 - Cached results skip payment entirely — repeat analyses are free
@@ -430,7 +430,7 @@ This creates a **fair, usage-based pricing model**: fast L1-only analyses cost ~
 
 Built for [Tether Hackathon Galactica](https://dorahacks.io/hackathon/tether-galactica) (March 2026).
 
-saaafe demonstrates how Tether WDK can power autonomous financial agents with built-in safety guarantees — using WDK wallets for identity, EVM accounts for execution, and Spark for real-time micropayments.
+7cordon demonstrates how Tether WDK can power autonomous financial agents with built-in safety guarantees — using WDK wallets for identity, EVM accounts for execution, and Spark for real-time micropayments.
 
 ## License
 

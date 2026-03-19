@@ -8,15 +8,15 @@ const TEST_SECRET = 'test-jwt-secret-minimum-16-chars-long';
 let savedSecret: string | undefined;
 
 beforeAll(() => {
-  savedSecret = process.env.SAAAFE_JWT_SECRET;
-  process.env.SAAAFE_JWT_SECRET = TEST_SECRET;
+  savedSecret = process.env.CORDON7_JWT_SECRET;
+  process.env.CORDON7_JWT_SECRET = TEST_SECRET;
 });
 
 afterAll(() => {
   if (savedSecret !== undefined) {
-    process.env.SAAAFE_JWT_SECRET = savedSecret;
+    process.env.CORDON7_JWT_SECRET = savedSecret;
   } else {
-    delete process.env.SAAAFE_JWT_SECRET;
+    delete process.env.CORDON7_JWT_SECRET;
   }
 });
 
@@ -125,9 +125,9 @@ describe('jwtAuthMiddleware', () => {
     expect(req.walletAddress).toBe(upper.toLowerCase());
   });
 
-  it('warns and passes through when Bearer present but SAAAFE_JWT_SECRET not configured', async () => {
-    const saved = process.env.SAAAFE_JWT_SECRET;
-    delete process.env.SAAAFE_JWT_SECRET;
+  it('warns and passes through when Bearer present but CORDON7_JWT_SECRET not configured', async () => {
+    const saved = process.env.CORDON7_JWT_SECRET;
+    delete process.env.CORDON7_JWT_SECRET;
 
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
     try {
@@ -135,12 +135,12 @@ describe('jwtAuthMiddleware', () => {
       await jwtAuthMiddleware(req, res, next);
 
       expect(warnSpy).toHaveBeenCalledWith(
-        '[saaafe] Bearer token present but SAAAFE_JWT_SECRET not configured — skipping JWT validation'
+        '[7cordon] Bearer token present but CORDON7_JWT_SECRET not configured — skipping JWT validation'
       );
       expect(next).toHaveBeenCalled();
       expect(res.status).not.toHaveBeenCalled();
     } finally {
-      if (saved) process.env.SAAAFE_JWT_SECRET = saved;
+      if (saved) process.env.CORDON7_JWT_SECRET = saved;
       warnSpy.mockRestore();
     }
   });

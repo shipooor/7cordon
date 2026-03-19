@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { VALID_ACTIONS, VALID_CHAINS, VALID_RISK_LEVELS, UUID_REGEX } from '@saaafe/shared';
+import { VALID_ACTIONS, VALID_CHAINS, VALID_RISK_LEVELS, UUID_REGEX } from '@7cordon/shared';
 import { authMiddleware } from '../middleware/auth.js';
 import { jwtAuthMiddleware } from '../middleware/jwt.js';
 import { serverState } from '../state.js';

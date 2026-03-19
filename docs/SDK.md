@@ -1,19 +1,19 @@
-# saaafe SDK Guide
+# 7cordon SDK Guide
 
-The saaafe SDK is the client-side library that agents integrate to protect their transactions. It provides transaction analysis, policy enforcement, and local wallet management.
+The 7cordon SDK is the client-side library that agents integrate to protect their transactions. It provides transaction analysis, policy enforcement, and local wallet management.
 
 ## Installation
 
 ```bash
-npm install @saaafe/sdk @saaafe/shared
+npm install @7cordon/sdk @7cordon/shared
 ```
 
 ## Quick Start
 
 ```typescript
-import { createGuardian } from '@saaafe/sdk';
+import { createGuardian } from '@7cordon/sdk';
 
-// 1. Create saaafe instance
+// 1. Create 7cordon instance
 const guardian = createGuardian({
   apiUrl: 'http://localhost:3000',
   apiKey: 'your-api-key',
@@ -57,7 +57,7 @@ interface GuardianConfig {
   // Required
   evmRpcUrl: string;                    // EVM RPC endpoint (Arbitrum, Ethereum, Sepolia)
   chain: Chain;                           // Target blockchain (see Chain type below)
-  apiUrl: string;                       // saaafe API server URL
+  apiUrl: string;                       // 7cordon API server URL
 
   // Optional: Authentication (at least one recommended)
   apiKey?: string;                      // Shared secret (SHA-256 hashed by server)
@@ -67,7 +67,7 @@ interface GuardianConfig {
 
   // Optional: Spark streaming payments
   enableSparkPayments?: boolean;        // Enable $0.001/sec USDT micropayments
-  guardianSparkAddress?: string;        // saaafe operator's Spark address to receive fees
+  guardianSparkAddress?: string;        // 7cordon operator's Spark address to receive fees
   sparkNetwork?: 'MAINNET' | 'TESTNET'; // Spark network (default: TESTNET)
 
   // Optional: Transaction execution control
@@ -95,8 +95,8 @@ const guardian = createGuardian({
 const guardian = createGuardian({
   evmRpcUrl: 'https://arb1.arbitrum.io/rpc',
   chain: 'arbitrum',
-  apiUrl: 'https://api.saaafe.me',
-  apiKey: process.env.SAAAFE_API_KEY,
+  apiUrl: 'https://api.7cordon.xyz',
+  apiKey: process.env.CORDON7_API_KEY,
   enableSparkPayments: true,
   guardianSparkAddress: '0x742d35Cc6634C0532925a3b844Bc9e7595f2bD18',
   sparkNetwork: 'MAINNET',
@@ -109,7 +109,7 @@ const guardian = createGuardian({
   evmRpcUrl: 'https://arb1.arbitrum.io/rpc',
   chain: 'arbitrum',
   apiUrl: 'http://localhost:3000',
-  apiKey: process.env.SAAAFE_API_KEY,
+  apiKey: process.env.CORDON7_API_KEY,
   analysisOnly: true, // Analyze transactions without executing them
 });
 ```
@@ -120,7 +120,7 @@ const guardian = createGuardian({
   evmRpcUrl: 'https://arb1.arbitrum.io/rpc',
   chain: 'arbitrum',
   apiUrl: 'http://localhost:3000',
-  apiKey: process.env.SAAAFE_API_KEY,
+  apiKey: process.env.CORDON7_API_KEY,
   erc4337: {
     bundlerUrl: 'https://bundler.example.com',
     paymasterUrl: 'https://paymaster.example.com',
@@ -400,7 +400,7 @@ The SDK caches analysis results internally using an LRU cache with file persiste
 - Protocol info: 30 days
 - Address checks: 7 days
 
-**File persistence**: `.saaafe/analysis-cache.json` (mode 0o600)
+**File persistence**: `.7cordon/analysis-cache.json` (mode 0o600)
 
 ## Trust Score
 
@@ -459,7 +459,7 @@ console.log(stats); // {
 guardian.getAuditLog().clear();
 ```
 
-**File**: `.saaafe/audit.jsonl` (append-only, mode 0o600)
+**File**: `.7cordon/audit.jsonl` (append-only, mode 0o600)
 
 ## Spark Payment Configuration
 
@@ -543,7 +543,7 @@ try {
   if (error instanceof Error) {
     if (error.message.includes('not initialized')) {
       // guardian.init() wasn't called
-    } else if (error.message.includes('saaafe API')) {
+    } else if (error.message.includes('7cordon API')) {
       // API server unreachable or returned error
     } else if (error.message.includes('Network error')) {
       // Network connectivity issue
@@ -555,8 +555,8 @@ try {
 
 **Common errors**:
 - `Guardian not initialized. Call init() first.` — call `init()` before `request()`
-- `saaafe API error 401` — invalid or missing API key
-- `saaafe API request timed out` — API server not responding
+- `7cordon API error 401` — invalid or missing API key
+- `7cordon API request timed out` — API server not responding
 - `WalletManager not initialized` — init() failed
 - `Invalid EVM address` — malformed recipient or contract address
 - `Invalid transaction amount` — amount not a valid number
@@ -582,13 +582,13 @@ await guardian.dispose();
 
 ```typescript
 import Anthropic from '@anthropic-ai/sdk';
-import { createGuardian } from '@saaafe/sdk';
-import type { TransactionRequest } from '@saaafe/shared';
+import { createGuardian } from '@7cordon/sdk';
+import type { TransactionRequest } from '@7cordon/shared';
 
 const client = new Anthropic();
 const guardian = createGuardian({
-  apiUrl: process.env.SAAAFE_API_URL,
-  apiKey: process.env.SAAAFE_API_KEY,
+  apiUrl: process.env.CORDON7_API_URL,
+  apiKey: process.env.CORDON7_API_KEY,
   evmRpcUrl: process.env.EVM_RPC_URL,
   chain: 'arbitrum',
 });

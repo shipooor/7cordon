@@ -1,14 +1,14 @@
 import { Router } from 'express';
 import { createChallenge, verifySignature, issueToken, verifiers } from '@shipooor/walletauth';
-import type { ChallengeRequest, ChallengeResponse, VerifyRequest, VerifyResponse } from '@saaafe/shared';
+import type { ChallengeRequest, ChallengeResponse, VerifyRequest, VerifyResponse } from '@7cordon/shared';
 
 const EVM_ADDRESS_RE = /^0x[0-9a-fA-F]{40}$/;
 const JWT_EXPIRY = '24h';
 const JWT_EXPIRY_MS = 24 * 60 * 60 * 1000;
 
 function getSecret(): string {
-  const secret = process.env.SAAAFE_JWT_SECRET;
-  if (!secret) throw new Error('SAAAFE_JWT_SECRET is required for wallet auth');
+  const secret = process.env.CORDON7_JWT_SECRET;
+  if (!secret) throw new Error('CORDON7_JWT_SECRET is required for wallet auth');
   return secret;
 }
 

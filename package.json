@@ -1,11 +1,11 @@
 {
-  "name": "saaafe",
+  "name": "7cordon",
   "description": "AI-powered trust and safety layer for autonomous financial agents on Tether WDK",
   "author": "shipooor",
-  "homepage": "https://saaafe.me",
+  "homepage": "https://7cordon.xyz",
   "repository": {
     "type": "git",
-    "url": "https://github.com/shipooor/saaafe.git"
+    "url": "https://github.com/shipooor/7cordon.git"
   },
   "private": true,
   "workspaces": [

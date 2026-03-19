@@ -1,9 +1,9 @@
 /**
- * Demo scenarios — real TransactionRequest objects for the saaafe pipeline.
+ * Demo scenarios — real TransactionRequest objects for the 7cordon pipeline.
  * Each scenario demonstrates a different aspect of the security system.
  */
 
-import type { TransactionRequest } from '@saaafe/shared';
+import type { TransactionRequest } from '@7cordon/shared';
 
 export interface Scenario {
   name: string;

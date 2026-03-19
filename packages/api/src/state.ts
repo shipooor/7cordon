@@ -11,8 +11,8 @@ import type {
   RiskLevel,
   TrustScore,
   PolicyConfig,
-} from '@saaafe/shared';
-import { DEFAULT_POLICY, calculateTrustScore } from '@saaafe/shared';
+} from '@7cordon/shared';
+import { DEFAULT_POLICY, calculateTrustScore } from '@7cordon/shared';
 
 type FinalStatus = 'approved' | 'blocked' | 'pending_approval';
 

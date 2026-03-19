@@ -1,6 +1,6 @@
-# saaafe API Reference
+# 7cordon API Reference
 
-The saaafe API server handles multi-level risk analysis (L1 quick, L2 deep) with Claude AI, integrates external data sources (GoPlus, DeFi Llama, Arbiscan), and serves a dashboard for real-time monitoring.
+The 7cordon API server handles multi-level risk analysis (L1 quick, L2 deep) with Claude AI, integrates external data sources (GoPlus, DeFi Llama, Arbiscan), and serves a dashboard for real-time monitoring.
 
 ## Server Setup
 
@@ -23,8 +23,8 @@ PORT=3001 npm run dev:api
 ANTHROPIC_API_KEY=sk-ant-...            # Claude API key
 
 # Auth (at least one required)
-SAAAFE_JWT_SECRET=your-secret-here      # JWT signing secret for wallet auth (min 16 chars)
-SAAAFE_API_KEY=your-shared-secret       # Static API key (fallback auth)
+CORDON7_JWT_SECRET=your-secret-here      # JWT signing secret for wallet auth (min 16 chars)
+CORDON7_API_KEY=your-shared-secret       # Static API key (fallback auth)
 
 # Optional
 PORT=3000                               # Server port (default: 3000)
@@ -52,10 +52,10 @@ The SDK uses the agent's WDK wallet as its identity — zero-config, no API keys
 
 ### API Key (Fallback)
 
-For simple setups or testing. Set `SAAAFE_API_KEY` on server and pass via header.
+For simple setups or testing. Set `CORDON7_API_KEY` on server and pass via header.
 
 **Flow**:
-1. Client sends `X-Saaafe-Key: <api-key>` header
+1. Client sends `X-Cordon7-Key: <api-key>` header
 2. Server SHA-256 hashes both configured and provided keys
 3. Server performs timing-safe constant-time comparison
 4. Prevents timing attacks on API key verification
@@ -63,7 +63,7 @@ For simple setups or testing. Set `SAAAFE_API_KEY` on server and pass via header
 ```bash
 # Example with API key
 curl -X POST http://localhost:3000/analyze \
-  -H "X-Saaafe-Key: your-api-key" \
+  -H "X-Cordon7-Key: your-api-key" \
   -H "Content-Type: application/json" \
   -d '{...}'
 ```
@@ -91,7 +91,7 @@ Global and endpoint-specific limits.
 
 Submit a transaction for AI risk analysis.
 
-**Authentication**: Required (`Authorization: Bearer <jwt>` or `X-Saaafe-Key` header)
+**Authentication**: Required (`Authorization: Bearer <jwt>` or `X-Cordon7-Key` header)
 
 **Rate limit**: 20 req/min
 
@@ -351,7 +351,7 @@ Active policy configuration and budget status.
 
 SDK reports the final analysis decision (including L0 blocks that never reach `/analyze`).
 
-**Authentication**: Required (`Authorization: Bearer <jwt>` or `X-Saaafe-Key` header)
+**Authentication**: Required (`Authorization: Bearer <jwt>` or `X-Cordon7-Key` header)
 
 **Rate limit**: 60 req/min
 
@@ -518,7 +518,7 @@ type ThreatType =
 | Status | Error | Cause | Resolution |
 |--------|-------|-------|-----------|
 | 400 | Invalid request schema | Missing/malformed field | Check request format against schema |
-| 401 | Unauthorized | Missing/invalid authentication | Provide a valid JWT or `X-Saaafe-Key` header |
+| 401 | Unauthorized | Missing/invalid authentication | Provide a valid JWT or `X-Cordon7-Key` header |
 | 429 | Too many requests | Rate limit exceeded | Wait and retry |
 | 500 | Analysis failed | Internal server error | Check logs, retry |
 
@@ -579,7 +579,7 @@ The API maintains state across requests for dashboard display:
 ### Analyze transaction:
 ```bash
 curl -X POST http://localhost:3000/analyze \
-  -H "X-Saaafe-Key: test-key" \
+  -H "X-Cordon7-Key: test-key" \
   -H "Content-Type: application/json" \
   -d '{
     "request": {
@@ -636,7 +636,7 @@ curl http://localhost:3000/dashboard/trust
 
 ## Integration with SDK
 
-The API is consumed by the saaafe SDK:
+The API is consumed by the 7cordon SDK:
 1. SDK calls `POST /analyze` with transaction request
 2. API runs L1/L2 analysis
 3. API returns `AnalysisResult` to SDK

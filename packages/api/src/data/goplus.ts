@@ -1,4 +1,4 @@
-import type { GoPlusData, Chain } from '@saaafe/shared';
+import type { GoPlusData, Chain } from '@7cordon/shared';
 import { fetchWithTimeout, EVM_ADDRESS_REGEX } from './fetch-utils.js';
 
 const GOPLUS_BASE_URL = 'https://api.gopluslabs.io/api/v1';

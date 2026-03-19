@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { AuditLogger } from './logger.js';
-import type { AuditEntry } from '@saaafe/shared';
+import type { AuditEntry } from '@7cordon/shared';
 import * as fs from 'fs';
 
 // Mock fs functions
@@ -65,7 +65,7 @@ describe('AuditLogger', () => {
       new AuditLogger();
 
       expect(fs.mkdirSync).toHaveBeenCalledWith(
-        expect.stringContaining('.saaafe'),
+        expect.stringContaining('.7cordon'),
         expect.objectContaining({ recursive: true, mode: 0o700 })
       );
     });

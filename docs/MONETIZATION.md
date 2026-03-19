@@ -1,6 +1,6 @@
-# saaafe Monetization Design
+# 7cordon Monetization Design
 
-> Analysis of pricing model trade-offs for the saaafe network.
+> Analysis of pricing model trade-offs for the 7cordon network.
 
 ## Current Model (Demo)
 
@@ -38,7 +38,7 @@ This is intentional: caching reduces server load and improves user experience. A
 
 ### Analysis vs execution gap
 
-saaafe analyzes a *request*, not the *execution*. An agent could request analysis for $1, then execute $1M. This is a fundamental limitation of any pre-transaction analysis system. Mitigation: the SDK's policy engine enforces budget limits independently of AI analysis.
+7cordon analyzes a *request*, not the *execution*. An agent could request analysis for $1, then execute $1M. This is a fundamental limitation of any pre-transaction analysis system. Mitigation: the SDK's policy engine enforces budget limits independently of AI analysis.
 
 ## Candidate Models
 
