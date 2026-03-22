@@ -270,6 +270,112 @@
 <div id="restart">Press R to restart &middot; Click to skip</div>
 
 <script>
+// ============================================
+// SOUND ENGINE (Web Audio API)
+// ============================================
+let audioCtx;
+function initAudio() {
+  if (audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+}
+
+function playTick() {
+  initAudio();
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.type = 'sine'; o.frequency.value = 800;
+  g.gain.setValueAtTime(0.08, audioCtx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.06);
+  o.connect(g); g.connect(audioCtx.destination);
+  o.start(); o.stop(audioCtx.currentTime + 0.06);
+}
+
+function playWhoosh() {
+  initAudio();
+  const bufSize = audioCtx.sampleRate * 0.3;
+  const buf = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / bufSize);
+  const src = audioCtx.createBufferSource();
+  src.buffer = buf;
+  const filt = audioCtx.createBiquadFilter();
+  filt.type = 'bandpass'; filt.frequency.value = 600; filt.Q.value = 2;
+  filt.frequency.exponentialRampToValueAtTime(2000, audioCtx.currentTime + 0.2);
+  const g = audioCtx.createGain();
+  g.gain.setValueAtTime(0.12, audioCtx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+  src.connect(filt); filt.connect(g); g.connect(audioCtx.destination);
+  src.start();
+}
+
+function playDing() {
+  initAudio();
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.type = 'sine'; o.frequency.value = 1200;
+  g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+  o.connect(g); g.connect(audioCtx.destination);
+  o.start(); o.stop(audioCtx.currentTime + 0.4);
+}
+
+function playAlert() {
+  initAudio();
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.type = 'sawtooth'; o.frequency.value = 200;
+  o.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.3);
+  g.gain.setValueAtTime(0.15, audioCtx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+  o.connect(g); g.connect(audioCtx.destination);
+  o.start(); o.stop(audioCtx.currentTime + 0.4);
+}
+
+function playBass() {
+  initAudio();
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.type = 'sine'; o.frequency.value = 60;
+  g.gain.setValueAtTime(0.2, audioCtx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.6);
+  o.connect(g); g.connect(audioCtx.destination);
+  o.start(); o.stop(audioCtx.currentTime + 0.6);
+}
+
+function playType() {
+  initAudio();
+  const bufSize = audioCtx.sampleRate * 0.02;
+  const buf = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / bufSize);
+  const src = audioCtx.createBufferSource();
+  src.buffer = buf;
+  const g = audioCtx.createGain();
+  g.gain.setValueAtTime(0.06, audioCtx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.02);
+  src.connect(g); g.connect(audioCtx.destination);
+  src.start();
+}
+
+function playSuccess() {
+  initAudio();
+  const o1 = audioCtx.createOscillator();
+  const o2 = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o1.type = 'sine'; o1.frequency.value = 600;
+  o2.type = 'sine'; o2.frequency.value = 900;
+  g.gain.setValueAtTime(0.08, audioCtx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+  o1.connect(g); o2.connect(g); g.connect(audioCtx.destination);
+  o1.start(); o2.start();
+  o1.stop(audioCtx.currentTime + 0.15);
+  o2.start(audioCtx.currentTime + 0.12);
+  o2.stop(audioCtx.currentTime + 0.3);
+}
+
+// Start audio on first interaction (browser requirement)
+document.addEventListener('click', initAudio, { once: true });
+
 const tl = gsap.timeline();
 const cx = window.innerWidth / 2;
 const cy = window.innerHeight / 2;
@@ -286,7 +392,7 @@ gsap.to('#progress', { width: '100%', duration: 120, ease: 'none' });
 
 // Logo fade in + scale
 tl.set('#logo', { left:'50%', top:'50%', xPercent:-50, yPercent:-50 })
-  .fromTo('#logo', { opacity:0, scale:0.8 }, { opacity:1, scale:1, duration:1, ease:'power2.out' })
+  .fromTo('#logo', { opacity:0, scale:0.8 }, { opacity:1, scale:1, duration:1, ease:'power2.out', onStart: playDing })
   .to('#logo', { opacity:0, duration:0.5 }, '+=1.5')
 
 // Title sequence
@@ -301,7 +407,7 @@ tl.set('#logo', { left:'50%', top:'50%', xPercent:-50, yPercent:-50 })
   .fromTo('#t-sub1', { opacity:0 }, { opacity:1, duration:0.6 }, '-=0.1')
 
   // Hold then clear
-  .to(['#t-tagline','#t-title','#t-title2','#t-sub1'], { opacity:0, y:-20, duration:0.5, stagger:0.05 }, '+=2')
+  .to(['#t-tagline','#t-title','#t-title2','#t-sub1'], { opacity:0, y:-20, duration:0.5, stagger:0.05, onStart: playWhoosh }, '+=2')
 
 // ============================================
 // ACT 2: PROBLEM (8-18s)
@@ -315,14 +421,14 @@ tl.set('#logo', { left:'50%', top:'50%', xPercent:-50, yPercent:-50 })
 
   // "Who watches them?" — big dramatic
   .set('#t-problem3', { left:'50%', top:'50%', xPercent:-50, yPercent:-50 })
-  .fromTo('#t-problem3', { opacity:0, scale:1.1 }, { opacity:1, scale:1, duration:0.8, ease:'power3.out' })
+  .fromTo('#t-problem3', { opacity:0, scale:1.1 }, { opacity:1, scale:1, duration:0.8, ease:'power3.out', onStart: playBass })
   .to('#t-problem3', { opacity:0, duration:0.4 }, '+=2')
 
   // "One bad transaction" → "Wallet drained"
   .set('#t-bad1', { left:'50%', top:'45%', xPercent:-50, yPercent:-50 })
   .set('#t-bad2', { left:'50%', top:'55%', xPercent:-50, yPercent:-50 })
   .fromTo('#t-bad1', { opacity:0 }, { opacity:1, duration:0.5 })
-  .fromTo('#t-bad2', { opacity:0, scale:1.2 }, { opacity:1, scale:1, duration:0.6, ease:'power3.out' }, '+=0.5')
+  .fromTo('#t-bad2', { opacity:0, scale:1.2 }, { opacity:1, scale:1, duration:0.6, ease:'power3.out', onStart: playAlert }, '+=0.5')
   .to(['#t-bad1','#t-bad2'], { opacity:0, duration:0.4 }, '+=1.5')
 
 // ============================================
@@ -348,18 +454,18 @@ tl.set('#logo', { left:'50%', top:'50%', xPercent:-50, yPercent:-50 })
   .set('#pipe2', { left:'calc(50% + 300px)', top:'50%', xPercent:-50, yPercent:-50 })
 
   .fromTo('#t-pipe-label', { opacity:0 }, { opacity:1, duration:0.4 })
-  .fromTo('#pipe0', { opacity:0, scale:0.8 }, { opacity:1, scale:1, duration:0.5, ease:'back.out(1.5)' })
+  .fromTo('#pipe0', { opacity:0, scale:0.8 }, { opacity:1, scale:1, duration:0.5, ease:'back.out(1.5)', onStart: playTick })
   .fromTo('#pa1', { opacity:0 }, { opacity:1, duration:0.3 })
-  .fromTo('#pipe1', { opacity:0, scale:0.8 }, { opacity:1, scale:1, duration:0.5, ease:'back.out(1.5)' })
+  .fromTo('#pipe1', { opacity:0, scale:0.8 }, { opacity:1, scale:1, duration:0.5, ease:'back.out(1.5)', onStart: playTick })
   .fromTo('#pa2', { opacity:0 }, { opacity:1, duration:0.3 })
-  .fromTo('#pipe2', { opacity:0, scale:0.8 }, { opacity:1, scale:1, duration:0.5, ease:'back.out(1.5)' })
+  .fromTo('#pipe2', { opacity:0, scale:0.8 }, { opacity:1, scale:1, duration:0.5, ease:'back.out(1.5)', onStart: playTick })
 
   // Pulse through pipeline
-  .to('#pipe0', { borderColor:'#22c55e', duration:0.3 }, '+=0.5')
+  .to('#pipe0', { borderColor:'#22c55e', duration:0.3, onStart: playDing }, '+=0.5')
   .to('#pipe0', { borderColor:'#222', duration:0.3 })
-  .to('#pipe1', { borderColor:'#eab308', duration:0.3 })
+  .to('#pipe1', { borderColor:'#eab308', duration:0.3, onStart: playDing })
   .to('#pipe1', { borderColor:'#222', duration:0.3 })
-  .to('#pipe2', { borderColor:'#ef4444', duration:0.3 })
+  .to('#pipe2', { borderColor:'#ef4444', duration:0.3, onStart: playAlert })
   .to('#pipe2', { borderColor:'#222', duration:0.3 })
 
   .to(['#t-pipe-label','#pipe0','#pa1','#pipe1','#pa2','#pipe2'], { opacity:0, duration:0.4 }, '+=1')
@@ -370,13 +476,13 @@ tl.set('#logo', { left:'50%', top:'50%', xPercent:-50, yPercent:-50 })
   .set('#terminal', { left:'50%', top:'50%', xPercent:-50, yPercent:-50 })
   .fromTo('#terminal', { opacity:0, scale:0.9 }, { opacity:1, scale:1, duration:0.6, ease:'power2.out' })
 
-  .fromTo('#tl1', { opacity:0, x:-10 }, { opacity:1, x:0, duration:0.3 }, '+=0.3')
-  .fromTo('#tl2', { opacity:0, x:-10 }, { opacity:1, x:0, duration:0.3 }, '+=0.4')
+  .fromTo('#tl1', { opacity:0, x:-10 }, { opacity:1, x:0, duration:0.3, onStart: playType }, '+=0.3')
+  .fromTo('#tl2', { opacity:0, x:-10 }, { opacity:1, x:0, duration:0.3, onStart: playType }, '+=0.4')
   .fromTo('#tl3', { opacity:0 }, { opacity:1, duration:0.1 }, '+=0.2')
-  .fromTo('#tl4', { opacity:0, x:-10 }, { opacity:1, x:0, duration:0.3 }, '+=0.4')
-  .fromTo('#tl5', { opacity:0, x:-10 }, { opacity:1, x:0, duration:0.3 }, '+=0.6')
-  .fromTo('#tl6', { opacity:0, x:-10 }, { opacity:1, x:0, duration:0.3 }, '+=0.6')
-  .fromTo('#tl7', { opacity:0, scale:1.05 }, { opacity:1, scale:1, duration:0.4 }, '+=0.5')
+  .fromTo('#tl4', { opacity:0, x:-10 }, { opacity:1, x:0, duration:0.3, onStart: playDing }, '+=0.4')
+  .fromTo('#tl5', { opacity:0, x:-10 }, { opacity:1, x:0, duration:0.3, onStart: playTick }, '+=0.6')
+  .fromTo('#tl6', { opacity:0, x:-10 }, { opacity:1, x:0, duration:0.3, onStart: playAlert }, '+=0.6')
+  .fromTo('#tl7', { opacity:0, scale:1.05 }, { opacity:1, scale:1, duration:0.4, onStart: playBass }, '+=0.5')
 
   // Hold on BLOCKED
   .to('#terminal', { opacity:0, scale:0.95, duration:0.5 }, '+=2.5')
@@ -400,7 +506,7 @@ tl.set('#logo', { left:'50%', top:'50%', xPercent:-50, yPercent:-50 })
   .fromTo('#stat5', { opacity:0, y:20 }, { opacity:1, y:0, duration:0.4 }, '-=0.2')
 
   // Count up
-  .to('#sv1', { textContent:3, duration:0.8, snap:{textContent:1} }, '-=0.5')
+  .to('#sv1', { textContent:3, duration:0.8, snap:{textContent:1}, onStart: playTick }, '-=0.5')
   .to('#sv2', { textContent:7, duration:0.8, snap:{textContent:1} }, '-=0.6')
   .to('#sv3', { textContent:4, duration:0.8, snap:{textContent:1} }, '-=0.6')
   .to('#sv4', { textContent:2, duration:0.8, snap:{textContent:1} }, '-=0.6')
@@ -464,7 +570,7 @@ tl.set('#logo', { left:'50%', top:'50%', xPercent:-50, yPercent:-50 })
   .set('#t-links', { left:'50%', top:'68%', xPercent:-50, yPercent:-50 })
   .set('#t-built', { left:'50%', top:'80%', xPercent:-50, yPercent:-50 })
 
-  .fromTo('#outro-logo', { opacity:0, scale:0.8 }, { opacity:1, scale:1, duration:0.8, ease:'power2.out' })
+  .fromTo('#outro-logo', { opacity:0, scale:0.8 }, { opacity:1, scale:1, duration:0.8, ease:'power2.out', onStart: playSuccess })
   .fromTo('#t-outro', { opacity:0, y:20 }, { opacity:1, y:0, duration:0.8 }, '-=0.3')
   .fromTo('#t-links', { opacity:0 }, { opacity:1, duration:0.6 }, '+=0.5')
   .fromTo('#t-built', { opacity:0 }, { opacity:1, duration:0.6 }, '+=0.3')
