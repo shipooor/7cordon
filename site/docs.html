@@ -595,6 +595,7 @@
     <ul class="sidebar-items">
       <li><a href="#deployment">Prerequisites</a></li>
       <li><a href="#deploy-local">Local Dev Setup</a></li>
+      <li><a href="#deploy-dashboard">Dashboard</a></li>
       <li><a href="#deploy-scripts">npm Scripts</a></li>
       <li><a href="#deploy-production">Production Deploy</a></li>
       <li><a href="#deploy-docker">Docker</a></li>
@@ -1890,6 +1891,25 @@ npm run mcp                # stdio for Claude Desktop
 
 # Verify
 curl http://localhost:3000/health</code></pre>
+
+  <h3 id="deploy-dashboard">Monitoring Dashboard</h3>
+  <p>7cordon includes a real-time monitoring dashboard for tracking your agents' activity. It shows transaction stats, trust score, budget usage, policy configuration, and a live activity feed.</p>
+  <h4>Start the dashboard</h4>
+<pre data-lang="bash"><code># Make sure the API server is running first
+npm run dev:api
+
+# In a separate terminal
+npm run dev:dashboard      # http://localhost:5173</code></pre>
+  <p>The dashboard connects to your local API server and auto-refreshes every 5 seconds. It reads from the <code>/dashboard/*</code> endpoints (read-only, no auth required for self-hosted).</p>
+  <h4>What you'll see</h4>
+  <ul>
+    <li><strong>Stats:</strong> total requests, approved, blocked, pending, avg analysis time</li>
+    <li><strong>Trust Score:</strong> 0-100 gauge based on transaction history</li>
+    <li><strong>Budget:</strong> daily and weekly spend vs limits</li>
+    <li><strong>Policy:</strong> max per tx, auto-approve threshold, rate limits, whitelisted tokens and protocols</li>
+    <li><strong>Recent Activity:</strong> live feed of all analyzed transactions with status, risk level, and AI explanation</li>
+  </ul>
+  <blockquote class="note"><p><strong>Note:</strong> The dashboard is for self-hosted deployments. In the future 7cordon Network, the dashboard will be available at 7cordon.xyz with wallet-based auth, where each agent owner sees only their own data.</p></blockquote>
 
   <h3 id="deploy-scripts">npm Scripts</h3>
   <table>
