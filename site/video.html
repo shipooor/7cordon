@@ -99,9 +99,9 @@
   #code-block {
     background: #111; border: 1px solid #222; border-radius: 10px;
     padding: 36px 44px; font-family:'JetBrains Mono',monospace;
-    font-size: 15px; line-height: 2.1; width: 760px;
-    white-space: pre; overflow: hidden;
+    font-size: 15px; width: 760px; text-align: left;
   }
+  .cl { line-height: 2.1; white-space: nowrap; }
   .ck { color: #c678dd; } .cs { color: #98c379; } .cf { color: #61afef; }
   .cc { color: #5c6370; } .cp { color: #abb2bf; }
 
@@ -211,11 +211,7 @@
 
   <!-- Code -->
   <div class="el mono dim" id="t-code-label" style="font-size:12px;letter-spacing:3px">INTEGRATION</div>
-  <pre class="el" id="code-block"><span class="ck">import</span> <span class="cp">{</span> <span class="cf">guardianMiddleware</span> <span class="cp">}</span> <span class="ck">from</span> <span class="cs">'@7cordon/wdk-module'</span>
-<span class="cp">wdk.</span><span class="cf">registerMiddleware</span><span class="cp">(</span><span class="cs">'ethereum'</span><span class="cp">,</span>
-  <span class="cf">guardianMiddleware</span><span class="cp">({</span> <span class="cp">apiUrl:</span> <span class="cs">'http://localhost:3000'</span> <span class="cp">})</span>
-<span class="cp">)</span>
-<span class="cc">// every tx is now intercepted and analyzed</span></pre>
+  <div class="el" id="code-block"><div class="cl"><span class="ck">import</span> { <span class="cf">guardianMiddleware</span> } <span class="ck">from</span> <span class="cs">'@7cordon/wdk-module'</span></div><div class="cl">&nbsp;</div><div class="cl">wdk.<span class="cf">registerMiddleware</span>(<span class="cs">'ethereum'</span>,</div><div class="cl">&nbsp;&nbsp;<span class="cf">guardianMiddleware</span>({ apiUrl: <span class="cs">'http://localhost:3000'</span> })</div><div class="cl">)</div><div class="cl">&nbsp;</div><div class="cl"><span class="cc">// every tx is now intercepted and analyzed</span></div></div>
   <div class="el center w300" id="t-code-sub" style="font-size:16px;color:#555;max-width:500px">Native WDK middleware. Also available as MCP server.</div>
 
   <!-- Features -->
