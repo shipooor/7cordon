@@ -6,11 +6,11 @@
 <style>
   body { margin:0; background:#111; color:#fff; font-family:'Inter',system-ui; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; gap:20px; }
   h1 { font-size:24px; font-weight:400; }
-  .step { color:#888; font-size:14px; max-width:500px; text-align:center; line-height:1.8; }
+  .step { color:#888; font-size:14px; max-width:600px; text-align:center; line-height:1.8; }
+  .step b { color:#e5e5e5; }
   #btn { padding:16px 48px; font-size:16px; background:#22c55e; color:#000; border:none; border-radius:8px; cursor:pointer; font-weight:700; }
   #btn:hover { background:#16a34a; }
-  #btn:disabled { background:#333; color:#666; cursor:default; }
-  #status { font-size:14px; color:#eab308; }
+  #status { font-size:14px; color:#eab308; min-height: 20px; }
 </style>
 </head>
 <body>
@@ -18,53 +18,52 @@
 <h1>Record 7cordon Demo Video</h1>
 
 <div class="step">
-  1. Click "Start" below<br>
-  2. Chrome will ask to share a tab — pick the <b>"7cordon"</b> tab<br>
-  3. Check <b>"Share tab audio"</b> checkbox<br>
-  4. The presentation will play and record automatically<br>
-  5. When done, a .webm file will download
+  1. Open <b>video.html</b> in another tab first<br>
+  2. Click on that tab once to activate audio<br>
+  3. Come back here and click <b>"Start Recording"</b><br>
+  4. In the Chrome dialog, switch to <b>"Chrome Tab"</b> at the top<br>
+  5. Select the <b>"7cordon"</b> tab<br>
+  6. Make sure <b>"Also share tab audio"</b> is checked<br>
+  7. Click <b>"Share"</b><br>
+  8. Press <b>R</b> to restart the presentation<br>
+  9. Wait ~2 min, then click <b>"Stop sharing"</b> or wait for auto-stop<br>
+  10. Video downloads automatically as .webm
 </div>
 
-<button id="btn" onclick="startRecording()">Start Recording</button>
+<button id="btn">Start Recording</button>
 <div id="status"></div>
 
 <script>
-async function startRecording() {
+document.getElementById('btn').addEventListener('click', async () => {
   const btn = document.getElementById('btn');
   const status = document.getElementById('status');
-  btn.disabled = true;
 
-  // First open video.html in new tab
-  status.textContent = 'Opening presentation tab...';
-  const videoTab = window.open('video.html', '_blank');
-
-  await new Promise(r => setTimeout(r, 2000));
-
-  status.textContent = 'Select the 7cordon tab and check "Share tab audio"';
+  status.textContent = 'Requesting screen capture...';
 
   try {
-    // This will prompt user to select which tab to capture
     const stream = await navigator.mediaDevices.getDisplayMedia({
-      video: true,
-      audio: true, // this enables "Share tab audio" checkbox
+      video: { width: 1920, height: 1080 },
+      audio: true,
     });
 
-    // Check if we got audio
     const hasAudio = stream.getAudioTracks().length > 0;
-    console.log('Audio tracks:', hasAudio);
 
-    const recorder = new MediaRecorder(stream, {
-      mimeType: MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')
-        ? 'video/webm;codecs=vp9,opus'
-        : 'video/webm',
-      videoBitsPerSecond: 8000000,
-    });
+    // Find supported mime type
+    let mimeType = 'video/webm';
+    for (const mt of ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm']) {
+      if (MediaRecorder.isTypeSupported(mt)) { mimeType = mt; break; }
+    }
 
+    const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 8000000 });
     const chunks = [];
-    recorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
+
+    recorder.ondataavailable = (e) => {
+      if (e.data.size > 0) chunks.push(e.data);
+    };
 
     recorder.onstop = () => {
-      const blob = new Blob(chunks, { type: 'video/webm' });
+      stream.getTracks().forEach(t => t.stop());
+      const blob = new Blob(chunks, { type: mimeType });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -72,49 +71,33 @@ async function startRecording() {
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      status.textContent = 'Done! Video saved as 7cordon-demo.webm' + (hasAudio ? ' (with audio)' : ' (NO audio — share tab audio was not checked)');
-      btn.disabled = false;
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      status.textContent = 'Done! Video downloaded.' + (hasAudio ? ' (with audio)' : ' (NO audio — check "Also share tab audio" next time)');
       btn.textContent = 'Record Again';
-      stream.getTracks().forEach(t => t.stop());
+      clearInterval(timer);
     };
 
-    // Start recording
-    recorder.start(1000); // collect data every second
-    status.textContent = 'Recording... ' + (hasAudio ? '(with audio ✓)' : '(NO audio!)');
+    recorder.start(1000);
+    btn.textContent = 'Stop Recording';
+    btn.onclick = () => recorder.stop();
 
-    // Trigger the presentation in the other tab
-    setTimeout(() => {
-      try {
-        videoTab.document.body.click(); // init audio
-        setTimeout(() => {
-          videoTab.document.dispatchEvent(new KeyboardEvent('keydown', { key: 'r' }));
-        }, 500);
-      } catch(e) { console.log('Cannot control tab:', e); }
-    }, 1000);
-
-    // Auto-stop after 125 seconds
-    let countdown = 125;
+    let elapsed = 0;
     const timer = setInterval(() => {
-      countdown--;
-      status.textContent = `Recording... ${countdown}s remaining` + (hasAudio ? ' (audio ✓)' : '');
-      if (countdown <= 0) {
-        clearInterval(timer);
-        recorder.stop();
-      }
+      elapsed++;
+      const min = Math.floor(elapsed / 60);
+      const sec = elapsed % 60;
+      status.textContent = `Recording ${min}:${sec.toString().padStart(2,'0')}` + (hasAudio ? ' (audio ✓)' : ' (no audio)');
+      if (elapsed >= 180) { recorder.stop(); clearInterval(timer); }
     }, 1000);
 
-    // Also stop if stream ends (user clicks "Stop sharing")
     stream.getVideoTracks()[0].onended = () => {
-      clearInterval(timer);
-      recorder.stop();
+      if (recorder.state !== 'inactive') recorder.stop();
     };
 
   } catch (err) {
-    status.textContent = 'Cancelled or error: ' + err.message;
-    btn.disabled = false;
+    status.textContent = err.name === 'NotAllowedError' ? 'Cancelled by user' : 'Error: ' + err.message;
   }
-}
+});
 </script>
 
 </body>
