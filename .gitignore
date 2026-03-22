@@ -7,7 +7,7 @@ build/
 *.log
 *.tsbuildinfo
 .DS_Store
-**/.saaafe/
+**/.7cordon/
 .svelte-kit/
 .claude/
 PLAN.md
