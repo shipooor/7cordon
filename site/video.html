@@ -266,6 +266,7 @@
   <div class="el center mono" id="t-built" style="font-size:13px;color:#333">Built on Tether WDK &mdash; Hackathon Galactica 2026</div>
 </div>
 
+<audio id="bgmusic" src="bg-music.mp3" preload="auto" loop></audio>
 <div id="progress"></div>
 <div id="restart">Press R to restart &middot; Click to skip</div>
 
@@ -374,7 +375,12 @@ function playSuccess() {
 }
 
 // Start audio on first interaction (browser requirement)
-document.addEventListener('click', initAudio, { once: true });
+document.addEventListener('click', () => {
+  initAudio();
+  const music = document.getElementById('bgmusic');
+  music.volume = 0.25;
+  music.play().catch(() => {});
+}, { once: true });
 
 const tl = gsap.timeline();
 const cx = window.innerWidth / 2;

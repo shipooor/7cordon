@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>7cordon — Record</title>
+<style>
+  body { margin:0; background:#111; color:#fff; font-family:'Inter',system-ui; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; gap:20px; }
+  h1 { font-size:24px; font-weight:400; }
+  .step { color:#888; font-size:14px; max-width:500px; text-align:center; line-height:1.8; }
+  #btn { padding:16px 48px; font-size:16px; background:#22c55e; color:#000; border:none; border-radius:8px; cursor:pointer; font-weight:700; }
+  #btn:hover { background:#16a34a; }
+  #btn:disabled { background:#333; color:#666; cursor:default; }
+  #status { font-size:14px; color:#eab308; }
+</style>
+</head>
+<body>
+
+<h1>Record 7cordon Demo Video</h1>
+
+<div class="step">
+  1. Click "Start" below<br>
+  2. Chrome will ask to share a tab — pick the <b>"7cordon"</b> tab<br>
+  3. Check <b>"Share tab audio"</b> checkbox<br>
+  4. The presentation will play and record automatically<br>
+  5. When done, a .webm file will download
+</div>
+
+<button id="btn" onclick="startRecording()">Start Recording</button>
+<div id="status"></div>
+
+<script>
+async function startRecording() {
+  const btn = document.getElementById('btn');
+  const status = document.getElementById('status');
+  btn.disabled = true;
+
+  // First open video.html in new tab
+  status.textContent = 'Opening presentation tab...';
+  const videoTab = window.open('video.html', '_blank');
+
+  await new Promise(r => setTimeout(r, 2000));
+
+  status.textContent = 'Select the 7cordon tab and check "Share tab audio"';
+
+  try {
+    // This will prompt user to select which tab to capture
+    const stream = await navigator.mediaDevices.getDisplayMedia({
+      video: true,
+      audio: true, // this enables "Share tab audio" checkbox
+    });
+
+    // Check if we got audio
+    const hasAudio = stream.getAudioTracks().length > 0;
+    console.log('Audio tracks:', hasAudio);
+
+    const recorder = new MediaRecorder(stream, {
+      mimeType: MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')
+        ? 'video/webm;codecs=vp9,opus'
+        : 'video/webm',
+      videoBitsPerSecond: 8000000,
+    });
+
+    const chunks = [];
+    recorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
+
+    recorder.onstop = () => {
+      const blob = new Blob(chunks, { type: 'video/webm' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = '7cordon-demo.webm';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      status.textContent = 'Done! Video saved as 7cordon-demo.webm' + (hasAudio ? ' (with audio)' : ' (NO audio — share tab audio was not checked)');
+      btn.disabled = false;
+      btn.textContent = 'Record Again';
+      stream.getTracks().forEach(t => t.stop());
+    };
+
+    // Start recording
+    recorder.start(1000); // collect data every second
+    status.textContent = 'Recording... ' + (hasAudio ? '(with audio ✓)' : '(NO audio!)');
+
+    // Trigger the presentation in the other tab
+    setTimeout(() => {
+      try {
+        videoTab.document.body.click(); // init audio
+        setTimeout(() => {
+          videoTab.document.dispatchEvent(new KeyboardEvent('keydown', { key: 'r' }));
+        }, 500);
+      } catch(e) { console.log('Cannot control tab:', e); }
+    }, 1000);
+
+    // Auto-stop after 125 seconds
+    let countdown = 125;
+    const timer = setInterval(() => {
+      countdown--;
+      status.textContent = `Recording... ${countdown}s remaining` + (hasAudio ? ' (audio ✓)' : '');
+      if (countdown <= 0) {
+        clearInterval(timer);
+        recorder.stop();
+      }
+    }, 1000);
+
+    // Also stop if stream ends (user clicks "Stop sharing")
+    stream.getVideoTracks()[0].onended = () => {
+      clearInterval(timer);
+      recorder.stop();
+    };
+
+  } catch (err) {
+    status.textContent = 'Cancelled or error: ' + err.message;
+    btn.disabled = false;
+  }
+}
+</script>
+
+</body>
+</html>
