@@ -260,9 +260,15 @@
   <div class="el center mono" id="t-built" style="font-size:13px;color:#333">Built on Tether WDK &mdash; Hackathon Galactica 2026</div>
 </div>
 
+<!-- Splash screen -->
+<div id="splash" style="position:fixed;inset:0;z-index:200;background:#0a0a0f;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:48px;font-weight:700;color:#e5e5e5;margin-bottom:24px">7cordon</div>
+  <div style="font-size:16px;color:#555;margin-bottom:48px">Demo Presentation</div>
+  <div style="padding:14px 48px;border:1px solid #333;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:14px;color:#888">Click anywhere to start</div>
+</div>
+
 <audio id="bgmusic" src="bg-music.mp3" preload="auto" loop></audio>
 <div id="progress"></div>
-<div id="restart">Press R to restart &middot; Click to skip</div>
 
 <script>
 // ============================================
@@ -368,23 +374,36 @@ function playSuccess() {
   o2.stop(audioCtx.currentTime + 0.3);
 }
 
-// Start audio on first interaction (browser requirement)
-document.addEventListener('click', () => {
+let started = false;
+const tl = gsap.timeline({ paused: true });
+let progressTween;
+
+// Splash click — init audio, start after 3s delay
+document.getElementById('splash').addEventListener('click', () => {
+  if (started) return;
+  started = true;
+
+  // Init audio
   initAudio();
   const music = document.getElementById('bgmusic');
   music.volume = 0.25;
   music.play().catch(() => {});
-}, { once: true });
 
-const tl = gsap.timeline();
+  // Hide splash
+  const splash = document.getElementById('splash');
+  splash.style.transition = 'opacity 0.5s';
+  splash.style.opacity = '0';
+  setTimeout(() => { splash.style.display = 'none'; }, 500);
+
+  // 3 second delay then start
+  setTimeout(() => {
+    tl.play();
+    progressTween = gsap.fromTo('#progress', { width: 0 }, { width: '100%', duration: 120, ease: 'none' });
+  }, 3000);
+});
+
 const cx = window.innerWidth / 2;
 const cy = window.innerHeight / 2;
-
-// Helper: position element centered
-function pos(id, x, y) { gsap.set(id, { x: x - 0, y: y - 0, xPercent: -50, yPercent: -50, left: '50%', top: '50%' }); }
-
-// Progress bar
-gsap.to('#progress', { width: '100%', duration: 120, ease: 'none' });
 
 // ============================================
 // ACT 1: INTRO (0-8s)
@@ -580,16 +599,16 @@ tl.set('#logo', { left:'50%', top:'50%', xPercent:-50, yPercent:-50 })
   .call(() => { tl.restart(); })
 ;
 
-// Click to advance (skip sections)
-document.addEventListener('click', () => {
-  tl.progress(Math.min(tl.progress() + 0.08, 1));
-});
-
 // R to restart
 document.addEventListener('keydown', (e) => {
   if (e.key === 'r' || e.key === 'R') {
     tl.restart();
-    gsap.fromTo('#progress', { width: 0 }, { width: '100%', duration: 120, ease: 'none' });
+    if (progressTween) progressTween.restart();
+  }
+  // Space to skip forward
+  if (e.key === ' ') {
+    e.preventDefault();
+    tl.progress(Math.min(tl.progress() + 0.08, 1));
   }
 });
 </script>
