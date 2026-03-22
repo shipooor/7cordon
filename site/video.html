@@ -112,6 +112,13 @@
     font-family: 'JetBrains Mono', monospace;
   }
 
+  /* Spark items */
+  .sp-item {
+    text-align: center; opacity: 0;
+  }
+  .sp-item .sv { font-size: 56px; font-weight: 900; }
+  .sp-item .sl { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:#555; margin-top:6px; }
+
   /* Chain pills */
   .cp {
     padding: 10px 24px;
@@ -242,9 +249,11 @@
   <!-- Spark -->
   <div class="el center w900" id="t-spark1" style="font-size:56px">Pay per analysis.</div>
   <div class="el center mono" id="t-spark2" style="font-size:20px;color:#555">$0.001/sec via Tether Spark</div>
-  <div class="stat-box" id="sp1"><div class="sv green">$0</div><div class="sl">L0 Policy</div></div>
-  <div class="stat-box" id="sp2"><div class="sv" style="color:#e5e5e5">$0.003</div><div class="sl">L1 Quick</div></div>
-  <div class="stat-box" id="sp3"><div class="sv" style="color:#e5e5e5">$0.015</div><div class="sl">L2 Deep</div></div>
+  <div class="el" id="spark-wrap" style="display:flex;gap:80px;justify-content:center">
+    <div class="sp-item" id="sp1"><div class="sv green">$0</div><div class="sl">L0 Policy</div></div>
+    <div class="sp-item" id="sp2"><div class="sv" style="color:#e5e5e5">$0.003</div><div class="sl">L1 Quick</div></div>
+    <div class="sp-item" id="sp3"><div class="sv" style="color:#e5e5e5">$0.015</div><div class="sl">L2 Deep</div></div>
+  </div>
 
   <!-- Outro -->
   <div class="el" id="outro-logo">
@@ -438,18 +447,15 @@ tl.set('#logo', { left:'50%', top:'50%', xPercent:-50, yPercent:-50 })
 // ============================================
 // ACT 10: SPARK (92-102s)
 // ============================================
-  .set('#t-spark1', { left:'50%', top:'32%', xPercent:-50, yPercent:-50 })
-  .set('#t-spark2', { left:'50%', top:'44%', xPercent:-50, yPercent:-50 })
-  .set('#sp1', { left:'calc(50% - 200px)', top:'62%', xPercent:-50, yPercent:-50 })
-  .set('#sp2', { left:'50%', top:'62%', xPercent:-50, yPercent:-50 })
-  .set('#sp3', { left:'calc(50% + 200px)', top:'62%', xPercent:-50, yPercent:-50 })
+  .set('#t-spark1', { left:'50%', top:'28%', xPercent:-50, yPercent:-50 })
+  .set('#t-spark2', { left:'50%', top:'42%', xPercent:-50, yPercent:-50 })
+  .set('#spark-wrap', { left:'50%', top:'62%', xPercent:-50, yPercent:-50 })
 
   .fromTo('#t-spark1', { opacity:0, y:20 }, { opacity:1, y:0, duration:0.6 })
   .fromTo('#t-spark2', { opacity:0 }, { opacity:1, duration:0.4 }, '+=0.3')
-  .fromTo('#sp1', { opacity:0, y:20 }, { opacity:1, y:0, duration:0.4 }, '+=0.3')
-  .fromTo('#sp2', { opacity:0, y:20 }, { opacity:1, y:0, duration:0.4 }, '-=0.2')
-  .fromTo('#sp3', { opacity:0, y:20 }, { opacity:1, y:0, duration:0.4 }, '-=0.2')
-  .to(['#t-spark1','#t-spark2','#sp1','#sp2','#sp3'], { opacity:0, duration:0.4 }, '+=2.5')
+  .fromTo('#spark-wrap', { opacity:0 }, { opacity:1, duration:0.3 }, '+=0.3')
+  .fromTo('.sp-item', { opacity:0, y:20 }, { opacity:1, y:0, duration:0.4, stagger:0.15 })
+  .to(['#t-spark1','#t-spark2','#spark-wrap'], { opacity:0, duration:0.4 }, '+=2.5')
 
 // ============================================
 // ACT 11: OUTRO (102-115s)
