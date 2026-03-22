@@ -737,26 +737,26 @@
   <p>Budget persistence: Policy engine restores budget from audit log on startup, preventing restart-based budget bypass.</p>
 
   <h4>Level 1: AI Quick Analysis (L1)</h4>
-  <p><strong>Timing:</strong> 2-5 seconds &bull; <strong>Cost:</strong> ~$0.003 USDT &bull; <strong>Location:</strong> Remote API server &bull; <strong>Model:</strong> Claude Haiku &bull; <strong>Data source:</strong> GoPlus API</p>
+  <p><strong>Timing:</strong> 2-5 seconds &bull; <strong>Cost:</strong> ~$0.003 USDT &bull; <strong>Location:</strong> Remote API server &bull; <strong>Model:</strong> configurable (fast LLM) &bull; <strong>Data source:</strong> GoPlus API</p>
   <p>Quick triage using on-chain security data and lightweight AI analysis. Good for common safe transactions.</p>
   <p><strong>Analysis steps:</strong></p>
   <ol>
     <li>Fetch GoPlus token security (honeypot check, holder count, open-source verification)</li>
     <li>Fetch on-chain address reputation (if applicable)</li>
-    <li>Run Haiku prompt: analyze transaction intent + on-chain data</li>
+    <li>Run AI prompt: analyze transaction intent + on-chain data</li>
     <li>Return risk assessment</li>
   </ol>
   <p><strong>Risk levels:</strong> <code>safe</code>, <code>low</code>, <code>medium</code>, <code>high</code>, <code>critical</code></p>
   <p><strong>Escalation to L2 if:</strong> Risk level &gt;= <code>medium</code> OR amount &gt; manual approval threshold ($500 default)</p>
 
   <h4>Level 2: AI Deep Analysis (L2)</h4>
-  <p><strong>Timing:</strong> 10-20 seconds &bull; <strong>Cost:</strong> ~$0.015 USDT &bull; <strong>Location:</strong> Remote API server &bull; <strong>Model:</strong> Claude Opus &bull; <strong>Data sources:</strong> GoPlus + Arbiscan contract source</p>
+  <p><strong>Timing:</strong> 10-20 seconds &bull; <strong>Cost:</strong> ~$0.015 USDT &bull; <strong>Location:</strong> Remote API server &bull; <strong>Model:</strong> configurable (reasoning LLM) &bull; <strong>Data sources:</strong> GoPlus + Arbiscan contract source</p>
   <p>Comprehensive threat assessment with full contract code inspection. Used only when L1 flagged suspicious activity or amount is large.</p>
   <p><strong>Analysis steps:</strong></p>
   <ol>
     <li>All L1 data (GoPlus, address checks)</li>
     <li>Fetch contract source code from Arbiscan</li>
-    <li>Run Opus prompt: comprehensive threat assessment with code review</li>
+    <li>Run AI prompt: comprehensive threat assessment with code review</li>
     <li>Identify specific threats (scam token, social engineering, malicious contract, etc.)</li>
     <li>Return detailed explanation and recommendations</li>
   </ol>
@@ -782,10 +782,10 @@
        &#9474;      &#9500;&#9472; Fetch GoPlus data (parallel)
        &#9474;      &#9500;&#9472; Fetch protocol info (parallel)
        &#9474;      &#9474;
-       &#9474;      &#9500;&#9472; Run L1 Analysis (Haiku)
+       &#9474;      &#9500;&#9472; Run L1 Quick Analysis
        &#9474;      &#9474;  &#9492;&#9472; Should escalate to L2?
        &#9474;      &#9474;
-       &#9474;      &#9492;&#9472; (if escalating) Run L2 Analysis (Opus)
+       &#9474;      &#9492;&#9472; (if escalating) Run L2 Deep Analysis
        &#9474;         &#9492;&#9472; Fetch Arbiscan contract source
        &#9474;
        &#9500;&#9472; Stop Spark Streaming
@@ -1325,7 +1325,7 @@ await guardian.dispose();</code></pre>
 <div class="doc-section" id="api">
   <h2>API Reference</h2>
 
-  <p>The 7cordon API server handles multi-level risk analysis (L1 quick, L2 deep) with Claude AI, integrates external data sources (GoPlus, DeFi Llama, Arbiscan), and serves a dashboard for real-time monitoring.</p>
+  <p>The 7cordon API server handles multi-level risk analysis (L1 quick, L2 deep) with AI, integrates external data sources (GoPlus, DeFi Llama, Arbiscan), and serves a dashboard for real-time monitoring.</p>
 
   <h3>Server Setup</h3>
 <pre data-lang="bash"><code># Start with default configuration
@@ -2191,7 +2191,7 @@ cp /backups/audit-20260315.jsonl .7cordon/audit.jsonl</code></pre>
   <p>Per-second Spark streaming: <strong>$0.001 USDT/sec</strong> during AI analysis.</p>
   <ul>
     <li>L0 policy checks: free (no AI)</li>
-    <li>L1 Haiku: ~3-4 sec = $0.003-0.004 revenue</li>
+    <li>L1 Quick: ~3-4 sec = $0.003-0.004 revenue</li>
     <li>L1+L2 escalation: ~18-22 sec = $0.018-0.022 revenue</li>
   </ul>
 
@@ -2199,8 +2199,8 @@ cp /backups/audit-20260315.jsonl .7cordon/audit.jsonl</code></pre>
   <table>
     <thead><tr><th>Level</th><th>Input tokens</th><th>Output tokens</th><th>AI cost</th><th>Time</th></tr></thead>
     <tbody>
-      <tr><td>L1 (Haiku)</td><td>380-450</td><td>165-310</td><td>$0.001-0.002</td><td>2-4s</td></tr>
-      <tr><td>L2 (Opus)</td><td>~900</td><td>~960</td><td>$0.017</td><td>17-20s</td></tr>
+      <tr><td>L1 (Quick)</td><td>380-450</td><td>165-310</td><td>$0.001-0.002</td><td>2-4s</td></tr>
+      <tr><td>L2 (Deep)</td><td>~900</td><td>~960</td><td>$0.017</td><td>17-20s</td></tr>
       <tr><td>L1+L2 combined</td><td>~1300</td><td>~1270</td><td>~$0.019</td><td>20-22s</td></tr>
     </tbody>
   </table>
