@@ -76,10 +76,167 @@
       font-size: 13px;
     }
 
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .topbar-logo {
+      width: 24px;
+      height: 24px;
+    }
+
     .topbar-name {
       font-weight: 700;
       letter-spacing: 0.5px;
       color: var(--text);
+    }
+
+    /* ===== Hero Layout ===== */
+    .hero-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: end;
+    }
+
+    /* ===== Hero Terminal ===== */
+    .hero-terminal {
+      background: var(--bg-raised);
+      border: 1px solid var(--border-light);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .terminal-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .terminal-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .terminal-dot.r { background: #ef4444; }
+    .terminal-dot.y { background: #eab308; }
+    .terminal-dot.g { background: #22c55e; }
+
+    .terminal-title {
+      flex: 1;
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    .terminal-body {
+      padding: 20px;
+      font-size: 12px;
+      line-height: 2;
+    }
+
+    .t-line {
+      opacity: 0;
+      transform: translateY(4px);
+      animation: line-in 0.3s ease forwards;
+    }
+
+    .t-prompt { color: var(--text); }
+    .t-dim { color: var(--text-dim); }
+    .t-check { color: var(--green); }
+    .t-warn { color: var(--yellow); }
+    .t-cross { color: var(--red); }
+    .t-muted { color: var(--text-muted); }
+
+    .t-line:nth-child(1) { animation-delay: 0.5s; }
+    .t-line:nth-child(2) { animation-delay: 1.4s; }
+    .t-line:nth-child(3) { animation-delay: 2.0s; }
+    .t-line:nth-child(4) { animation-delay: 2.8s; }
+    .t-line:nth-child(5) { animation-delay: 3.5s; }
+    .t-line:nth-child(6) { animation-delay: 4.2s; }
+    .t-line:nth-child(7) { animation-delay: 4.6s; }
+    .t-line:nth-child(8) { animation-delay: 5.2s; }
+
+    .t-blocked {
+      display: inline-block;
+      padding: 1px 8px;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 2px;
+      color: var(--red);
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+    }
+
+    @media (max-width: 768px) {
+      .hero-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ===== Hero CTA ===== */
+    .hero-cta {
+      display: flex;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .hero-cta a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 20px;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 500;
+      border-radius: 3px;
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+
+    .btn-primary {
+      background: #fff;
+      color: #111;
+      border: 1px solid #fff;
+    }
+
+    .btn-primary:hover {
+      background: #ddd;
+      border-color: #ddd;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--text-muted);
+      color: var(--text);
+    }
+
+    /* ===== Defense Level Numbers ===== */
+    .defense-level {
+      position: relative;
+    }
+
+    .defense-level-num {
+      position: absolute;
+      top: -125px;
+      right: -10px;
+      font-size: 240px;
+      font-weight: 700;
+      color: #3333336b;
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+      z-index: -1;
     }
 
     .topbar-links {
@@ -130,25 +287,36 @@
     }
 
     .hero-tagline {
-      font-size: 14px;
-      color: var(--text-muted);
-      margin-bottom: 16px;
+      font-size: 15px;
+      color: var(--text);
+      margin-bottom: 24px;
       font-weight: 400;
+      font-family: var(--sans);
+    }
+
+    .hero-accent {
+      color: #c8b89a;
+    }
+
+    .hero-built {
+      font-size: 12px;
+      color: #50937a;
+      margin-bottom: 12px;
     }
 
     .hero-title {
       font-family: var(--mono);
-      font-size: clamp(24px, 4vw, 40px);
+      font-size: clamp(22px, 3vw, 32px);
       font-weight: 700;
       line-height: 1.2;
-      color: var(--text);
+      color: #fff;
       margin-bottom: 20px;
     }
 
     .hero-sub {
       font-family: var(--sans);
-      font-size: 14px;
-      color: var(--text-muted);
+      font-size: 13px;
+      color: var(--text-dim);
       max-width: 560px;
       line-height: 1.6;
     }
@@ -1319,7 +1487,13 @@
 
 <!-- Top bar -->
 <nav class="topbar">
-  <span class="topbar-name">7cordon</span>
+  <div class="topbar-brand">
+    <svg class="topbar-logo" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="20,2 34.5,7.5 38.5,22 30,35 10,35 1.5,22 5.5,7.5" stroke="#888" stroke-width="1.5" fill="none"/>
+      <text x="20" y="25" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="16" font-weight="700" fill="#e5e5e5">7</text>
+    </svg>
+    <span class="topbar-name">7cordon</span>
+  </div>
   <div class="topbar-links">
     <a href="https://github.com/shipooor/7cordon" target="_blank">GitHub</a>
     <a href="docs.html">Docs</a>
@@ -1333,20 +1507,37 @@
   <!-- Hero -->
   <section class="hero-section">
     <div class="section-inner">
-      <div class="hero-content">
-        <div class="hero-tagline">built on Tether WDK</div>
-        <h1 class="hero-title">AI trust & safety layer<br>for autonomous agents</h1>
-        <p class="hero-sub">
-          Every transaction an AI agent makes passes through three defense levels.
-          Policy rules catch the obvious. AI catches the rest.
-        </p>
-        <hr class="hero-separator">
-        <div class="hero-prompt">
-          <span class="prompt-line"><span class="cmd">agent</span>  swap 500 USDT &rarr; 0x7a250d...  <span class="dim">(arbitrum)</span></span>
-          <span class="prompt-line"><span class="dim">L0</span>  policy check <span class="check">&#10003;</span> <span class="dim">budget ok, address not blacklisted</span></span>
-          <span class="prompt-line"><span class="dim">L1</span>  quick analysis <span class="warn">&#9888;</span> <span class="dim">unknown token, low holder count</span></span>
-          <span class="prompt-line"><span class="dim">L2</span>  deep analysis <span class="cross">&#10007;</span> <span class="dim">honeypot &mdash; 100% sell tax in contract</span></span>
-          <span class="prompt-line"><span class="cross">&#10007;</span> <span class="cmd">BLOCKED</span> &mdash; agent funds protected</span>
+      <div class="hero-layout">
+        <div class="hero-content">
+          <div class="hero-built">built on Tether WDK</div>
+          <h1 class="hero-title">Your agent's<br><span class="hero-accent">security cordon.</span></h1>
+          <div class="hero-tagline">AI trust & safety layer for autonomous agents</div>
+          <p class="hero-sub">
+            Every transaction an AI agent makes passes through three defense levels.
+            Policy rules catch the obvious. AI catches the rest.
+          </p>
+          <div class="hero-cta">
+            <a href="docs.html" class="btn-primary">Get Started</a>
+            <a href="https://github.com/shipooor/7cordon" target="_blank" class="btn-ghost">GitHub &rarr;</a>
+          </div>
+        </div>
+        <div class="hero-terminal">
+          <div class="terminal-bar">
+            <div class="terminal-dot r"></div>
+            <div class="terminal-dot y"></div>
+            <div class="terminal-dot g"></div>
+            <div class="terminal-title">7cordon &mdash; live interception</div>
+          </div>
+          <div class="terminal-body">
+            <div class="t-line"><span class="t-prompt">$</span> <span class="t-muted">agent requests swap 500 USDT &rarr; 0x7a250d...</span></div>
+            <div class="t-line"><span class="t-dim">&nbsp;&nbsp;chain:</span> <span class="t-muted">arbitrum</span> <span class="t-dim">&bull; token:</span> <span class="t-muted">unknown</span></div>
+            <div class="t-line">&nbsp;</div>
+            <div class="t-line"><span class="t-check">&#10003;</span> <span class="t-dim">L0 policy</span> &nbsp;&nbsp;&nbsp;<span class="t-muted">budget ok, address not blacklisted</span></div>
+            <div class="t-line"><span class="t-warn">&#9888;</span> <span class="t-dim">L1 haiku</span> &nbsp;&nbsp;&nbsp;<span class="t-muted">unknown token, low holder count</span></div>
+            <div class="t-line"><span class="t-cross">&#10007;</span> <span class="t-dim">L2 opus</span> &nbsp;&nbsp;&nbsp;<span class="t-muted">honeypot &mdash; 100% sell tax in contract</span></div>
+            <div class="t-line">&nbsp;</div>
+            <div class="t-line"><span class="t-blocked">BLOCKED</span> <span class="t-muted">&mdash; agent funds protected</span> <span class="t-dim">(2.4s)</span></div>
+          </div>
         </div>
       </div>
     </div>
@@ -1358,6 +1549,7 @@
       <div class="section-title">Defense Pipeline</div>
       <div class="defense-grid anim-target anim-up">
         <div class="defense-level">
+          <div class="defense-level-num">0</div>
           <div class="defense-level-header">L0 Policy Engine</div>
           <div class="defense-level-meta">&lt;1ms &middot; free</div>
           <div class="defense-level-desc">
@@ -1366,6 +1558,7 @@
         </div>
         <div class="defense-arrow">&#8594;</div>
         <div class="defense-level">
+          <div class="defense-level-num">1</div>
           <div class="defense-level-header">L1 Quick Analysis</div>
           <div class="defense-level-meta">~2-5s &middot; ~$0.003</div>
           <div class="defense-level-desc">
@@ -1374,6 +1567,7 @@
         </div>
         <div class="defense-arrow">&#8594;</div>
         <div class="defense-level">
+          <div class="defense-level-num">2</div>
           <div class="defense-level-header">L2 Deep Analysis</div>
           <div class="defense-level-meta">~10-20s &middot; ~$0.015</div>
           <div class="defense-level-desc">
@@ -1979,6 +2173,10 @@
       </div>
 
       <div class="summary-footer anim-target anim-up">
+        <svg width="16" height="16" viewBox="0 0 40 40" fill="none" style="vertical-align: middle; margin-right: 6px;">
+          <polygon points="20,2 34.5,7.5 38.5,22 30,35 10,35 1.5,22 5.5,7.5" stroke="#555" stroke-width="1.5" fill="none"/>
+          <text x="20" y="25" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="16" font-weight="700" fill="#888">7</text>
+        </svg>
         Built for Tether Hackathon Galactica
       </div>
     </div>

@@ -28,7 +28,7 @@ export function createServer(): express.Express {
     : rawCorsOrigin;
   app.use(cors({
     origin: process.env.NODE_ENV === 'development'
-      ? ['http://localhost:4000', 'http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175']
+      ? true
       : corsOrigins,
     methods: ['GET', 'POST'],
   }));
